@@ -61,3 +61,12 @@ int contientTousPoint( CERCLE c , POINT tab[] , int nbPoints ){
 	
 	return ok;
 }
+
+int contientPoint( CERCLE c , POINT p){
+
+	if(c.x + c.d/2 < p.x || c.x - c.d/2 > p.x || c.y + c.d/2 < p.y || c.y - c.d/2 > p.y)
+		return 0;
+	else
+		return 1;
+
+}
