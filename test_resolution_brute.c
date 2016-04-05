@@ -32,7 +32,7 @@ int main(){
 	printf("Cercle solution brute: Coordonnées x=%d, y=%d, diamètre=%lf.\n",c.x,c.y,c.d);
 	printf("Le résultat devrait être x=10, y=10, d=10\n");
 
-<<<<<<< HEAD
+
 	if ( estEgal(c, vraiC) ){
 	   printf("Résultat conforme! \n");
 	   return 0;  
@@ -40,12 +40,6 @@ int main(){
 	   printf("Résultat NON CONFORME! \n");
 	   return 1; 
 	}
-=======
-	/* if ( estEgal(c, vraiC) ) */
-	/*   return 0;  */
-	/* else  */
-	/*   return 1; */
 
 	return 0;
->>>>>>> 503cec06e95ea0a19345bacc6649a9892e7f93e6
 }
