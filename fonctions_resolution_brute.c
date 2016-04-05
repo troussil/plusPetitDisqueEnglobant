@@ -54,7 +54,7 @@ int contientTousPoint( CERCLE c , POINT tab[] , int nbPoints ){
 	int ok = 1;
 	
 	while(i<nbPoints && ok) {
-	  if (contientPoint( c, tab[i] ))
+	  if (!contientPoint( c, tab[i] ))
 	    ok = 0;
 	  i++;
 	}
