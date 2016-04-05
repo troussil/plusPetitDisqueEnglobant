@@ -4,7 +4,10 @@ CFLAGS= -Wall
 
 #Commandes
 
-all: Test
+all: Test generateur
+
+generateur: generateur.c
+	$(CC) $(CFLAGS) $< -o $@
 
 Test: resolution_brute.o test_resolution_brute.o fonctions_resolution_brute.o
 	$(CC) $(CFLAGS) test_resolution_brute.o fonctions_resolution_brute.o resolution_brute.o -lm -o $@
@@ -21,4 +24,4 @@ fonctions_resolution_brute.o: fonctions_resolution_brute.c
 #Nettoyage
 
 clean: 
-	rm *.o Test
+	rm *.o Test generateur

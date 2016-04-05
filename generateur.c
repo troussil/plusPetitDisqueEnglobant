@@ -31,4 +31,6 @@ int main( int argc, char* argv []){
     y=rand_a_b(ymin,ymax);
     printf ("%d %d\n", x, y);
    }
+
+   return 0; 
 }
