@@ -17,7 +17,9 @@ int main(){
 	printf("Cercle solution brute: Coordonnées x=%d, y=%d, diamètre=%lf.\n",c.x,c.y,c.d);
 	printf("Le résultat devrait être x=10, y=10, d=10\n");
 
-	return 0;
-
+	/* if ( estEgal(c, vraiC) ) */
+	/*   return 0;  */
+	/* else  */
+	/*   return 1; */
 
 }

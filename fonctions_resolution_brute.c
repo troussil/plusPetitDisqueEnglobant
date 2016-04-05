@@ -3,7 +3,7 @@
 #include <math.h>
 
 #include "structures.h"
-
+#include "fonctions_resolution_brute.h"
 
 //Renvoie le cercle le plus petit passant par deux points p1 et p2
  
@@ -53,10 +53,10 @@ int contientTousPoint( CERCLE c , POINT tab[] , int nbPoints ){
 	int i = 0;	
 	int ok = 1;
 	
-	while(i<nbPoints && ok){
-		if(c.x + c.d/2 < tab[i].x || c.x - c.d/2 > tab[i].x || c.y + c.d/2 < tab[i].y || c.y - c.d/2 > tab[i].y)
-			ok = 0;
-		i++;
+	while(i<nbPoints && ok) {
+	  if (contientPoint( c, tab[i] ))
+	    ok = 0;
+	  i++;
 	}
 	
 	return ok;
