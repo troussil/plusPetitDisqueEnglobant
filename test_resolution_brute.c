@@ -17,27 +17,46 @@ int estEgal( CERCLE c1, CERCLE c2 ){
 
 int main(){
 
-	POINT tab[5] = {{10,10},{10,15},{10,5},{5,10},{15,10}};	
-	CERCLE vraiC; //Solution
+	CERCLE vraiC; //Solution universelle pour les 3 tests
 	vraiC.x = 10; vraiC.y=10; vraiC.d=10.0;	
 
-	int nbPoints = sizeof(tab) / sizeof (tab[0]);
-	
+	// Test 1 : Points cocirculaires
+
+	POINT tab1[] = {{10,15},{10,5},{5,10},{15,10}};	
+	printf("\n** Test 1 : Points cocirculaires **\n\n");
+	int nbPoints = sizeof(tab1) / sizeof (tab1[0]);
 	printf("Nombre de points: %d\n",nbPoints);
-
-	CERCLE c = brute(tab,nbPoints);
-
-	
-	
-	printf("Cercle solution brute: Coordonnées x=%d, y=%d, diamètre=%lf.\n",c.x,c.y,c.d);
+	CERCLE c1 = brute(tab1,nbPoints);
+	printf("Cercle solution brute: Coordonnées x=%d, y=%d, diamètre=%lf.\n",c1.x,c1.y,c1.d);
 	printf("Le résultat devrait être x=10, y=10, d=10\n");
 
+	// Test 2 : Points alignés
 
-	if ( estEgal(c, vraiC) ){
-	   printf("Résultat conforme! \n");
+	POINT tab2[] = {{10,15},{10,14},{10,5},{10,7}};	
+	printf("\n** Test 2 : Points alignés **\n\n");
+	nbPoints = sizeof(tab2) / sizeof (tab2[0]);
+	printf("Nombre de points: %d\n",nbPoints);
+	CERCLE c2 = brute(tab2,nbPoints);
+	printf("Cercle solution brute: Coordonnées x=%d, y=%d, diamètre=%lf.\n",c2.x,c2.y,c2.d);
+	printf("Le résultat devrait être x=10, y=10, d=10\n");
+
+	// Test 3 : Points confondus
+
+	POINT tab3[] = {{10,10},{10,10},{10,10},{10,15},{10,5}};	
+	printf("\n** Test 3 : Points confondus **\n\n");
+	nbPoints = sizeof(tab3) / sizeof (tab3[0]);
+	printf("Nombre de points: %d\n",nbPoints);
+	CERCLE c3 = brute(tab3,nbPoints);
+	printf("Cercle solution brute: Coordonnées x=%d, y=%d, diamètre=%lf.\n",c3.x,c3.y,c3.d);
+	printf("Le résultat devrait être x=10, y=10, d=10\n");
+
+	// Résultat
+
+	if ( estEgal(c1, vraiC) && estEgal(c2, vraiC) && estEgal(c3, vraiC) ){
+	   printf(" \n\n     => Résultat CONFORME! \n\n");
 	   return 0;  
 	} else {
-	   printf("Résultat NON CONFORME! \n");
+	   printf(" \n\n     => Résultat NON CONFORME! \n\n");
 	   return 1; 
 	}
 
