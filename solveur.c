@@ -1,86 +1,84 @@
 #include <stdio.h>
 #include <stdlib.h> 
-#include "structures.h"
 #include <string.h>
-#define taille 500
-#define taillePoint 3
+#include "structures.h"
+#include "fonctions_resolution_brute.h"
+#include "resolution_brute.h"
+
+#define TAILLEPOINT 3 //Diametre d'un point
+#define N 50 //Nb de points
 
 
-int i;
-/*char * saisir_chaine(char * lpBuffer, size_t nBufSize){
-  size_t nbCar = 0;    
-  int c;
-  c = getchar();
-  while (nbCar < nBufSize - 1 && c != EOF && c != '\n'){
-    lpBuffer[nbCar] = (char)c;
-    nbCar++;
-    c = getchar();
+POINT* convertirEntree ();
+char* dessinerCercle(FILE *file, int x, int y, int r);
+char* dessinerPoint(FILE *file, int x, int y, int r);
+void ecritureSVG(POINT tab[N], FILE* file);
+void GenerationFichierSVG(POINT tab[]);
+
+
+int i=0, j=0;
+
+//convertit les coordonnées de l'entrée standard en un tableau de POINTS
+POINT* convertirEntree (){
+  POINT* tab=malloc (sizeof(POINT)*N);
+  char chaine[10];
+  for (i;i<N;i++){
+    while((chaine[j] = getc(stdin)) != ' ' && chaine[j]!=EOF){
+      j++;
+    }
+    printf("%s ", chaine);
+    tab[i].x=atoi(chaine);
+    strcpy(chaine, "");
+    j=0;
+    while((chaine[j]= getc(stdin)) != '\n' && chaine[j]!=EOF){
+      j++;
+    }
+    printf("%s\n", chaine);
+    tab[i].y=atoi(chaine);
+    strcpy(chaine, "");
+    j=0;
   }
-  lpBuffer[nbCar] = '\0'; 
-  return lpBuffer;
-}*/
-
-
-
-POINT* convertir (FILE* file){
-	POINT* tab=malloc (sizeof (POINT) * taille);
-	file= fopen("Points.txt","r");
-	if(!file) {
-    perror("File opening failed");
-    exit;
-  }
-  int c;
-	char *chaine;
-	while((c = fgetc(file)) != EOF){
-  	chaine=chaine+c;
-		while((c = fgetc(file)) != ' ' && c!=EOF){
-			chaine=chaine+c;
-		}
-		tab[i].x=atoi(chaine);
-		strcpy(chaine, "");
-		while((c = fgetc(file)) != ' ' && c!=EOF){
-			chaine=chaine+c;
-		}
-		tab[i].y=atoi(chaine);
-		strcpy(chaine, "");
-		i++;
-	}
-	return tab;
+  return tab;
 }
 
-
-char* dessinerCercle(int x, int y, int r){
+//dessine un cercle en SVG
+char* dessinerCercle(FILE *file, int x, int y, int r){
   char* codeCercle= malloc (sizeof (*codeCercle) *500);
-  sprintf(codeCercle,"<circle x=\"%d\" y=\"%d\" r=\"%d\" stroke=\"black\" stroke-width=\"3\" fill=\"red\" />",x,y,r);
-  printf("%s\n", codeCercle);
+  sprintf(codeCercle,"<circle cx=\"%d\" cy=\"%d\" r=\"%d\" stroke=\"red\" stroke-width=\"3\" fill=\"transparent\" fill-opacity=\"0\" />",x,y,r);
+  fprintf(file,"%s\n", codeCercle);
   return codeCercle;
 }
 
 
-
-char* dessinerPoint(int x, int y, int r){ 
+//Dessine un point en SVG
+char* dessinerPoint(FILE *file, int x, int y, int r){ 
   char* codePoint= malloc (sizeof (*codePoint) * 500);
-  sprintf(codePoint,"<circle x=\"%d\" y=\"%d\" r=\"%d\" stroke=\"black\" stroke-width=\"3\"/>",x,y,r);
-  printf("%s\n", codePoint);
+  sprintf(codePoint,"<circle cx=\"%d\" cy=\"%d\" r=\"%d\" stroke=\"black\" stroke-width=\"3\" fill=\"black\"/>",x,y,r);
+  fprintf(file,"%s\n", codePoint);
   return codePoint;
 }
 
-
-void ecritureSVG(POINT tab[taille], FILE* file){
-  for(i=0; i<taille; i++){
-		fprintf(file,dessinerPoint((tab[i]).x, tab[i].y, taillePoint));
+//Dessine les points et le cercle dans le SVG
+void ecritureSVG(POINT tab[N], FILE* file){
+  //On dessine tous les points dans le SVG
+  for(i=0; i<N; i++){
+    dessinerPoint(file,(tab[i]).x, tab[i].y, TAILLEPOINT);
   }
-  //calcul du cercle
-  //fprintf(file,dessinerCercle(cercle.x,cercle.y,cercle.r);
-
+  //On calcul la solution brute puis on la dessine dans le SVG
+  CERCLE CercleSolution=brute(tab , N);
+  /*CERCLE CercleSolution;
+  CercleSolution.x = 250;
+  CercleSolution.y=250;
+  CercleSolution.d = 250;*/
+  dessinerCercle(file, CercleSolution.x, CercleSolution.y, CercleSolution.d);
 }
 
 
-
-void fichierSVG(POINT tab[]){
+//Genere le fichier SVG complet
+void GenerationFichierSVG(POINT tab[]){
   //creation et ouverture du fichier
   FILE *file;
-  file= fopen("Points.svg", "a");
+  file= fopen("Points.svg", "w");
   
   //ecriture de l'entete
   fprintf(file,"<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
@@ -88,29 +86,19 @@ void fichierSVG(POINT tab[]){
   fprintf(file,"\"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n");
   fprintf(file,"<svg width=\"500\" height=\"500\" version=\"1.1\"\n");
   fprintf(file,"xmlns=\"http://www.w3.org/2000/svg\">\n");
-  fprintf(file,"<title> EXEMPLE LOGO </title>\n");
-  fprintf(file,"<desc> Du LOGO. </desc>\n");
+  fprintf(file,"<title> RESOLUTION BRUTE </title>\n");
+  fprintf(file,"<desc> Du RESOLUTION BRUTE. </desc>\n");
   
   //ecriture du programme
   ecritureSVG(tab,file);
-
+  
   //fin du programme et fermer le fichier
   fprintf(file, "</svg>\n");
   fclose(file);
 }
 
-
-
-
 int main(){
-  char lpBuffer[taille];
-	FILE *file;
-  //lpBuffer=saisir_chaine(lpBuffer, sizeof(lpBuffer));
-  POINT *tab=convertir(file);
-	FichierSVG(tab);
-  printf("Chaine enregistrée: %s\n", lpBuffer);
-  dessinerPoint(50,50,50);
-  dessinerCercle(50,50,50);
-  
+  POINT *tab=convertirEntree();
+  GenerationFichierSVG(tab);
   return 0;
 }
