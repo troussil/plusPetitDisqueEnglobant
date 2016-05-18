@@ -4,16 +4,19 @@ CFLAGS= -Wall
 
 #Commandes
 
-all: Test generateur
+all: generateur solveur test 
 
 generateur: generateur.c
 	$(CC) $(CFLAGS) $< -o $@
 
-Test: resolution_brute.o test_resolution_brute.o fonctions_resolution_brute.o
-	$(CC) $(CFLAGS) test_resolution_brute.o fonctions_resolution_brute.o resolution_brute.o -lm -o $@
+solveur: solveur.c fonctions_resolution_brute.o resolution_brute.o  
+	$(CC) $(CFLAGS) $^ -lm -o $@
+
+test: resolution_brute.o test_resolution_brute.o fonctions_resolution_brute.o
+	$(CC) $(CFLAGS) $^ -lm -o $@
 
 test_resolution_brute.o: test_resolution_brute.c
-	$(CC) -c $(CFLAGS) test_resolution_brute.c -lm -o $@
+	$(CC) -c $(CFLAGS) $< -lm -o $@
 
 resolution_brute.o: resolution_brute.c
 	$(CC) -c $(CFLAGS) resolution_brute.c -lm -o $@
@@ -22,6 +25,8 @@ fonctions_resolution_brute.o: fonctions_resolution_brute.c
 	$(CC) -c $(CFLAGS) fonctions_resolution_brute.c -lm -o $@
 
 #Nettoyage
-
 clean: 
-	rm *.o Test generateur
+	rm -f *.o
+	rm -f *.svg
+	rm -f *~
+	rm test generateur solveur

@@ -1,11 +1,7 @@
 #ifndef structures_h
 #define structures_h
 
-
-
 #define coo int
-//#define coo float
-
 
 typedef struct model_point{
 	coo x;
