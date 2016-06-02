@@ -76,6 +76,10 @@ void ecritureSVG(POINT tab[], FILE* file , int N){
   CercleSolution.y=250;
   CercleSolution.d = 250;*/
   dessinerCercle(file, CercleSolution.x, CercleSolution.y, CercleSolution.d);
+
+  printf(" \n*** CERCLE SOLUTION PAR METHODE BRUTE: posX = %d , posY = %d , diamètre = %lf  ***\n", CercleSolution.x, CercleSolution.y, CercleSolution.d );
+
+
 }
 
 
