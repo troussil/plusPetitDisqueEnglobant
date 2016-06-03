@@ -19,13 +19,17 @@ int main( int argc, char* argv []){
     printf("usage: %s <nbDePoints> <xmin> <xmax> <ymin> <ymax>\n", argv[0]); 
     return 1;
   }
+
   N=atoi(argv[1]);
+  printf ("%d \n", N); //Affichage nb de points générés
+
   xmin=atoi(argv[2]);   
   xmax=atoi(argv[3]);
   ymin=atoi(argv[4]);
   ymax=atoi(argv[5]);
   int i;
   int x, y; 
+
   for (i=0;i<N;i++){
     x=rand_a_b(xmin,xmax);
     y=rand_a_b(ymin,ymax);

@@ -1,5 +1,6 @@
 
 #include "structures.h"
+#include "improved_pruning.h"
 
 
 /**
@@ -32,7 +33,7 @@ CERCLE ApxMEB1 ( POINT P[], int nbPoints, double apx){
  * @param P tableau des points du plan
  * @param nbPoints nombre de points
  * @param apx facteur d'approximation recherché
- * @return sol cercle solution
+ * @return sol le cercle solution
 **/
 
 CERCLE ApxMEB2 ( POINT P[], int nbPoints, double apx){
@@ -55,17 +56,26 @@ CERCLE ApxMEB2 ( POINT P[], int nbPoints, double apx){
 /**
  * Cherche le point le plus loin d'un autre point
  * @param P tableau des points du plan parmi lesquels chercher
+ * @param nbPoints nombre de points
  * @param c point pour lequel on cherche le plus éloigné
- * @return f le point le plus loin
+ * @return fp le point le plus loin
 **/
 
-POINT farthestPoint (POINT P[] , POINT c){
+POINT farthestPoint (POINT P[] , int nbPoints , POINT c){
 
-	POINT f;
+	POINT fp;
+	double dist = 0.0;
+	
+	int i;
+	for (i = 0; i < nbPoints; i++)
+	{
+		if ( sqrt( ( (c.x - P[i].x)*(c.x - P[i].x) ) + ( (c.y - P[i].y)*(c.y - P[i].y) ) ) > dist){ //formule de la distance entre 2 points ds le plan
+			fp.x = P[i].x;
+			fp.y = P[i].y;
+		}
+	}
 
-	//TO CODE
-
-	return f;
+	return fp;
 	
 }
 

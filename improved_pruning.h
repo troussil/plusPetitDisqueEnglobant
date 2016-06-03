@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "structures.h"
+#include <math.h>
 
 
 /**
@@ -29,11 +30,12 @@ CERCLE ApxMEB2 ( POINT P[], int nbPoints, double apx);
 /**
  * Cherche le point le plus loin d'un autre point
  * @param P tableau des points du plan parmi lesquels chercher
+ * @param nbPoints nombre de points
  * @param c point pour lequel on cherche le plus éloigné
  * @return f le point le plus loin
 **/
 
-POINT farthestPoint (POINT P[] , POINT c);
+POINT farthestPoint (POINT P[] , int nbPoints , POINT c);
 
 
 /**
