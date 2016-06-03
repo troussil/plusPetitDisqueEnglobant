@@ -4,7 +4,7 @@
 
 
 #define coo double
-#define NB_POINTS 10
+#define NB_POINTS 12
 //#define coo float
 
 
@@ -20,8 +20,10 @@ typedef struct model_cercle{
 	double d;
 } CERCLE;
 
-
-
-
+typedef struct model_doublet{
+	POINT a;
+	POINT b;
+	double mediatrice;
+}; DOUBLET
 
 #endif

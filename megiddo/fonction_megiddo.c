@@ -16,7 +16,6 @@ on enlève les redondances au niveau des équations
 */
 POINT* triAbscisse(POINT tab[],int longueur){
 	int i,compteur;
-	double carre=2;
 	POINT *resultat=malloc(longueur*sizeof(POINT));
 	compteur=0;
 	for(i=0;i<longueur;i+=2){
@@ -43,23 +42,47 @@ POINT* triAbscisse(POINT tab[],int longueur){
 	}
 	return resultat;
 }
-
+/*
+Calcul du carre d'un nombre: rend l'affichage plus lisible
+*/
 double auCarre(double v){
 	double carre =2;
 	return (pow(v,carre));
 }
+/*
+Calcul des valeurs critiques:
+revient à calculer l'intersection des médiatrice [ai;ai+1] avec l'axe y=0
+si nombre de point impaire: on rajoute un point qui existe déjà pour avoir des doublets
+*/
 
 double* tableauValeurCritique(POINT tab[],int longueur){
 	int i,j;
 	double valeur;
 	double epsilon=0.00000001;
-	double *critique=malloc((longueur/2)*sizeof(double));
 	j=0;
-	for(i=0;i<longueur;i+=2){
-		valeur=(auCarre(tab[i+1].x)-auCarre(tab[i].x)+auCarre(tab[i+1].y)-auCarre(tab[i].y))/(epsilon+2*((tab[i+1].x)-(tab[i].x)));
-		critique[j]=valeur;
-		j+=1;
+		
+	if(longueur%2==0){
+		double *critique=malloc((longueur/2)*sizeof(double));
+
+		for(i=0;i<longueur;i+=2){
+			valeur=(auCarre(tab[i+1].x)-auCarre(tab[i].x)+auCarre(tab[i+1].y)-auCarre(tab[i].y))/(epsilon+2*((tab[i+1].x)-(tab[i].x)));
+			critique[j]=valeur;
+			j+=1;
 	}
+
+	}
+	else{
+		longueur+=1;
+		double *critique=malloc((longueur/2)*sizeof(double));*
+
+		for(i=0;i<longueur-1;i+=2){
+			valeur=(auCarre(tab[i+1].x)-auCarre(tab[i].x)+auCarre(tab[i+1].y)-auCarre(tab[i].y))/(epsilon+2*((tab[i+1].x)-(tab[i].x)));
+			critique[j]=valeur;
+			j+=1;
+	}
+		critique[longueur]=critique[0];
+	}
+	
 	return critique;
 
 }

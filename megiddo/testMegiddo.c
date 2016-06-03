@@ -5,7 +5,7 @@
 
 int main(){
 
-	POINT tab[NB_POINTS] = {{2,3},{2,4},{3,5},{4,6},{2,7},{3,8},{1,2},{5,4},{2,8},{3,9}};	
+	POINT tab[NB_POINTS] = {{1,0},{3,2},{3,-2},{4,-5},{5,3},{7,-1},{7,2},{5,5},{7,6},{9,4},{9,-4},{10,-1}};	
 	//afficherTableau(tab);
 	POINT *resultat=malloc(NB_POINTS*sizeof(POINT));
 	// resultat[nbPoints];
@@ -15,9 +15,10 @@ int main(){
 	printf("---------------\n");
 	critique=tableauValeurCritique(resultat,NB_POINTS);
 	afficherTableauDouble(critique,NB_POINTS/2);
-	quickSort(critique,0,4);
+	quickSort(critique,0,NB_POINTS/2-1);
 	printf("trie du tableau: \n");
 	afficherTableauDouble(critique,NB_POINTS/2);
+	printf("valeur médiane:%lf \n", mediane(critique,NB_POINTS/2) );
 
 }
 

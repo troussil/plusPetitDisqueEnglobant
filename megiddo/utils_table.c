@@ -9,8 +9,8 @@ affiche tableau de POINT
 */
 void afficherTableauPoint(POINT tab[],int taille){
 	//int taille=sizeof(tab)/sizeof(POINT);
-
-	for (int i = 0; i <taille; ++i)
+    int i;
+	for ( i = 0; i <taille; i++)
 	{
 		printf("%d | x = %lf | y = %lf ",i,tab[i].x,tab[i].y );
 		printf("|\n");
@@ -21,8 +21,8 @@ affiche tableau de double
 */
 void afficherTableauDouble(double tab[],int taille){
 	//int taille=sizeof(tab)/sizeof(POINT);
-
-	for (int i = 0; i <taille; ++i)
+    int i;
+	for ( i = 0; i <taille; i++)
 	{
 		printf("%d | xcritique = %lf ",i,tab[i] );
 		printf("|\n");
@@ -42,7 +42,10 @@ void echanger(double tableau[], int a, int b){
 
 }
 
-/*Trie le tableau*/
+/*Trie le tableau
+Problème : complexité en nlog(n)....
+A voir plus tard
+*/
 
 void quickSort(double tableau[], int debut, int fin){
 
@@ -66,14 +69,16 @@ void quickSort(double tableau[], int debut, int fin){
     quickSort(tableau, droite+1, fin);
 }
 
+/*Calcul de la valeur médiane d'un tableau*/
+
 double mediane(double tableau[],int longueur){
     double valeur;
     if (longueur%2 == 0){
-        valeur=((tableau[longueur/2]+tableau[(longueur/2)+1])/2);
+        valeur=((tableau[(longueur/2)-1]+tableau[(longueur/2)])/2);
         return valeur;
     }
     else{
-        valeur=(tableau[(longueur+1)/2]);
+        valeur=(tableau[((longueur+1)/2)-1]);
         return valeur;
     }
 }
