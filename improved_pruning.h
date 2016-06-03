@@ -3,6 +3,15 @@
 #include "structures.h"
 #include <math.h>
 
+/**
+ * Une structure permettant de retourner un tableau de points et la taille qu'il fait
+**/ 
+
+typedef struct tabOfPoints_and_size{
+    POINT* tab;
+	int nbPoints;
+} POINTS_AND_NB;
+
 
 /**
  * Algorithme utilisant les théorèmes 2 et 4
@@ -42,11 +51,12 @@ POINT farthestPoint (POINT P[] , int nbPoints , POINT c);
  * Ôte un ou plusieurs points de l'ensemble de points
  * @param P ensemble de points
  * @param c point à considérer comme le centre
+ * @param nbPoints nombre de points
  * @param dist critère de distance à considérer pour ôter les points
  * @return Q le tableau de points dont on a ôté des points
 **/
 
-POINT* prune (POINT P[] , POINT c , double dist);
+POINTS_AND_NB prune (POINT P[] , int nbPoints , POINT c , double dist);
 
 /**
  * On regarde si chaque point de l'ensemble remplit la condition de pruning, et si ce n'est pas le cas on regarde s'il est le plus loin.
