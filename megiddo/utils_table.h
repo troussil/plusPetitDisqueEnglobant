@@ -7,11 +7,9 @@
 #include "structure.h"
 
 void afficherTableauPoint(POINT tab[],int taille);
-void afficherTableauDouble(double tab[],int taille);
-void echanger(double tableau[], int a, int b);
-void quickSort(double tableau[], int debut, int fin);
-double mediane(double tableau[],int longueur);
-
-
+void afficherTableauDoublet(DOUBLET tab[],int taille);
+void echanger(DOUBLET tableau[], int a, int b);
+void quickSort(DOUBLET tableau[], int debut, int fin);
+double mediane(DOUBLET tableau[],int longueur);
 
 #endif

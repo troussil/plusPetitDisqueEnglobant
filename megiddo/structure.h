@@ -15,8 +15,8 @@ typedef struct model_point{
 
 
 typedef struct model_cercle{
-        coo x;
-        coo y;
+    coo x;
+    coo y;
 	double d;
 } CERCLE;
 
@@ -24,6 +24,6 @@ typedef struct model_doublet{
 	POINT a;
 	POINT b;
 	double mediatrice;
-}; DOUBLET
+} DOUBLET;
 
 #endif

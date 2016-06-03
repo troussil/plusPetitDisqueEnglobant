@@ -8,8 +8,7 @@
 
 
 POINT* triAbscisse(POINT tab[],int taille);
-double* tableauValeurCritique(POINT tab[],int longueur);
+DOUBLET* tableauValeurCritique(POINT tab[],int longueur);
 double auCarre(double v);
-
 
 #endif

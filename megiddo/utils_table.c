@@ -19,12 +19,12 @@ void afficherTableauPoint(POINT tab[],int taille){
 /*
 affiche tableau de double
 */
-void afficherTableauDouble(double tab[],int taille){
+void afficherTableauDoublet(DOUBLET tab[],int taille){
 	//int taille=sizeof(tab)/sizeof(POINT);
     int i;
 	for ( i = 0; i <taille; i++)
 	{
-		printf("%d | xcritique = %lf ",i,tab[i] );
+		printf("doublet: %d | xi= %lf | yi= %lf | xj= %lf | yj= %lf | xcritique = %lf ",i,tab[i].a.x,tab[i].a.y,tab[i].b.x,tab[i].b.y ,tab[i].mediatrice);
 		printf("|\n");
 	}
 }
@@ -32,13 +32,21 @@ void afficherTableauDouble(double tab[],int taille){
 /*Echange 2 valeurs d'un tableau
 utile pour le quickSort
 */
-void echanger(double tableau[], int a, int b){
+void echanger(DOUBLET tableau[], int a, int b){
 
-    double temp = tableau[a];
+    POINT *tempA=malloc(sizeof(POINT));
+    POINT *tempB=malloc(sizeof(POINT));
+    double temp = tableau[a].mediatrice;
+    *tempA=tableau[a].a;
+    *tempB=tableau[a].b;
 
-    tableau[a] = tableau[b];
+    tableau[a].mediatrice = tableau[b].mediatrice;
+    tableau[a].a=tableau[b].a;
+    tableau[a].b=tableau[b].b;
 
-    tableau[b] = temp;
+    tableau[b].mediatrice = temp;
+    tableau[b].a=*tempA;
+    tableau[b].b=*tempB;
 
 }
 
@@ -47,19 +55,19 @@ Problème : complexité en nlog(n)....
 A voir plus tard
 */
 
-void quickSort(double tableau[], int debut, int fin){
+void quickSort(DOUBLET tableau[], int debut, int fin){
 
     int gauche = debut-1;
     int droite = fin+1;
-	const double pivot = tableau[debut];
+	const double pivot = tableau[debut].mediatrice;
 
     if(debut >= fin)
         return;
 
     while(1){
 
-        do droite--; while(tableau[droite] > pivot);
-        do gauche++; while(tableau[gauche] < pivot);
+        do droite--; while(tableau[droite].mediatrice > pivot);
+        do gauche++; while(tableau[gauche].mediatrice < pivot);
 
         if(gauche < droite)
             echanger(tableau, gauche, droite);
@@ -71,14 +79,14 @@ void quickSort(double tableau[], int debut, int fin){
 
 /*Calcul de la valeur médiane d'un tableau*/
 
-double mediane(double tableau[],int longueur){
+double mediane(DOUBLET tableau[],int longueur){
     double valeur;
     if (longueur%2 == 0){
-        valeur=((tableau[(longueur/2)-1]+tableau[(longueur/2)])/2);
+        valeur=(((tableau[(longueur/2)-1].mediatrice)+(tableau[(longueur/2)].mediatrice))/2);
         return valeur;
     }
     else{
-        valeur=(tableau[((longueur+1)/2)-1]);
+        valeur=((tableau[((longueur+1)/2)-1].mediatrice));
         return valeur;
     }
 }

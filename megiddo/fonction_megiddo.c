@@ -55,35 +55,43 @@ revient à calculer l'intersection des médiatrice [ai;ai+1] avec l'axe y=0
 si nombre de point impaire: on rajoute un point qui existe déjà pour avoir des doublets
 */
 
-double* tableauValeurCritique(POINT tab[],int longueur){
+DOUBLET* tableauValeurCritique(POINT tab[],int longueur){
 	int i,j;
 	double valeur;
 	double epsilon=0.00000001;
 	j=0;
 		
 	if(longueur%2==0){
-		double *critique=malloc((longueur/2)*sizeof(double));
+		DOUBLET *critique=malloc((longueur/2)*sizeof(DOUBLET));
 
 		for(i=0;i<longueur;i+=2){
 			valeur=(auCarre(tab[i+1].x)-auCarre(tab[i].x)+auCarre(tab[i+1].y)-auCarre(tab[i].y))/(epsilon+2*((tab[i+1].x)-(tab[i].x)));
-			critique[j]=valeur;
+			critique[j].mediatrice=valeur;
+			critique[j].a=tab[i];
+			critique[j].b=tab[i+1];
 			j+=1;
-	}
+		}
+		return critique;
 
 	}
 	else{
 		longueur+=1;
-		double *critique=malloc((longueur/2)*sizeof(double));*
+		DOUBLET *critique=malloc((longueur/2)*sizeof(double));
 
 		for(i=0;i<longueur-1;i+=2){
 			valeur=(auCarre(tab[i+1].x)-auCarre(tab[i].x)+auCarre(tab[i+1].y)-auCarre(tab[i].y))/(epsilon+2*((tab[i+1].x)-(tab[i].x)));
-			critique[j]=valeur;
+			critique[j].mediatrice=valeur;
+			critique[j].a=tab[i];
+			critique[j].b=tab[i+1];
 			j+=1;
 	}
-		critique[longueur]=critique[0];
+		critique[longueur].mediatrice=critique[0].mediatrice;
+		critique[longueur].a=critique[0].a;
+		critique[longueur].b=critique[0].b;
+		return critique;
 	}
 	
-	return critique;
+	
 
 }
 

@@ -10,15 +10,16 @@ int main(){
 	POINT *resultat=malloc(NB_POINTS*sizeof(POINT));
 	// resultat[nbPoints];
 	resultat=triAbscisse(tab,NB_POINTS);
-	afficherTableauPoint(resultat,NB_POINTS);
-	double *critique=malloc((NB_POINTS/2)*sizeof(double));
+	//afficherTableauPoint(resultat,NB_POINTS);
+	DOUBLET *critique=malloc((NB_POINTS/2)*sizeof(DOUBLET));
 	printf("---------------\n");
 	critique=tableauValeurCritique(resultat,NB_POINTS);
-	afficherTableauDouble(critique,NB_POINTS/2);
+	//afficherTableauDoublet(critique,NB_POINTS/2);
 	quickSort(critique,0,NB_POINTS/2-1);
 	printf("trie du tableau: \n");
-	afficherTableauDouble(critique,NB_POINTS/2);
-	printf("valeur médiane:%lf \n", mediane(critique,NB_POINTS/2) );
+	afficherTableauDoublet(critique,NB_POINTS/2);
+
+	printf("valeur médiane:%lf \n", mediane(critique,NB_POINTS/2));
 
 }
 
