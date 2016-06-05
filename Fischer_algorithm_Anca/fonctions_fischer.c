@@ -5,11 +5,12 @@
 #include "hashset_itr.h"
 #include "structures.h"
 
-//calcule la distence entre les points a et b
+//calcule la distance entre les points a et b
 double distance(POINT a, POINT* b){
 	return sqrt((a.x - b->x)*(a.x - b->x) + (a.y - b->y)*(a.y - b->y));
 }
 
+//retourne le set resultat de la difference S\T
 hashset_t hashset_difference(hashset_t S, hashset_t T){
     hashset_t result = hashset_create();
     hashset_itr_t iter = hashset_iterator(S);
@@ -23,21 +24,48 @@ hashset_t hashset_difference(hashset_t S, hashset_t T){
     return result;
 }
 
+//verifie si les coefficients de p dans l'espace engeindre par M sont negatifs (pour le dropping)
+int coefficients_negatifs(POINT p,hashset_t M){
+	// Matrix * lambdas = p
+	int N = (int)M->nitems;
+	int i;
+	double lambdas[N];
+	int Matrix[2][N];
+	for(i=0; i<N; i++){
+		Matrix[0][i] = ((POINT *)M->items[i])->x;
+		Matrix[1][i] = ((POINT *)M->items[i])->y;
+	}
+
+
+	// a trouver
+
+
+
+	return 0;
+}
+
+//retourne 1 si p appartient a conv(T), 0 sinon
 int appartenance_conv(POINT p, hashset_t T){
-	//retourne 1 si p appartient a conv(T), 0 sinon
+	
 	//TODO
 	return 1;
 }
 
+//retourne 1 si p appartient a aff(T), 0 sinon
 int appartenance_aff(POINT p, hashset_t T){
-	//retourne 1 si p appartient a aff(T), 0 sinon
+	
 	//TODO
 	return 0;
 }
 
-void dropping(hashset_t* T){
+void dropping(hashset_t T){
 	//TODO trouver le point q qu'on doit enlever
-	//hashset_remove(T, &q)
+	POINT q;
+	if(coefficients_negatifs(q, T)){
+		hashset_remove(T, &q);
+	}
+	
+
 }
 
 void walking(POINT*c, hashset_t T){
@@ -75,7 +103,7 @@ CERCLE* algorithme_fischer(hashset_t S){
 
 	while(!appartenance_conv(c,T)){
 		if(appartenance_aff(c,T)){
-			dropping(&T);
+			dropping(T);
 		}
 		walking(&c, T);
 	}

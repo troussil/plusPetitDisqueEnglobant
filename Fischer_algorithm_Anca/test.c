@@ -35,6 +35,8 @@ int main()
 
     printf("%d\n",hashset_is_member(set,&p5));
     
+    printf("Le set contient %d points\n", (int)set->nitems);
+    
     //test iterateur set points
     printf("Test iterateur set points: \n");
 
