@@ -3,11 +3,12 @@
 #include "hashset.h"
 #include "hashset_itr.h"
 #include "structures.h"
+#include "fonctions_fischer.h"
 
 int main()
 {
     //test creation set points 
-    
+
     POINT p1 = {10,15};
     POINT p2 = {10,5};
     POINT p3 = {5,10};
@@ -42,6 +43,10 @@ int main()
         hashset_iterator_next(iter);
     }
     
+    //test algorithme
+    CERCLE* seb = algorithme_fischer(set);
+    
+    printf("resultat: le cercle de centre {%d,%d} et rayon %f\n", seb->x, seb->y, seb->d);
 
     return 0;
 }
