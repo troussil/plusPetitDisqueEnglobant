@@ -14,7 +14,7 @@ hashset_t hashset_create()
         return NULL;
     }
     set->nbits = 2*sizeof(int);
-    set->capacity = (size_t)(1 << set->nbits);
+    set->capacity = (size_t)(set->nbits);
     set->mask = set->capacity - 1;
     set->items = calloc(set->capacity, sizeof(size_t));
     if (set->items == NULL) {
