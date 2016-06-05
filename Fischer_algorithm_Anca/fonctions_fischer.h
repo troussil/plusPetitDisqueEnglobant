@@ -8,6 +8,8 @@
 
 double distance(POINT a, POINT* b);
 
+hashset_t hashset_difference(hashset_t S, hashset_t T);
+
 int appartenance_conv(POINT p, hashset_t T);
 
 int appartenance_aff(POINT p, hashset_t T);
