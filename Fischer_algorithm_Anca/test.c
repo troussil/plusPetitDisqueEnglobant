@@ -8,6 +8,7 @@
 int main()
 {
     //test creation set points 
+    printf("Test creation set points: \n");
 
     POINT p1 = {10,15};
     POINT p2 = {10,5};
@@ -35,6 +36,7 @@ int main()
     printf("%d\n",hashset_is_member(set,&p5));
     
     //test iterateur set points
+    printf("Test iterateur set points: \n");
 
     while(hashset_iterator_has_next(iter))
     {
