@@ -8,8 +8,10 @@
 
 void afficherTableauPoint(POINT tab[],int taille);
 void afficherTableauDoublet(DOUBLET tab[],int taille);
-void echanger(DOUBLET tableau[], int a, int b);
-void quickSort(DOUBLET tableau[], int debut, int fin);
+void echangerDoublet(DOUBLET tableau[], int a, int b);
+void echangerPoint(POINT tableau[], int a, int b);
+void quickSortDoublet(DOUBLET tableau[], int debut, int fin);
+void quickSortPoint(POINT tableau[], int debut, int fin);
 double mediane(DOUBLET tableau[],int longueur);
 
 #endif
