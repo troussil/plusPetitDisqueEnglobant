@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h> 
 #include <string.h>
+#include <math.h>
 #include "structures.h"
 #include "fonctions_resolution_brute.h"
 #include "resolution_brute.h"
@@ -10,6 +11,7 @@
 
 
 POINT* convertirEntree ();
+int tailleFrame(int xf, int yf);
 char* dessinerCercle(FILE *file, int x, int y, int r);
 char* dessinerPoint(FILE *file, int x, int y, int r);
 void ecritureSVG(POINT tab[N], FILE* file);
@@ -17,6 +19,7 @@ void GenerationFichierSVG(POINT tab[]);
 
 
 int i=0, j=0;
+int xf=0, yf=0; //coordonnés maximales qui serviront à calculer la taille de la frame
 
 //convertit les coordonnées de l'entrée standard en un tableau de POINTS
 POINT* convertirEntree (){
@@ -28,6 +31,9 @@ POINT* convertirEntree (){
     }
     printf("%s ", chaine);
     tab[i].x=atoi(chaine);
+    if(abs(tab[i].x)>xf){
+      xf=abs(tab[i].x);
+    }
     strcpy(chaine, "");
     j=0;
     while((chaine[j]= getc(stdin)) != '\n' && chaine[j]!=EOF){
@@ -35,10 +41,20 @@ POINT* convertirEntree (){
     }
     printf("%s\n", chaine);
     tab[i].y=atoi(chaine);
+    if(abs(tab[i].y)>yf){
+      yf=abs(tab[i].y);
+    }
     strcpy(chaine, "");
     j=0;
   }
   return tab;
+}
+
+//calcul la taille de la frame
+int tailleFrame(int xf, int yf){
+  printf("%d %d\n",xf,yf);
+  int a = sqrt(xf*xf+yf*yf);
+  return a;
 }
 
 //dessine un cercle en SVG
@@ -65,11 +81,11 @@ void ecritureSVG(POINT tab[N], FILE* file){
     dessinerPoint(file,(tab[i]).x, tab[i].y, TAILLEPOINT);
   }
   //On calcul la solution brute puis on la dessine dans le SVG
-  CERCLE CercleSolution=brute(tab , N);
-  /*CERCLE CercleSolution;
-  CercleSolution.x = 250;
-  CercleSolution.y=250;
-  CercleSolution.d = 250;*/
+  //CERCLE CercleSolution=brute(tab , N);
+  CERCLE CercleSolution;
+  CercleSolution.x = tailleFrame(xf,yf);
+  CercleSolution.y=tailleFrame(xf,yf);
+  CercleSolution.d =tailleFrame(xf,yf);
   dessinerCercle(file, CercleSolution.x, CercleSolution.y, CercleSolution.d);
 }
 
@@ -84,7 +100,8 @@ void GenerationFichierSVG(POINT tab[]){
   fprintf(file,"<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
   fprintf(file,"<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\"\n");
   fprintf(file,"\"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n");
-  fprintf(file,"<svg width=\"500\" height=\"500\" version=\"1.1\"\n");
+  int a=tailleFrame(xf,yf)+10;
+  fprintf(file,"<svg width=\"%d\" height=\"%d\" version=\"1.1\"\n",a*2,a*2);
   fprintf(file,"xmlns=\"http://www.w3.org/2000/svg\">\n");
   fprintf(file,"<title> RESOLUTION BRUTE </title>\n");
   fprintf(file,"<desc> Du RESOLUTION BRUTE. </desc>\n");
