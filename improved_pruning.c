@@ -84,18 +84,33 @@ POINT farthestPoint (POINT P[] , int nbPoints , POINT c){
  * Ôte un ou plusieurs points de l'ensemble de points
  * @param P ensemble de points
  * @param c point à considérer comme le centre
- * @param dist critère de distance à considérer pour ôter les points
- * @return Q le tableau de points dont on a ôté des points
+ * @param nbPoints nombre de points
+ * @param dist critère de pruning: la distance entre le point et le centre c est inférieure à dist
+ * @return X contenant le tableau de points dont on a ôté des points + le nombre de points retenus
 **/
 
-POINT* prune (POINT P[] , POINT c , double dist){
+POINTS_AND_NB prune (POINT P[] , int nbPoints , POINT c , double dist){
 
-	POINT* Q;
+	POINTS_AND_NB X; // Structure à retourner
+	
+	int nbPointsOk = 0; //nbre de points ne vérifiant pas le critère de pruning
+ 	int i;
 
-	//TO CODE
+	/* Nouveau tableau qui contiendra uniquement les points non "prunés" */
+ 	POINT* Q = (POINT*) malloc(nbPoints * sizeof(POINT));
 
-	return Q;
+	/* Ajouter au nouveau tableau tous les points ne vérifiant pas le critère de pruning */
+	for (i = 0; i < nbPoints; i++){
+		if ( (( (c.x - P[i].x)*(c.x - P[i].x) ) + ( (c.y - P[i].y)*(c.y - P[i].y) )) > dist*dist ){
+			Q[nbPointsOk] = P[i]; 
+			nbPointsOk++;
+		}
+	}
 
+	/* On remplit la structure POINTS_AND_NB avec le tableau pruné et le nombre de points restant */
+	X.tab = Q;
+	X.nbPoints = nbPointsOk;
+	return X;
 }
 
 
@@ -115,7 +130,5 @@ POINT* farthPtPrune (POINT P[] , POINT c , double dist){
 	//TO CODE
 
 	return Q;
-
-
 
 }
