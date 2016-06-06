@@ -13,8 +13,8 @@
 
 CERCLE ApxMEB1 ( POINT P[], int nbPoints, double apx){
 
-	POINT c;	//Centre du cercle solution
-	int r;		//Rayon du cercle solution
+	//POINT c;	//Centre du cercle solution
+	//int r;		//Rayon du cercle solution
 	CERCLE sol; //Cercle solution
 
 
@@ -38,8 +38,8 @@ CERCLE ApxMEB1 ( POINT P[], int nbPoints, double apx){
 
 CERCLE ApxMEB2 ( POINT P[], int nbPoints, double apx){
 
-	POINT c;	//Centre du cercle solution
-	int r;		//Rayon du cercle solution
+	//POINT c;	//Centre du cercle solution
+	//int r;		//Rayon du cercle solution
 	CERCLE sol; //Cercle solution
 
 
@@ -119,16 +119,54 @@ POINTS_AND_NB prune (POINT P[] , int nbPoints , POINT c , double dist){
  * @param P ensemble de points
  * @param c point à considérer comme le centre
  * @param dist critère de distance à considérer pour ôter les points
- * @return Q le tableau de points dont on a ôté des points + le point (q, sqrt(x))
+ * @return X le tableau de points dont on a ôté des points + le point le plus loin + sa distance au centre
 **/
 
-POINT* farthPtPrune (POINT P[] , POINT c , double dist){
+POINTS_AND_SPD farthPtPrune (POINT P[] , int nbPoints , POINT c , double dist){
 
 
-	POINT* Q;
+	POINTS_AND_SPD X; //structure à retourner
 
-	//TO CODE
+	POINT* Q = (POINT*) malloc(nbPoints * sizeof(POINT)); //Nouveau tableau qui contiendra uniquement les points non "prunés"
 
-	return Q;
+	POINT q = {0,0};
+	double x = -DBL_MAX;	// =-79769e+308  != -infini (limite de l'algorithme)
+	
+	int nbPointsOk = 0; //nbre de points ne vérifiant pas le critère de pruning
+
+	//int toPrune[nbPoints] = {0}; //contiendra les index des points à pruner METHODE NON CONSERVEE
+
+	int i;
+	double e;
+
+	for (i = 0; i < nbPoints; i++){
+
+		e = (( (c.x - P[i].x)*(c.x - P[i].x) ) + ( (c.y - P[i].y)*(c.y - P[i].y) )); //distance entre c et P[i] au carré
+
+		if ( e < dist*dist ){
+			/* Prunage du point P[i] */
+			/* = ne pas le sauvegarder */
+
+		} else{ 
+			
+			/* Sauvegarde du point non pruné */
+			Q[nbPointsOk] = P[i]; 
+			nbPointsOk++;
+
+			if (e > x)
+			{
+				q = P[i];
+				x = e;
+			}
+		}
+	}
+
+
+	X.tab = Q;
+	X.nbPoints = nbPointsOk;
+	X.farthest = q;
+	X.distance = sqrt(x);
+
+	return X;
 
 }

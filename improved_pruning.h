@@ -2,15 +2,30 @@
 #include <stdlib.h>
 #include "structures.h"
 #include <math.h>
+#include <float.h>
+
 
 /**
  * Une structure permettant de retourner un tableau de points et la taille qu'il fait
+ * (utilisé pour la méthode prune)
 **/ 
 
 typedef struct tabOfPoints_and_size{
     POINT* tab;
 	int nbPoints;
 } POINTS_AND_NB;
+
+/**
+ * Une structure permettant de retourner un tableau de points, la taille qu'il fait, le point le plus loin, et une distance
+ * (utilisé pour la méthode farthPtPrune)
+**/ 
+
+typedef struct tabOfPoints_and_size_and_point_and_dist{
+    POINT* tab;
+	int nbPoints;
+	POINT farthest;
+	double distance;
+} POINTS_AND_SPD;
 
 
 /**
@@ -63,7 +78,7 @@ POINTS_AND_NB prune (POINT P[] , int nbPoints , POINT c , double dist);
  * @param P ensemble de points
  * @param c point à considérer comme le centre
  * @param dist critère de distance à considérer pour ôter les points
- * @return Q le tableau de points dont on a ôté des points + le point (q, sqrt(x))
+ * @return X le tableau de points dont on a ôté des points + le point le plus loin + sa distance au centre
 **/
 
-POINT* farthPtPrune (POINT P[] , POINT c , double dist);
+POINTS_AND_SPD farthPtPrune (POINT P[] , int nbPoints , POINT c , double dist);
