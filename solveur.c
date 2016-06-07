@@ -7,30 +7,34 @@
 #include "resolution_brute.h"
 
 #define TAILLEPOINT 3 //Diametre d'un point
-#define N 50 //Nb de points
 
 
-POINT* convertirEntree ();
+
 int tailleFrame(int xf, int yf);
+POINT* convertirEntree (int N);
 char* dessinerCercle(FILE *file, int x, int y, int r);
 char* dessinerPoint(FILE *file, int x, int y, int r);
-void ecritureSVG(POINT tab[N], FILE* file);
-void GenerationFichierSVG(POINT tab[]);
+void ecritureSVG(POINT tab[], FILE* file , int N);
+void GenerationFichierSVG(POINT tab[] , int N);
 
 
 int i=0, j=0;
 int xf=0, yf=0; //coordonnés maximales qui serviront à calculer la taille de la frame
 int a; //taille de la frame
 
-//convertit les coordonnées de l'entrée standard en un tableau de POINTS
-POINT* convertirEntree (){
+/*
+ * Convertit les coordonnées de l'entrée standard en un tableau de POINTS
+ * @param N nombre de points
+*/
+
+POINT* convertirEntree (int N){
   POINT* tab=malloc (sizeof(POINT)*N);
   char chaine[10];
-  for (i;i<N;i++){
+  for (i=0;i<N;i++){
     while((chaine[j] = getc(stdin)) != ' ' && chaine[j]!=EOF){
       j++;
     }
-    printf("%s ", chaine);
+    /* printf("%s ", chaine); */
     tab[i].x=atoi(chaine);
     if(abs(tab[i].x)>xf){
       xf=abs(tab[i].x);
@@ -40,7 +44,7 @@ POINT* convertirEntree (){
     while((chaine[j]= getc(stdin)) != '\n' && chaine[j]!=EOF){
       j++;
     }
-    printf("%s\n", chaine);
+    /* printf("%s\n", chaine); */
     tab[i].y=atoi(chaine);
     if(abs(tab[i].y)>yf){
       yf=abs(tab[i].y);
@@ -77,7 +81,7 @@ char* dessinerPoint(FILE *file, int x, int y, int r){
 }
 
 //Dessine les points et le cercle dans le SVG
-void ecritureSVG(POINT tab[N], FILE* file){
+void ecritureSVG(POINT tab[], FILE* file , int N){
   //On dessine tous les points dans le SVG
   for(i=0; i<N; i++){
     dessinerPoint(file,(tab[i]).x, tab[i].y, TAILLEPOINT);
@@ -99,11 +103,15 @@ void ecritureSVG(POINT tab[N], FILE* file){
   printf("r=%d\n",CercleFrame.d);
   dessinerCercle(file, CercleFrame.x, CercleFrame.y, CercleFrame.d);
   dessinerCercle(file, CercleSolution.x, CercleSolution.y, CercleSolution.d);
+
+  printf(" \n*** CERCLE SOLUTION PAR METHODE BRUTE: posX = %d , posY = %d , diamètre = %lf  ***\n", CercleSolution.x, CercleSolution.y, CercleSolution.d );
+
+
 }
 
 
 //Genere le fichier SVG complet
-void GenerationFichierSVG(POINT tab[]){
+void GenerationFichierSVG(POINT tab[] , int N){
   //creation et ouverture du fichier
   FILE *file;
   file= fopen("Points.svg", "w");
@@ -118,7 +126,7 @@ void GenerationFichierSVG(POINT tab[]){
   fprintf(file,"<desc> Du RESOLUTION BRUTE. </desc>\n");
   
   //ecriture du programme
-  ecritureSVG(tab,file);
+  ecritureSVG(tab,file,N);
   
   //fin du programme et fermer le fichier
   fprintf(file, "</svg>\n");
@@ -126,7 +134,23 @@ void GenerationFichierSVG(POINT tab[]){
 }
 
 int main(){
-  POINT *tab=convertirEntree();
-  GenerationFichierSVG(tab);
+  
+  char nbPointsStr[10]; //Contiendra les caractères lus pour le nb de points
+  int k = 0;
+
+  while((nbPointsStr[k] = getc(stdin)) != ' ' && nbPointsStr[k]!=EOF){
+      k++;
+  }
+  
+
+  int nbPoints = atoi(nbPointsStr);
+  printf("\n*\nNombre de points lu: %s \n*\n", nbPointsStr);
+  
+  POINT *tab = convertirEntree( nbPoints );
+  printf("*\nPoints lus sur le stdin et convertis !\n*\n");
+  
+  GenerationFichierSVG(tab , nbPoints);
+  printf("*\nFichier SVG généré !  \n*\n");
+  
   return 0;
 }
