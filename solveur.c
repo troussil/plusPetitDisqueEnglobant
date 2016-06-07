@@ -66,7 +66,7 @@ int tailleFrame(int xf, int yf){
 //dessine un cercle en SVG
 char* dessinerCercle(FILE *file, int x, int y, int r){
   char* codeCercle= malloc (sizeof (*codeCercle) *500);
-  sprintf(codeCercle,"<circle cx=\"%d\" cy=\"%d\" r=\"%d\" stroke=\"red\" stroke-width=\"3\" fill=\"transparent\" fill-opacity=\"0\" />",x,y,r);
+  sprintf(codeCercle,"<circle cx=\"%d\" cy=\"%d\" r=\"%d\" stroke=\"red\" stroke-width=\"3\" fill=\"transparent\" fill-opacity=\"0\" />",x+a/2,y+a/2,r);
   fprintf(file,"%s\n", codeCercle);
   return codeCercle;
 }
@@ -75,7 +75,7 @@ char* dessinerCercle(FILE *file, int x, int y, int r){
 //Dessine un point en SVG
 char* dessinerPoint(FILE *file, int x, int y, int r){ 
   char* codePoint= malloc (sizeof (*codePoint) * 500);
-  sprintf(codePoint,"<circle cx=\"%d\" cy=\"%d\" r=\"%d\" stroke=\"black\" stroke-width=\"3\" fill=\"black\"/>",x,y,r);
+  sprintf(codePoint,"<circle cx=\"%d\" cy=\"%d\" r=\"%d\" stroke=\"black\" stroke-width=\"3\" fill=\"black\"/>",x+a/2,y+a/2,r);
   fprintf(file,"%s\n", codePoint);
   return codePoint;
 }
@@ -85,24 +85,14 @@ void ecritureSVG(POINT tab[], FILE* file , int N){
   //On dessine tous les points dans le SVG
   for(i=0; i<N; i++){
     dessinerPoint(file,(tab[i]).x, tab[i].y, TAILLEPOINT);
+    printf("%d,%d\n",(tab[i]).x,(tab[i]).y);
   }
-  //On dessine le cercle dont le diametre correspon à la Frame (carrée) dans le SVG
-  CERCLE CercleFrame;
-  CercleFrame.x = a/2;
-  CercleFrame.y=a/2;
-  CercleFrame.d =a/2;
-
-
   //On calcul la solution brute puis on la dessine dans le SVG
   CERCLE CercleSolution=brute(tab , N);
   printf("x=%d, ",CercleSolution.x);
   printf("y=%d, ",CercleSolution.y);
-  printf("r=%d\n",CercleSolution.d);
-  printf("x=%d, ",CercleFrame.x);
-  printf("y=%d, ",CercleFrame.y);
-  printf("r=%d\n",CercleFrame.d);
-  dessinerCercle(file, CercleFrame.x, CercleFrame.y, CercleFrame.d);
-  dessinerCercle(file, CercleSolution.x, CercleSolution.y, CercleSolution.d);
+  printf("r=%lf\n",CercleSolution.d);
+  dessinerCercle(file, CercleSolution.x, CercleSolution.y, CercleSolution.d/2);
 
   printf(" \n*** CERCLE SOLUTION PAR METHODE BRUTE: posX = %d , posY = %d , diamètre = %lf  ***\n", CercleSolution.x, CercleSolution.y, CercleSolution.d );
 
@@ -120,7 +110,7 @@ void GenerationFichierSVG(POINT tab[] , int N){
   fprintf(file,"<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
   fprintf(file,"<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\"\n");
   fprintf(file,"\"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n");
-  fprintf(file,"<svg width=\"%d\" height=\"%d\" version=\"1.1\"\n",a,a);
+  fprintf(file,"<svg width=\"%d\" height=\"%d\" version=\"1.1\"\n",a*2,a*2);
   fprintf(file,"xmlns=\"http://www.w3.org/2000/svg\">\n");
   fprintf(file,"<title> RESOLUTION BRUTE </title>\n");
   fprintf(file,"<desc> Du RESOLUTION BRUTE. </desc>\n");
