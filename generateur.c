@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <math.h>
 
 /**
  * Genere un entier entre a et b
@@ -8,7 +9,7 @@
  * @param b borne superieure
  */
 int rand_a_b (int a, int b){
-  return rand()%(b-a )+a;
+  return rand()%(b-a )+a+sqrt(a*a+b*b)/2;
 }
 
 int main( int argc, char* argv []){

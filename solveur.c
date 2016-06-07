@@ -20,6 +20,7 @@ void GenerationFichierSVG(POINT tab[]);
 
 int i=0, j=0;
 int xf=0, yf=0; //coordonnés maximales qui serviront à calculer la taille de la frame
+int a; //taille de la frame
 
 //convertit les coordonnées de l'entrée standard en un tableau de POINTS
 POINT* convertirEntree (){
@@ -47,6 +48,7 @@ POINT* convertirEntree (){
     strcpy(chaine, "");
     j=0;
   }
+  a=tailleFrame(xf,yf); //mise a jour de la taille de la frame
   return tab;
 }
 
@@ -80,12 +82,22 @@ void ecritureSVG(POINT tab[N], FILE* file){
   for(i=0; i<N; i++){
     dessinerPoint(file,(tab[i]).x, tab[i].y, TAILLEPOINT);
   }
+  //On dessine le cercle dont le diametre correspon à la Frame (carrée) dans le SVG
+  CERCLE CercleFrame;
+  CercleFrame.x = a/2;
+  CercleFrame.y=a/2;
+  CercleFrame.d =a/2;
+
+
   //On calcul la solution brute puis on la dessine dans le SVG
-  //CERCLE CercleSolution=brute(tab , N);
-  CERCLE CercleSolution;
-  CercleSolution.x = tailleFrame(xf,yf);
-  CercleSolution.y=tailleFrame(xf,yf);
-  CercleSolution.d =tailleFrame(xf,yf);
+  CERCLE CercleSolution=brute(tab , N);
+  printf("x=%d, ",CercleSolution.x);
+  printf("y=%d, ",CercleSolution.y);
+  printf("r=%d\n",CercleSolution.d);
+  printf("x=%d, ",CercleFrame.x);
+  printf("y=%d, ",CercleFrame.y);
+  printf("r=%d\n",CercleFrame.d);
+  dessinerCercle(file, CercleFrame.x, CercleFrame.y, CercleFrame.d);
   dessinerCercle(file, CercleSolution.x, CercleSolution.y, CercleSolution.d);
 }
 
@@ -100,8 +112,7 @@ void GenerationFichierSVG(POINT tab[]){
   fprintf(file,"<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
   fprintf(file,"<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\"\n");
   fprintf(file,"\"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n");
-  int a=tailleFrame(xf,yf)+10;
-  fprintf(file,"<svg width=\"%d\" height=\"%d\" version=\"1.1\"\n",a*2,a*2);
+  fprintf(file,"<svg width=\"%d\" height=\"%d\" version=\"1.1\"\n",a,a);
   fprintf(file,"xmlns=\"http://www.w3.org/2000/svg\">\n");
   fprintf(file,"<title> RESOLUTION BRUTE </title>\n");
   fprintf(file,"<desc> Du RESOLUTION BRUTE. </desc>\n");
