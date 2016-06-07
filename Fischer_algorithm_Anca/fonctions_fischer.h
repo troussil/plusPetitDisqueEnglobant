@@ -2,22 +2,27 @@
 #define FONCTIONS_FISCHER_H_
 
 
+int estEgal( CERCLE c1, CERCLE c2 );
 
-#include "hashset.h"
-#include "structures.h"
+//calcule la distance entre les points a et b
+double distance(POINT a, POINT b);
 
-double distance(POINT a, POINT* b);
+double calculer_determinant(POINT a, POINT b, POINT c);
 
-hashset_t hashset_difference(hashset_t S, hashset_t T);
+//verifie si les coefficients de p dans l'espace engeindre par M sont negatifs (pour le dropping)
+int coefficients_negatifs(POINT p,POINT T[], int nbPoints);
 
-int appartenance_conv(POINT p, hashset_t T);
+//retourne 1 si p appartient a conv(T), 0 sinon
+int appartenance_conv(POINT p,POINT T[], int nbPoints);
 
-int appartenance_aff(POINT p, hashset_t T);
+//retourne 1 si p appartient a aff(T), 0 sinon
+int appartenance_aff(POINT p,POINT T[], int nbPoints);
 
-void dropping(hashset_t* T);
+void dropping(POINT T[], int nbPoints);
 
-int walking(POINT*c, hashset_t T);
+void walking(POINT* c, POINT T[], int nbPoints);
 
-CERCLE* algorithme_fischer(hashset_t S);
+
+CERCLE algorithme_fischer(POINT S[], int nbPoints);
 
 #endif

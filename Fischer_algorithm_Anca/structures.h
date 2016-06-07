@@ -1,5 +1,5 @@
-#ifndef structures_h
-#define structures_h
+#ifndef geometry_h
+#define geometry_h
 
 #define coo int
 

@@ -1,117 +1,95 @@
 #include <stdio.h>
 #include <math.h>
 
-#include "hashset.h"
-#include "hashset_itr.h"
 #include "structures.h"
 
-//calcule la distance entre les points a et b
-double distance(POINT a, POINT* b){
-	return sqrt((a.x - b->x)*(a.x - b->x) + (a.y - b->y)*(a.y - b->y));
+/**
+ * Teste si deux cercles c1 et c2 sont égaux
+**/
+int estEgal( CERCLE c1, CERCLE c2 ){
+    if( (c1.x == c2.x) && (c1.y == c2.y) && (c1.d == c2.d) )
+        return 1;
+    else
+        return 0;
 }
 
-//retourne le set resultat de la difference S\T
-hashset_t hashset_difference(hashset_t S, hashset_t T){
-    hashset_t result = hashset_create();
-    hashset_itr_t iter = hashset_iterator(S);
+//calcule la distance entre les points a et b
+double distance(POINT a, POINT b){
+	return sqrt((a.x - b.x)*(a.x - b.x) + (a.y - b.y)*(a.y - b.y));
+}
 
-    while(hashset_iterator_has_next(iter))
-    {
-    	if(!hashset_is_member(T,(POINT*)hashset_iterator_value(iter)))  
-        	hashset_add(result, (POINT*)hashset_iterator_value(iter));
-        hashset_iterator_next(iter);
-    }
-    return result;
+
+double calculer_determinant(POINT a, POINT b, POINT c){
+	return 0;
 }
 
 //verifie si les coefficients de p dans l'espace engeindre par M sont negatifs (pour le dropping)
-int coefficients_negatifs(POINT p,hashset_t M){
-	// Matrix * lambdas = p
-	int N = (int)M->nitems;
-	int i;
-	double lambdas[N];
-	int Matrix[2][N];
-	for(i=0; i<N; i++){
-		Matrix[0][i] = ((POINT *)M->items[i])->x;
-		Matrix[1][i] = ((POINT *)M->items[i])->y;
-	}
-
-
-	// a trouver
-
-
+int coefficients_negatifs(POINT p,POINT T[], int nbPoints){
 
 	return 0;
 }
 
 //retourne 1 si p appartient a conv(T), 0 sinon
-int appartenance_conv(POINT p, hashset_t T){
+int appartenance_conv(POINT p,POINT T[], int nbPoints){
 	
 	//TODO
 	return 1;
 }
 
 //retourne 1 si p appartient a aff(T), 0 sinon
-int appartenance_aff(POINT p, hashset_t T){
+int appartenance_aff(POINT p,POINT T[], int nbPoints){
 	
 	//TODO
 	return 0;
 }
 
-void dropping(hashset_t T){
+void dropping(POINT T[], int nbPoints){
 	//TODO trouver le point q qu'on doit enlever
 	POINT q;
-	if(coefficients_negatifs(q, T)){
-		hashset_remove(T, &q);
+	if(coefficients_negatifs(q, T, nbPoints)){
+		//effacer point q du tableau
 	}
 	
 
 }
 
-void walking(POINT*c, hashset_t T){
+void walking(POINT* c, POINT T[], int nbPoints){
 	//TODO deplace c vers cc(T)
 
 }
 
 
-CERCLE* algorithme_fischer(hashset_t S){
+CERCLE algorithme_fischer(POINT S[], int nbPoints){
 
-	POINT c; //un point aleatoire de S
-	hashset_itr_t iter = hashset_iterator(S);
-	c.x = ((POINT*)hashset_iterator_value(iter))->x;
-	c.y = ((POINT*)hashset_iterator_value(iter))->y;
+	POINT c = S[0];
 
 	printf("in function c.x = %d c.y = %d\n", c.x, c.y); 
-	//TODO resoudre probleme: le point c commence au 2eme point du set au lieu du premier
 
-
-	POINT* p; // le point le plus eloigne de c
+	POINT p; // le point le plus eloigne de c
 	double max=0;
-	while(hashset_iterator_has_next(iter))
+	for(int i=1; i<nbPoints;i++)
     {
-    	POINT* q = (POINT*)hashset_iterator_value(iter);
-    	printf("in function q.x = %d q.y = %d\n", q->x, q->y);
+    	POINT q = S[i];
+    	printf("in function q.x = %d q.y = %d\n", q.x, q.y);
     	if(max < distance(c,q)){
     		max = distance(c,q);
     		p = q;
     	}
-        hashset_iterator_next(iter);
     }
 
-	hashset_t T = hashset_create();
-	hashset_add(T, &p);
+	POINT T[1];
+	T[0] = p;
 
-	while(!appartenance_conv(c,T)){
-		if(appartenance_aff(c,T)){
-			dropping(T);
+	while(!appartenance_conv(c,T,1)){
+		if(appartenance_aff(c,T,1)){
+			dropping(T,1);
 		}
-		walking(&c, T);
+		walking(&c, T,1);
 	}
 
-	CERCLE* resultat;
-	resultat = (CERCLE*)malloc(sizeof(CERCLE));
-	resultat->x = c.x;
-	resultat->y = c.y;
-	resultat->d = 2*distance(c,p);
+	CERCLE resultat;
+	resultat.x = c.x;
+	resultat.y = c.y;
+	resultat.d = 2*distance(c,p);
 	return resultat;
 }

@@ -1,56 +1,55 @@
 #include <stdio.h>
 
-#include "hashset.h"
-#include "hashset_itr.h"
+
 #include "structures.h"
 #include "fonctions_fischer.h"
 
+
 int main()
 {
-    //test creation set points 
-    printf("Test creation set points: \n");
 
-    POINT p1 = {10,15};
-    POINT p2 = {10,5};
-    POINT p3 = {5,10};
-    POINT p4 = {15,10};
-    POINT p5 = {0,0};
-    POINT *items[] = {&p1,&p2,&p3,&p4,NULL}; 
-    size_t ii, nitems = 4;
-    hashset_t set = hashset_create();
-    hashset_itr_t iter = hashset_iterator(set);
+    CERCLE vraiC; //Solution universelle pour les 3 tests
+    vraiC.x = 10; vraiC.y=10; vraiC.d=10.0; 
 
-    if (set == NULL) {
-        fprintf(stderr, "failed to create hashset instance\n");
-        abort();
+    // Test 1 : Points cocirculaires
+
+    POINT tab1[] = {{10,15},{10,5},{5,10},{15,10}}; 
+    printf("\n** Test 1 : Points cocirculaires **\n\n");
+    int nbPoints = sizeof(tab1) / sizeof (tab1[0]);
+    printf("Nombre de points: %d\n",nbPoints);
+    CERCLE c1 = algorithme_fischer(tab1,nbPoints);
+    printf("Cercle solution: Coordonnées x=%d, y=%d, diamètre=%lf.\n",c1.x,c1.y,c1.d);
+    printf("Le résultat devrait être x=10, y=10, d=10\n");
+
+    // Test 2 : Points alignés
+
+    POINT tab2[] = {{10,15},{10,14},{10,5},{10,7}}; 
+    printf("\n** Test 2 : Points alignés **\n\n");
+    nbPoints = sizeof(tab2) / sizeof (tab2[0]);
+    printf("Nombre de points: %d\n",nbPoints);
+    CERCLE c2 = algorithme_fischer(tab2,nbPoints);
+    printf("Cercle solution: Coordonnées x=%d, y=%d, diamètre=%lf.\n",c2.x,c2.y,c2.d);
+    printf("Le résultat devrait être x=10, y=10, d=10\n");
+
+    // Test 3 : Points confondus
+
+    POINT tab3[] = {{10,10},{10,10},{10,10},{10,15},{10,5}};    
+    printf("\n** Test 3 : Points confondus **\n\n");
+    nbPoints = sizeof(tab3) / sizeof (tab3[0]);
+    printf("Nombre de points: %d\n",nbPoints);
+    CERCLE c3 = algorithme_fischer(tab3,nbPoints);
+    printf("Cercle solution: Coordonnées x=%d, y=%d, diamètre=%lf.\n",c3.x,c3.y,c3.d);
+    printf("Le résultat devrait être x=10, y=10, d=10\n");
+
+    // Résultat
+
+    if ( estEgal(c1, vraiC) && estEgal(c2, vraiC) && estEgal(c3, vraiC) ){
+       printf(" \n\n     => Résultat CONFORME! \n\n");
+       return 0;  
+    } else {
+       printf(" \n\n     => Résultat NON CONFORME! \n\n");
+       return 1; 
     }
-
-    for (ii = 0; ii < nitems; ++ii) {
-        hashset_add(set, items[ii]);
-    }
-
-    for (ii = 0; ii < nitems; ++ii) {
-        printf("%d\n",hashset_is_member(set, items[ii]));
-    }
-
-    printf("%d\n",hashset_is_member(set,&p5));
-    
-    printf("Le set contient %d points\n", (int)set->nitems);
-    
-    //test iterateur set points
-    printf("Test iterateur set points: \n");
-
-    while(hashset_iterator_has_next(iter))
-    {
-        
-        printf("%d %d\n",((POINT*)hashset_iterator_value(iter))->x, ((POINT*)hashset_iterator_value(iter))->y);
-        hashset_iterator_next(iter);
-    }
-    
-    //test algorithme
-    CERCLE* seb = algorithme_fischer(set);
-    
-    printf("resultat: le cercle de centre {%d,%d} et rayon %f\n", seb->x, seb->y, seb->d);
 
     return 0;
 }
