@@ -29,6 +29,17 @@ typedef struct tabOfPoints_and_size_and_point_and_dist{
 
 
 /**
+ * Une structure permettant de retourner un centre et un rayon
+ * (utilisé pour la méthode initializeBall et updateBall)
+**/ 
+
+typedef struct point_and_dist{
+    POINT center;
+	double radius;
+} POINT_AND_R;
+
+
+/**
  * Algorithme utilisant les théorèmes 2 et 4
  * @param P tableau des points du plan
  * @param nbPoints nombre de points
@@ -37,7 +48,6 @@ typedef struct tabOfPoints_and_size_and_point_and_dist{
 **/
 
 CERCLE ApxMEB1 ( POINT P[], int nbPoints, double apx);
-
 
 
 /**
@@ -82,3 +92,12 @@ POINTS_AND_NB prune (POINT P[] , int nbPoints , POINT c , double dist);
 **/
 
 POINTS_AND_SPD farthPtPrune (POINT P[] , int nbPoints , POINT c , double dist);
+
+/**
+ * Initalise une boule à partir de deux points les plus loin parmi un ensemble.
+ * @param P ensemble de points
+ * @param nbPoints nombre de points
+ * @return X le centre initialisé + le rayon
+**/
+
+POINT_AND_R initializeBall (POINT P[] , int nbPoints);
