@@ -32,7 +32,7 @@ void afficherTableauDoublet(DOUBLET tab[],int taille){
 /*Echange 2 valeurs d'un tableau
 utile pour le quickSort
 */
-void echanger(DOUBLET tableau[], int a, int b){
+void echangerDoublet(DOUBLET tableau[], int a, int b){
 
     POINT *tempA=malloc(sizeof(POINT));
     POINT *tempB=malloc(sizeof(POINT));
@@ -50,12 +50,27 @@ void echanger(DOUBLET tableau[], int a, int b){
 
 }
 
+void echangerPoint(POINT tableau[], int a, int b){
+
+    double tempX=tableau[a].x;
+    double tempY=tableau[a].y;
+
+    tableau[a].x=tableau[b].x;
+    tableau[a].y=tableau[b].y;
+
+    tableau[b].x=tempX;
+    tableau[b].y=tempY;
+
+}
+
+
+
 /*Trie le tableau
 Problème : complexité en nlog(n)....
 A voir plus tard
 */
 
-void quickSort(DOUBLET tableau[], int debut, int fin){
+void quickSortDoublet(DOUBLET tableau[], int debut, int fin){
 
     int gauche = debut-1;
     int droite = fin+1;
@@ -70,11 +85,34 @@ void quickSort(DOUBLET tableau[], int debut, int fin){
         do gauche++; while(tableau[gauche].mediatrice < pivot);
 
         if(gauche < droite)
-            echanger(tableau, gauche, droite);
+            echangerDoublet(tableau, gauche, droite);
         else break;
     }
-    quickSort(tableau, debut, droite);
-    quickSort(tableau, droite+1, fin);
+    quickSortDoublet(tableau, debut, droite);
+    quickSortDoublet(tableau, droite+1, fin);
+}
+
+
+void quickSortPoint(POINT tableau[], int debut, int fin){
+
+    int gauche = debut-1;
+    int droite = fin+1;
+    const double pivot = tableau[debut].x;
+
+    if(debut >= fin)
+        return;
+
+    while(1){
+
+        do droite--; while(tableau[droite].x > pivot);
+        do gauche++; while(tableau[gauche].x < pivot);
+
+        if(gauche < droite)
+            echangerPoint(tableau, gauche, droite);
+        else break;
+    }
+    quickSortPoint(tableau, debut, droite);
+    quickSortPoint(tableau, droite+1, fin);
 }
 
 /*Calcul de la valeur médiane d'un tableau*/
