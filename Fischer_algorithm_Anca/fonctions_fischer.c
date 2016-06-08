@@ -4,6 +4,198 @@
 
 #include "structures.h"
 
+POINT first_point;		/* first hull POINT pour le calcul de l'enveloppe convexe*/
+
+double min(double a, double b){
+	if(a<b)
+		return a;
+	else return b;
+}
+
+double max(double a, double b){
+	if(a>b)
+		return a;
+	else return b;
+}
+
+/**
+ * calcule la distance entre les points a et b
+**/
+double distance(POINT a, POINT b){
+	return sqrt((a.x - b.x)*(a.x - b.x) + (a.y - b.y)*(a.y - b.y));
+}
+
+double signed_triangle_area(POINT a, POINT b, POINT c)
+{
+	return( (a.x*b.y - a.y*b.x + a.y*c.x 
+		- a.x*c.y + b.x*c.y - c.x*b.y) / 2.0 );
+}
+
+double triangle_area(POINT a, POINT b, POINT c)
+{
+	return( fabs(signed_triangle_area(a,b,c)) );
+}
+
+bool ccw(POINT a, POINT b, POINT c)
+{
+	double signed_triangle_area();
+
+	return (signed_triangle_area(a,b,c) > EPSILON);
+}
+
+bool cw(POINT a, POINT b, POINT c)
+{
+	double signed_triangle_area();
+
+	return (signed_triangle_area(a,b,c) < - EPSILON);
+}
+
+bool collinear(POINT a, POINT b, POINT c)
+{
+	double signed_triangle_area();
+
+	return (fabs(signed_triangle_area(a,b,c)) <= EPSILON);
+}
+
+void print_points(POINT p[], int n)
+{
+        int i;                  /* counter */
+
+        for (i=0; i<n; i++)
+                printf("(%lf,%lf)\n",p[i].x,p[i].y);
+}
+
+void print_point(POINT* p)
+{
+	printf("%f %f\n",p->x,p->y);
+}
+
+void print_polygon(polygon *p)
+{
+	int i;			/* counter */
+
+        for (i=0; i<p->n; i++)
+                //printf("(%f,%f)\n",(p->p[i]).x,(p->p[i]).y);
+        	print_point(&p->p[i]);
+}
+
+
+
+
+
+
+void sort_and_remove_duplicates(POINT in[], int *n)
+{
+        int i;                  /* counter */
+        int oldn;               /* number of points before deletion */
+        int hole;               /* index marked for potential deletion */
+	bool leftlower();
+
+	qsort(in, *n, sizeof(POINT), leftlower);
+
+        oldn = *n;
+	hole = 1;
+        for (i=1; i<oldn; i++) {
+		if ((in[hole-1].x == in[i].x) && (in[hole-1].y == in[i].y)) 
+                        (*n)--;
+                else {
+                		in[hole].x = in[i].x;
+                		in[hole].y = in[i].y;
+                        hole = hole + 1;
+                }
+        }
+        in[hole].x = in[oldn-1].x;
+        in[hole].y = in[oldn-1].y;
+}
+
+
+
+
+
+
+
+void convex_hull(POINT in[], int n, polygon *hull)
+{
+	int i;			/* input counter */
+	int top;		/* current hull size */
+	bool smaller_angle();
+	
+	if (n <= 3) { 		/* all points on hull! */
+		for (i=0; i<n; i++)
+			(hull->p[i]).x = in[i].x;
+			(hull->p[i]).y = in[i].y;
+		hull->n = n;
+		return;
+	}
+
+	sort_and_remove_duplicates(in,&n);
+	first_point.x = in[0].x;
+	first_point.y = in[0].y;
+
+
+	qsort(&in[1], n-1, sizeof(POINT), smaller_angle);
+
+	(hull->p[0]).x = first_point.x;
+	(hull->p[0]).y = first_point.y;
+
+
+	(hull->p[1]).x = in[1].x;
+	(hull->p[1]).y = in[1].y;
+
+	/* sentinel to avoid special case */
+	in[n].x = first_point.x;
+	in[n].y = first_point.y;
+
+	top = 1;
+	i = 2;
+
+	while (i <= n) {
+		if (!ccw(hull->p[top-1], hull->p[top], in[i])) 
+			top = top-1;	/* top not on hull */
+		else {
+			top = top+1;
+                    	//copy_point(in[i],hull->p[top]);
+			(hull->p[top]).x= in[i].x;
+			(hull->p[top]).y= in[i].y;
+			i = i+1;
+		}
+	}
+
+	hull->n = top;
+}
+
+
+bool leftlower(POINT *p1, POINT *p2)
+{
+	if ((*p1).x < (*p2).x) return (-1);
+	if ((*p1).x > (*p2).x) return (1);
+
+        if ((*p1).y < (*p2).y) return (-1);
+        if ((*p1).y > (*p2).y) return (1);
+
+	return(0);
+}
+
+bool smaller_angle(POINT *p1, POINT *p2)
+{
+	if (collinear(first_point,*p1,*p2)) {
+		if (distance(first_point,*p1) <= distance(first_point,*p2))
+			return(-1);
+		else
+			return(1);
+	}
+
+	if (ccw(first_point,*p1,*p2))
+		return(-1);
+	else
+		return(1);
+}
+
+
+
+
+
+
 /**
  * Teste si deux cercles c1 et c2 sont égaux
 **/
@@ -14,12 +206,7 @@ int estEgal( CERCLE c1, CERCLE c2 ){
         return 0;
 }
 
-/**
- * calcule la distance entre les points a et b
-**/
-double distance(POINT a, POINT b){
-	return sqrt((a.x - b.x)*(a.x - b.x) + (a.y - b.y)*(a.y - b.y));
-}
+
 
 /**
  * Teste si les points du tableau sont alignes
@@ -60,7 +247,7 @@ double calculer_determinant2(POINT a, POINT b){
 	return a.x*b.y - a.y*b.x;
 }
 
-//retourne l'index d'un point avec des coeffs negatifs dans l'ecriture p = alpha*T[i] + betha*T[j]
+//retourne l'index d'un POINT avec des coeffs negatifs dans l'ecriture p = alpha*T[i] + betha*T[j]
 //on utilise Cramer pour un systeme de dimension 2
 int coefficients_negatifs(POINT p,POINT T[], int nbPoints){
 	int alpha;
@@ -99,7 +286,7 @@ int appartenance_aff(POINT p,POINT T[], int nbPoints){
 		return 0;
 	else if(i==1 && distance(p,T[i])==0)
 		return 0;
-	//si les point de T sont allignes, il faut que p appartienne a la droite pour qu'il appartienne a aff(T)
+	//si les POINT de T sont allignes, il faut que p appartienne a la droite pour qu'il appartienne a aff(T)
 	else if(pointsColineaires(T,nbPoints)){
 		POINT temp[nbPoints+1];
 		temp[0] = p;
@@ -136,14 +323,14 @@ CERCLE algorithme_fischer(POINT S[], int nbPoints){
 
 	POINT c = S[0];
 
-	printf("in function c.x = %d c.y = %d\n", c.x, c.y); 
+	printf("in function c.x = %f c.y = %f\n", c.x, c.y); 
 
-	POINT p; // le point le plus eloigne de c
+	POINT p; // le POINT le plus eloigne de c
 	double max=0;
 	for(int i=1; i<nbPoints;i++)
     {
     	POINT q = S[i];
-    	printf("in function q.x = %d q.y = %d\n", q.x, q.y);
+    	printf("in function q.x = %f q.y = %f\n", q.x, q.y);
     	if(max < distance(c,q)){
     		max = distance(c,q);
     		p = q;
