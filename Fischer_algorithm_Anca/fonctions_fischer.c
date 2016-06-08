@@ -13,6 +13,18 @@ int estEgal( CERCLE c1, CERCLE c2 ){
         return 0;
 }
 
+int pointsColineaires(POINT T[], int nbPoints){
+	POINT a = T[0];
+	POINT b = T[1];
+	int i = 2;
+	while(T[i].x!=0 && T[i].y!=0 && i<nbPoints){
+		if( (T[i].y-a.y)/(b.y-a.y) != (T[i].x-a.x)/(b.x-a.x))
+			return 0;
+	}
+	
+	return 1;
+}
+
 //calcule la distance entre les points a et b
 double distance(POINT a, POINT b){
 	return sqrt((a.x - b.x)*(a.x - b.x) + (a.y - b.y)*(a.y - b.y));
@@ -38,9 +50,22 @@ int appartenance_conv(POINT p,POINT T[], int nbPoints){
 
 //retourne 1 si p appartient a aff(T), 0 sinon
 int appartenance_aff(POINT p,POINT T[], int nbPoints){
-	
-	//TODO
-	return 0;
+	int i=0;
+	while(T[i].x!=0 && T[i].y!=0)
+		i++;
+	if(i==1 && distance(p,T[i])!=0)
+		return 0;
+	else if(i==1 && distance(p,T[i])==0)
+		return 0;
+	else if(pointsColineaires(T,nbPoints)){
+		POINT temp[nbPoints+1];
+		temp[0] = p;
+		for(int j=1;j<=nbPoints;j++)
+			temp[j]=T[j-1];
+		if(pointsColineaires(temp,nbPoints+1))
+			return 1;
+		else return 0;
+	} else return 1;
 }
 
 void dropping(POINT T[], int nbPoints){
@@ -77,14 +102,14 @@ CERCLE algorithme_fischer(POINT S[], int nbPoints){
     	}
     }
 
-	POINT T[1];
+	POINT T[3]={};
 	T[0] = p;
 
-	while(!appartenance_conv(c,T,1)){
-		if(appartenance_aff(c,T,1)){
-			dropping(T,1);
+	while(!appartenance_conv(c,T,3)){
+		if(appartenance_aff(c,T,3)){
+			dropping(T,3);
 		}
-		walking(&c, T,1);
+		walking(&c, T,3);
 	}
 
 	CERCLE resultat;
