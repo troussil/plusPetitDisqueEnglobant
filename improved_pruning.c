@@ -13,16 +13,52 @@
 
 CERCLE ApxMEB1 ( POINT P[], int nbPoints, double apx){
 
-	//POINT c;	//Centre du cercle solution
-	//int r;		//Rayon du cercle solution
+	int nbPts = nbPoints;
+	POINTS_AND_NB X;
+	
 	CERCLE sol; //Cercle solution
 
+	POINT c;	//Centre du cercle solution
+	int r;		//Rayon du cercle solution
 
-	//TO CODE
+	POINT q;	//Point extrême
+	int R;		//Distance
+
+	double delta; //distance entre centre du cercle min et centre cercle en cours
+	double crit;  //critère de pruning (distance)
 
 
+	POINT_AND_R Y = initializeBall(P , nbPoints); 
+	c = Y.center;
+	r = Y.radius; 
+
+	
+	q = farthestPoint( P , nbPts , c );
+	R = sqrt( ( (c.x - q.x)*(c.x - q.x) ) + ( (c.y - q.y)*(c.y - q.y) ) );
+
+	while( R > r*(1+apx) ){
+
+		delta = sqrt( ((R*R) - (r*r))/2 );
+		crit = sqrt((r*r)+(delta*delta)) - delta;
+		
+		X = prune( P, nbPts, c, crit);
+		P = X.tab;
+		nbPts = X.nbPoints;
+
+
+		/***** UPDATEBALL ****
+		TODO: différentes possibilités avec 2 algos de Yildirim et 1 de Larsson & Källberg
+		*********************/
+
+		q = farthestPoint( P , nbPts , c );
+		R = sqrt( ( (c.x - q.x)*(c.x - q.x) ) + ( (c.y - q.y)*(c.y - q.y) ) );
+
+	}
+
+	sol.x = c.x;
+	sol.y = c.y;
+	sol.d = R;
 	return sol;
-
 
 }
 
@@ -38,14 +74,57 @@ CERCLE ApxMEB1 ( POINT P[], int nbPoints, double apx){
 
 CERCLE ApxMEB2 ( POINT P[], int nbPoints, double apx){
 
-	//POINT c;	//Centre du cercle solution
-	//int r;		//Rayon du cercle solution
+	int nbPts = nbPoints;
+	POINTS_AND_SPD Z;
+	
 	CERCLE sol; //Cercle solution
 
+	POINT c;	//Centre du cercle solution
+	int r;		//Rayon du cercle solution
 
-	//TO CODE
+	POINT q;	//Point extrême
+	int R;		//Distance
+
+	POINT cc;	//Centre temporaire
+	int RR;		//Distance temporaire
+
+	double delta; //distance entre centre du cercle min et centre cercle en cours
+	double gap;	  //distance entre c et cc (delta minuscule dans l'article)
+	double crit;  //critère de pruning (distance)
+
+	POINT_AND_R Y = initializeBall(P , nbPoints); 
+	c = Y.center;
+	r = Y.radius; 
+
+	q = farthestPoint( P , nbPts , c );
+	R = sqrt( ( (c.x - q.x)*(c.x - q.x) ) + ( (c.y - q.y)*(c.y - q.y) ) );
+
+	while( R > r*(1+apx) ){
+
+		cc = c;
+		RR = R;
+
+		/***** UPDATEBALL ****
+		TODO: différentes possibilités avec 2 algos de Yildirim et 1 de Larsson & Källberg
+		*********************/
+
+		gap = sqrt( ( (c.x - cc.x)*(c.x - cc.x) ) + ( (c.y - cc.y)*(c.y - cc.y) ) );
+		delta = ( gap + sqrt(2*(RR*RR - r*r) - gap*gap) )/2;
+		crit = sqrt(r*r + delta*delta) - delta;
+
+		Z = farthPtPrune( P , nbPts , c , crit);
+
+		P = Z.tab;
+		nbPts = Z.nbPoints;
+		R = Z.distance;
+		q = Z.farthest; 
 
 
+	}	
+
+	sol.x = c.x;
+	sol.y = c.y;
+	sol.d = R;
 	return sol;
 
 
@@ -166,6 +245,34 @@ POINTS_AND_SPD farthPtPrune (POINT P[] , int nbPoints , POINT c , double dist){
 	X.nbPoints = nbPointsOk;
 	X.farthest = q;
 	X.distance = sqrt(x);
+
+	return X;
+
+}
+
+/**
+ * Initalise une boule à partir de deux points les plus loin parmi un ensemble.
+ * @param P ensemble de points
+ * @param nbPoints nombre de points
+ * @return X le centre initialisé + le rayon
+**/
+
+POINT_AND_R initializeBall (POINT P[] , int nbPoints){
+
+	POINT_AND_R X;
+	POINT temp;
+
+	int randIndex = rand()%(nbPoints+1);
+	temp.x = P[randIndex].x;
+	temp.y = P[randIndex].y;
+
+	POINT q1 = farthestPoint( P , nbPoints, temp);
+	POINT q2 = farthestPoint( P , nbPoints, q1);
+
+	X.center.x = (q2.x + q1.x)/2;
+	X.center.y = (q2.y + q1.y)/2;
+
+	X.radius = sqrt( ( (q1.x - q2.x)*(q1.x - q2.x) ) + ( (q1.y - q2.y)*(q1.y - q2.y) ) ) /2;
 
 	return X;
 
