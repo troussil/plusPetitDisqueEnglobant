@@ -1,7 +1,7 @@
 #ifndef structures_h
 #define structures_h
 
-#define coo int
+#define coo double
 
 typedef struct model_point{
 	coo x;
