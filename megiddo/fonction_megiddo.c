@@ -62,21 +62,26 @@ int triAbscisse(POINT tab[],int longueur){
 
 /*
 Calcul des valeurs critiques:
-revient à calculer l'intersection des médiatrice [ai;ai+1] avec l'axe y=0
-si nombre de point impaire: on rajoute un point qui existe déjà pour avoir des doublets
+revient à calculer l'intersection des médiatrice [ai;ai+1] avec l'axe y=ordonne
+si nombre de point impaire: on ne traite pas le dernier à cette occurence
+pour avoir le point selon une droite d'équation y!=0, on a simplement à prendre l'abscisse à y=0
+et y ajouter ordonne*B; B étant le coeff directeur de la médiatrice
 */
 
-DOUBLET* tableauValeurCritique(POINT tab[],int longueur){
+DOUBLET* tableauValeurCritique(POINT tab[],int longueur,int ordonne){
 	int i,j;
-	double valeur;
+	double valeur_en_zero,valeur;
 	double epsilon=0.00000001;
+	double coeff_directeur;
 	j=0;
 		
 	//if(longueur%2==0){
 		DOUBLET *critique=malloc((longueur/2)*sizeof(DOUBLET));
 
 		for(i=0;i<longueur;i+=2){
-			valeur=(auCarre(tab[i+1].x)-auCarre(tab[i].x)+auCarre(tab[i+1].y)-auCarre(tab[i].y))/(epsilon+2*((tab[i+1].x)-(tab[i].x)));
+			valeur_en_zero=(auCarre(tab[i+1].x)-auCarre(tab[i].x)+auCarre(tab[i+1].y)-auCarre(tab[i].y))/(epsilon+2*((tab[i+1].x)-(tab[i].x)));
+			coeff_directeur=(((tab[i+1].y)-(tab[i].y))/((tab[i].x)-(tab[i+1].x)));
+			valeur=valeur_en_zero+ (coeff_directeur*ordonne);
 			critique[j].mediatrice=valeur;
 			critique[j].a=tab[i];
 			critique[j].b=tab[i+1];
@@ -153,41 +158,38 @@ on regarde les xcritique > ou < à xm
 on peut enlever 1/2 de ces points
 */
 
-int pruning(POINT point[],int longueur){
-	int i,j,compteur,solution,taille,pair,impair;
+int pruning(POINT point[],int longueur,int ordonne){
+	int i,j,compteur,solution,taille,impair;
 	double med;
 	compteur=0;
 	impair=0;
-	pair=0;
 	/*Tableau de départ*/
-	//printf("tabeau de point de départ\n");
-	//afficherTableauPoint(point,longueur);
+	printf("tabeau de point de départ\n");
+	afficherTableauPoint(point,longueur);
 
 	/*Trie de doublets de même abscisse*/
 	taille=triAbscisse(point,longueur);
-	//printf("abscisse trié: \n");
-	//afficherTableauPoint(point,taille);
+	printf("abscisse trié: \n");
+	afficherTableauPoint(point,taille);
 
 	/*Calcul des valeurs critiques*/
 	if(taille%2!=0){
 		taille-=1;
 		impair=1;
 	}
-	else{
-		pair=1;
-	}
+	
 	//printf("bug ICI\n");
 	DOUBLET* doublet=malloc(taille/2*sizeof(DOUBLET));
-	doublet=tableauValeurCritique(point,taille);
-	//printf("Calcul des valeurs critiques: \n");
-	//afficherTableauDoublet(doublet,taille/2);
+	doublet=tableauValeurCritique(point,taille,ordonne);
+	printf("Calcul des valeurs critiques: \n");
+	afficherTableauDoublet(doublet,taille/2);
 
 	/*Trie des valeurs pour trouver la médiane + gestion des cas impairs*/
 	med=quickSortDoublet(doublet,0,taille/2-1);
-	//printf("tableau de doublets trié pour trouver la médiane\n");
-	//afficherTableauDoublet(doublet,taille/2);
+	printf("tableau de doublets trié pour trouver la médiane\n");
+	afficherTableauDoublet(doublet,taille/2);
 	
-	//printf("valeur médiane: %lf\n",med );
+	printf("valeur médiane: %lf\n",med );
 
 
 	/*Création d'un POINT médian (xm,0)*/
@@ -231,10 +233,10 @@ int pruning(POINT point[],int longueur){
 			exit(EXIT_SUCCESS);
 		}
 	}
-	//printf("count= %d\n",count );
-	//printf("valeurs à éliminer:\n");
+	printf("count= %d\n",count );
+	printf("valeurs à éliminer:\n");
 	quickSortPoint(elim,0,count-1);
-	//afficherTableauPoint(elim,count);
+	afficherTableauPoint(elim,count);
 	quickSortPoint(point,0,taille-1);
 	if(impair==1){
 		taille+=1;

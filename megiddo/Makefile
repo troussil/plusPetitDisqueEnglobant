@@ -1,4 +1,4 @@
-all:	test generateur
+all:	test generateur demo
 
 fonction_megiddo.o:	fonction_megiddo.c fonction_megiddo.h structure.h utils.o
 	gcc -Wall -c -lm fonction_megiddo.c utils.o -o fonction_megiddo.o
@@ -16,10 +16,14 @@ solveur.o:	solveur.c structure.h solveur_megiddo.h
 	gcc -c -Wall solveur.c -o solveur.o
         
         
-test:	fonction_megiddo.o utils_table.o utils.o testMegiddo.c solveur.o
-	gcc -Wall solveur.o fonction_megiddo.o utils_table.o utils.o testMegiddo.c -o test -lm -g
+test:	fonction_megiddo.o utils_table.o utils.o testMegiddo.c
+	gcc -Wall fonction_megiddo.o utils_table.o utils.o testMegiddo.c -o test -lm -g
+
+demo:	fonction_megiddo.o utils_table.o utils.o demoMegiddo.c solveur.o
+	gcc -Wall fonction_megiddo.o solveur.o utils_table.o utils.o demoMegiddo.c -o demo -lm -g
+ 
 
 
 clean:
-	rm *.o test generateur
+	rm *.o test generateur demo
 	rm *.svg
