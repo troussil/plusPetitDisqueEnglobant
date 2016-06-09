@@ -11,18 +11,18 @@ int main(){
 	POINT trueFarthest; //Solution réelle
 	trueFarthest.x = 260; trueFarthest.y=280; 	
 
-	POINT tab1[] = {{5,15},{16,5},{5,5},{260,280}};	
+	POINT tab1[] = {{5,15},{16,5},{5,5},{260,280},{100,40},{100,-10},{100,80},{100,-90},{100,60},{100,-30}};	
 	POINT c; c.x = 0; c.y = 0;
 
 
-	POINT test = farthestPoint( tab1 , 4 , c );
+	POINT test = farthestPoint( tab1 , 10 , c );
 	printf("Method (1/3) farthestPoint: ");
 
 	if (test.x == trueFarthest.x && test.y == trueFarthest.y ){
 		printf("SUCCESS !\n");
 	} else {
 		printf("FAILURE !\n");
-		printf("%d != %d OR/AND %d != %d\n", test.x,trueFarthest.x,test.y,trueFarthest.y);
+		printf("%lf != %lf OR/AND %lf != %lf\n", test.x,trueFarthest.x,test.y,trueFarthest.y);
 	}
 
 
