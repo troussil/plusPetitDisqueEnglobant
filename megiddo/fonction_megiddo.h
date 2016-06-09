@@ -15,7 +15,7 @@
 
 
 int triAbscisse(POINT tab[],int taille);
-DOUBLET* tableauValeurCritique(POINT tab[],int longueur);
+DOUBLET* tableauValeurCritique(POINT tab[],int longueur,int ordonne);
 int calculPositionSolution(POINT tab[],int longueur,double mediane);
-int pruning(POINT point[],int longueur);
+int pruning(POINT point[],int longueur,int ordonne);
 #endif
