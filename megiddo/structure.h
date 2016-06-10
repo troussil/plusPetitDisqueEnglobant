@@ -24,6 +24,7 @@ typedef struct model_doublet{
 	POINT a;
 	POINT b;
 	double mediatrice;
+	double angle;
 } DOUBLET;
 
 #endif

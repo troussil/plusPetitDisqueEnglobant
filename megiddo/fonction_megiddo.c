@@ -185,7 +185,7 @@ int pruning(POINT point[],int longueur,int ordonne){
 	afficherTableauDoublet(doublet,taille/2);
 
 	/*Trie des valeurs pour trouver la médiane + gestion des cas impairs*/
-	med=quickSortDoublet(doublet,0,taille/2-1);
+	med=quickSortDoubletMediatrice(doublet,0,taille/2-1);
 	printf("tableau de doublets trié pour trouver la médiane\n");
 	afficherTableauDoublet(doublet,taille/2);
 	
@@ -263,6 +263,40 @@ int pruning(POINT point[],int longueur,int ordonne){
 }
 
 
+/*Calcul l'angle avec la droite x=0 */
 
+DOUBLET* calculAngleCritique(POINT tab[],int longueur){
+	int i;
+	double angle;
+	
+	POINT *milieu=malloc(sizeof(POINT));
+	POINT *xcritique=malloc(sizeof(POINT));
+	DOUBLET *critique=malloc(partiEntiere(longueur/2)*sizeof(DOUBLET));
 
+	critique=tableauValeurCritique(tab,longueur,0);
+
+	for(i=0;i<partiEntiere(longueur/2);i++){
+		xcritique->x=critique[i].mediatrice;
+		xcritique->y=0;
+		milieu->x=((critique[i].a.x)+(critique[i].b.x))/2;
+		milieu->y=((critique[i].a.y)+(critique[i].b.y))/2;
+		angle=atan2((milieu->y),((milieu->x)-(xcritique->x)));
+		if(angle>(PI/2)){
+			angle=angle -PI;
+		}
+		else if(angle<(-PI/2)){
+			angle=angle +PI;
+		}
+		if (critique[i].a.x!=critique[i].b.x){
+			critique[i].angle=angle;
+		}
+		else{
+			critique[i].angle=0;
+		}
+		
+
+	}
+	return critique;
+
+}
 

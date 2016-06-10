@@ -28,3 +28,6 @@ POINT* distanceInf(POINT xm, POINT *a, POINT *b){
 		return a;
 
 }
+int partiEntiere(int a){
+	return (int)a;
+}

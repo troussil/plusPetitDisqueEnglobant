@@ -10,8 +10,11 @@ void afficherTableauPoint(POINT tab[],int taille);
 void afficherTableauDoublet(DOUBLET tab[],int taille);
 void echangerDoublet(DOUBLET tableau[], int a, int b);
 void echangerPoint(POINT tableau[], int a, int b);
-double quickSortDoublet(DOUBLET tableau[], int debut, int fin);
+double quickSortDoubletMediatrice(DOUBLET tableau[], int debut, int fin);
+double quickSortDoubletAngle(DOUBLET tableau[], int debut, int fin);
 void quickSortPoint(POINT tableau[], int debut, int fin);
-double mediane(DOUBLET tableau[],int longueur);
+double medianeMediatrice(DOUBLET tableau[],int longueur);
+double medianeAngle(DOUBLET tableau[],int longueur);
+
 
 #endif
