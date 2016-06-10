@@ -52,22 +52,6 @@ int collinear(POINT a, POINT b, POINT c)
 	return (fabs(signed_triangle_area(a,b,c)) <= EPSILON);
 }
 
-
-void print_point(POINT* p)
-{
-	printf("%f %f\n",p->x,p->y);
-}
-
-void print_polygon(polygon *p)
-{
-	int i;			/* counter */
-
-        for (i=0; i<p->n; i++)
-                //printf("(%f,%f)\n",(p->p[i]).x,(p->p[i]).y);
-        	print_point(&p->p[i]);
-}
-
-
 void sort_and_remove_duplicates(POINT in[], int *n)
 {
     int i;                  /* counter */
@@ -174,9 +158,6 @@ int smaller_angle(POINT *p1, POINT *p2)
 
 
 
-
-
-
 /**
  * Teste si deux cercles c1 et c2 sont égaux
 **/
@@ -195,13 +176,13 @@ int estEgal( CERCLE c1, CERCLE c2 ){
 **/
 int tableau_collinear(POINT T[], int nbPoints){
 	POINT a = T[0];
-	int i=1;
-	while(distance(a,T[i])==0.0 && i<nbPoints)
-		i++;
-	POINT b = T[i];
-	while(T[i].x!=0 && T[i].y!=0 && i<nbPoints){
-		if( (T[i].y-a.y)/(b.y-a.y) != (T[i].x-a.x)/(b.x-a.x))
+	POINT b = T[1];
+	int i=2;
+	
+	while(i<nbPoints){
+		if(!collinear(a,b,T[i]))
 			return 0;
+		i++;
 	}
 	
 	return 1;
@@ -327,6 +308,8 @@ void walking(POINT* c, POINT T[], int nbPoints){
 
 CERCLE algorithme_fischer(POINT S[], int nbPoints){
 
+	sort_and_remove_duplicates(S,&nbPoints);
+
 	POINT c = S[0]; 
 
 	POINT p; // le POINT le plus eloigne de c
@@ -334,17 +317,17 @@ CERCLE algorithme_fischer(POINT S[], int nbPoints){
 	for(int i=1; i<nbPoints;i++)
     {
     	POINT q = S[i];
-    	printf("in function q.x = %f q.y = %f\n", q.x, q.y);
     	if(max < distance(c,q)){
     		max = distance(c,q);
     		p = q;
     	}
     }
 
-	POINT T[3]={};
+	POINT T[3]={0};
 	T[0] = p;
 
 	while(!appartenance_conv(c,T,3)){
+		printf("on est dans le while");
 		if(appartenance_aff(c,T,3)){
 			dropping(c,T,3);
 		}
