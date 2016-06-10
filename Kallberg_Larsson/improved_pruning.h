@@ -2,15 +2,7 @@
 #include <stdlib.h>
 #include "structures.h"
 #include <math.h>
-
-/**
- * Une structure permettant de retourner un tableau de points et la taille qu'il fait
-**/ 
-
-typedef struct tabOfPoints_and_size{
-    POINT* tab;
-	int nbPoints;
-} POINTS_AND_NB;
+#include <float.h>
 
 
 /**
@@ -22,7 +14,6 @@ typedef struct tabOfPoints_and_size{
 **/
 
 CERCLE ApxMEB1 ( POINT P[], int nbPoints, double apx);
-
 
 
 /**
@@ -63,7 +54,16 @@ POINTS_AND_NB prune (POINT P[] , int nbPoints , POINT c , double dist);
  * @param P ensemble de points
  * @param c point à considérer comme le centre
  * @param dist critère de distance à considérer pour ôter les points
- * @return Q le tableau de points dont on a ôté des points + le point (q, sqrt(x))
+ * @return X le tableau de points dont on a ôté des points + le point le plus loin + sa distance au centre
 **/
 
-POINT* farthPtPrune (POINT P[] , POINT c , double dist);
+POINTS_AND_SPD farthPtPrune (POINT P[] , int nbPoints , POINT c , double dist);
+
+/**
+ * Initalise une boule à partir de deux points les plus loin parmi un ensemble.
+ * @param P ensemble de points
+ * @param nbPoints nombre de points
+ * @return X le centre initialisé + le rayon
+**/
+
+POINT_AND_R initializeBall (POINT P[] , int nbPoints);
