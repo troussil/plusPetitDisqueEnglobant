@@ -42,18 +42,6 @@ int main()
     printf("Le résultat devrait être x=10, y=10, d=10\n");
 
 
-    POINT in[MAXPOLY];      /* input points */
-    polygon hull;           /* convex hull */
-    int n;              /* number of points */
-    int i;              /* counter */
-
-    scanf("%d",&n);
-    for (i=0; i<n; i++)
-        scanf("%lf %lf",&in[i].x,&in[i].y);
-
-    convex_hull(in,n,&hull);
-
-    print_polygon(&hull);
 
     // Résultat
 

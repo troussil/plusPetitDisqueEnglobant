@@ -31,39 +31,27 @@ double signed_triangle_area(POINT a, POINT b, POINT c)
 		- a.x*c.y + b.x*c.y - c.x*b.y) / 2.0 );
 }
 
-double triangle_area(POINT a, POINT b, POINT c)
-{
-	return( fabs(signed_triangle_area(a,b,c)) );
-}
-
-bool ccw(POINT a, POINT b, POINT c)
+int ccw(POINT a, POINT b, POINT c)
 {
 	double signed_triangle_area();
 
 	return (signed_triangle_area(a,b,c) > EPSILON);
 }
 
-bool cw(POINT a, POINT b, POINT c)
+int cw(POINT a, POINT b, POINT c)
 {
 	double signed_triangle_area();
 
 	return (signed_triangle_area(a,b,c) < - EPSILON);
 }
 
-bool collinear(POINT a, POINT b, POINT c)
+int collinear(POINT a, POINT b, POINT c)
 {
 	double signed_triangle_area();
 
 	return (fabs(signed_triangle_area(a,b,c)) <= EPSILON);
 }
 
-void print_points(POINT p[], int n)
-{
-        int i;                  /* counter */
-
-        for (i=0; i<n; i++)
-                printf("(%lf,%lf)\n",p[i].x,p[i].y);
-}
 
 void print_point(POINT* p)
 {
@@ -80,45 +68,39 @@ void print_polygon(polygon *p)
 }
 
 
-
-
-
-
 void sort_and_remove_duplicates(POINT in[], int *n)
 {
-        int i;                  /* counter */
-        int oldn;               /* number of points before deletion */
-        int hole;               /* index marked for potential deletion */
-	bool leftlower();
+    int i;                  /* counter */
+    int oldn;               /* number of points before deletion */
+    int hole;               /* index marked for potential deletion */
+	int leftlower();
 
 	qsort(in, *n, sizeof(POINT), leftlower);
 
-        oldn = *n;
+    oldn = *n;
 	hole = 1;
         for (i=1; i<oldn; i++) {
 		if ((in[hole-1].x == in[i].x) && (in[hole-1].y == in[i].y)) 
-                        (*n)--;
-                else {
-                		in[hole].x = in[i].x;
-                		in[hole].y = in[i].y;
-                        hole = hole + 1;
-                }
+            (*n)--;
+        else {
+            in[hole].x = in[i].x;
+            in[hole].y = in[i].y;
+            hole = hole + 1;
         }
-        in[hole].x = in[oldn-1].x;
-        in[hole].y = in[oldn-1].y;
+    }
+    in[hole].x = in[oldn-1].x;
+    in[hole].y = in[oldn-1].y;
 }
 
 
-
-
-
-
-
+/**
+ * calcule l'enveloppe convexe grace a l'algorithme de Graham
+**/
 void convex_hull(POINT in[], int n, polygon *hull)
 {
 	int i;			/* input counter */
 	int top;		/* current hull size */
-	bool smaller_angle();
+	int smaller_angle();
 	
 	if (n <= 3) { 		/* all points on hull! */
 		for (i=0; i<n; i++)
@@ -154,7 +136,6 @@ void convex_hull(POINT in[], int n, polygon *hull)
 			top = top-1;	/* top not on hull */
 		else {
 			top = top+1;
-                    	//copy_point(in[i],hull->p[top]);
 			(hull->p[top]).x= in[i].x;
 			(hull->p[top]).y= in[i].y;
 			i = i+1;
@@ -165,7 +146,7 @@ void convex_hull(POINT in[], int n, polygon *hull)
 }
 
 
-bool leftlower(POINT *p1, POINT *p2)
+int leftlower(POINT *p1, POINT *p2)
 {
 	if ((*p1).x < (*p2).x) return (-1);
 	if ((*p1).x > (*p2).x) return (1);
@@ -176,7 +157,7 @@ bool leftlower(POINT *p1, POINT *p2)
 	return(0);
 }
 
-bool smaller_angle(POINT *p1, POINT *p2)
+int smaller_angle(POINT *p1, POINT *p2)
 {
 	if (collinear(first_point,*p1,*p2)) {
 		if (distance(first_point,*p1) <= distance(first_point,*p2))
@@ -212,7 +193,7 @@ int estEgal( CERCLE c1, CERCLE c2 ){
  * Teste si les points du tableau sont alignes
  * retourne 1 si oui, 0 sinon
 **/
-int pointsColineaires(POINT T[], int nbPoints){
+int tableau_collinear(POINT T[], int nbPoints){
 	POINT a = T[0];
 	int i=1;
 	while(distance(a,T[i])==0.0 && i<nbPoints)
@@ -272,7 +253,32 @@ int coefficients_negatifs(POINT p,POINT T[], int nbPoints){
 //retourne 1 si p appartient a conv(T), 0 sinon
 int appartenance_conv(POINT p,POINT T[], int nbPoints){
 	
-	//TODO
+    polygon initial;
+    polygon a_comparer;
+
+	POINT tab_initial[nbPoints];
+	POINT tab_a_comparer[nbPoints];
+
+	int i;
+
+	while(T[i].x != 0 && T[i].y !=0){
+		tab_initial[i]=T[i];
+		tab_a_comparer[i]=T[i];
+		i++;
+	}
+	tab_a_comparer[i]=p;
+
+    convex_hull(tab_initial,i-1,&initial);
+    convex_hull(tab_a_comparer,i,&a_comparer);
+
+    if(initial.n != a_comparer.n)
+    	return 0;
+    else{
+    	for (i=0; i<initial.n; i++)
+            if(distance(initial.p[i],a_comparer.p[i])!=0)
+        		return 0;
+    }
+
 	return 1;
 }
 
@@ -287,12 +293,12 @@ int appartenance_aff(POINT p,POINT T[], int nbPoints){
 	else if(i==1 && distance(p,T[i])==0)
 		return 0;
 	//si les POINT de T sont allignes, il faut que p appartienne a la droite pour qu'il appartienne a aff(T)
-	else if(pointsColineaires(T,nbPoints)){
+	else if(tableau_collinear(T,nbPoints)){
 		POINT temp[nbPoints+1];
 		temp[0] = p;
 		for(int j=1;j<=nbPoints;j++)
 			temp[j]=T[j-1];
-		if(pointsColineaires(temp,nbPoints+1))
+		if(tableau_collinear(temp,nbPoints+1))
 			return 1;
 		else return 0;
 	} 
@@ -321,9 +327,7 @@ void walking(POINT* c, POINT T[], int nbPoints){
 
 CERCLE algorithme_fischer(POINT S[], int nbPoints){
 
-	POINT c = S[0];
-
-	printf("in function c.x = %f c.y = %f\n", c.x, c.y); 
+	POINT c = S[0]; 
 
 	POINT p; // le POINT le plus eloigne de c
 	double max=0;
