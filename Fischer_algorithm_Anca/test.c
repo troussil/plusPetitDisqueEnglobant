@@ -45,13 +45,11 @@ int main()
 
     // Résultat
 
-    /*if ( estEgal(c1, vraiC) && estEgal(c2, vraiC) && estEgal(c3, vraiC) ){
-       printf(" \n\n     => Résultat CONFORME! \n\n");
-       return 0;  
+    if ( estEgal(c1, vraiC) && estEgal(c2, vraiC) && estEgal(c3, vraiC) ){
+       printf(" \n\n     => Résultat CONFORME! \n"); 
     } else {
-       printf(" \n\n     => Résultat NON CONFORME! \n\n");
-       return 1; 
-    }*/
+       printf(" \n\n     => Résultat NON CONFORME! \n");
+    }
 
     return 0;
 }

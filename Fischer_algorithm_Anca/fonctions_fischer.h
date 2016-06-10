@@ -6,9 +6,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-double min(double a, double b);
-
-double max(double a, double b);
 
 double distance(POINT a, POINT b);
 
@@ -20,27 +17,13 @@ int cw(POINT a, POINT b, POINT c);
 
 int collinear(POINT a, POINT b, POINT c);
 
-void print_points(POINT p[], int n);
-
-void print_point(POINT* p);
-
-void print_polygon(polygon *p);
-
-
-
-
 void sort_and_remove_duplicates(POINT in[], int *n);
-
-
 
 int leftlower(POINT *p1, POINT *p2);
 
 int smaller_angle(POINT *p1, POINT *p2);
 
-
-
 void convex_hull(POINT in[], int n, polygon *hull);
-
 
 int estEgal( CERCLE c1, CERCLE c2 );
 
@@ -59,7 +42,6 @@ int appartenance_aff(POINT p,POINT T[], int nbPoints);
 void dropping(POINT T[], int nbPoints);
 
 void walking(POINT* c, POINT T[], int nbPoints);
-
 
 CERCLE algorithme_fischer(POINT S[], int nbPoints);
 

@@ -6,16 +6,15 @@
 
 POINT first_point;		/* first hull POINT pour le calcul de l'enveloppe convexe*/
 
-double min(double a, double b){
-	if(a<b)
-		return a;
-	else return b;
+void print_point(POINT* p)
+{
+	printf("%f %f\n",p->x,p->y);
 }
 
-double max(double a, double b){
-	if(a>b)
-		return a;
-	else return b;
+void print_polygon(polygon *p)
+{
+	for (int i=0; i<p->n; i++)
+    	print_point(&p->p[i]);
 }
 
 /**
@@ -45,6 +44,10 @@ int cw(POINT a, POINT b, POINT c)
 	return (signed_triangle_area(a,b,c) < - EPSILON);
 }
 
+
+/**
+ * verifie si a,b,c alignes
+**/
 int collinear(POINT a, POINT b, POINT c)
 {
 	double signed_triangle_area();
@@ -52,6 +55,9 @@ int collinear(POINT a, POINT b, POINT c)
 	return (fabs(signed_triangle_area(a,b,c)) <= EPSILON);
 }
 
+/**
+ * tri des points et enlevement des dupliques
+**/
 void sort_and_remove_duplicates(POINT in[], int *n)
 {
     int i;                  /* counter */
@@ -157,7 +163,6 @@ int smaller_angle(POINT *p1, POINT *p2)
 }
 
 
-
 /**
  * Teste si deux cercles c1 et c2 sont égaux
 **/
@@ -167,7 +172,6 @@ int estEgal( CERCLE c1, CERCLE c2 ){
     else
         return 0;
 }
-
 
 
 /**
@@ -232,6 +236,7 @@ int coefficients_negatifs(POINT p,POINT T[], int nbPoints){
 }
 
 //retourne 1 si p appartient a conv(T), 0 sinon
+// calcule l'enveloppe convexe de T et celui te T+p et verifie si c'est le meme
 int appartenance_conv(POINT p,POINT T[], int nbPoints){
 	
     polygon initial;
@@ -245,12 +250,19 @@ int appartenance_conv(POINT p,POINT T[], int nbPoints){
 	while(T[i].x != 0 && T[i].y !=0){
 		tab_initial[i]=T[i];
 		tab_a_comparer[i]=T[i];
+		//printf("%f rt %f\n", tab_a_comparer[i].x,tab_a_comparer[i].y);
 		i++;
 	}
 	tab_a_comparer[i]=p;
+	//printf("%f rt %f\n", tab_a_comparer[i].x,tab_a_comparer[i].y);
 
-    convex_hull(tab_initial,i-1,&initial);
-    convex_hull(tab_a_comparer,i,&a_comparer);
+    convex_hull(tab_initial,i,&initial);
+    convex_hull(tab_a_comparer,i+1,&a_comparer);
+
+    printf("\npolygine initial: \n");
+    print_polygon(&initial);
+    printf("\npolygine a comparer: \n");
+    print_polygon(&a_comparer);
 
     if(initial.n != a_comparer.n)
     	return 0;
@@ -327,7 +339,6 @@ CERCLE algorithme_fischer(POINT S[], int nbPoints){
 	T[0] = p;
 
 	while(!appartenance_conv(c,T,3)){
-		printf("on est dans le while");
 		if(appartenance_aff(c,T,3)){
 			dropping(c,T,3);
 		}
