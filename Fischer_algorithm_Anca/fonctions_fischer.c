@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <math.h>
 
 #include "structures.h"
@@ -209,6 +210,18 @@ void init_tab(POINT tab[], int nbPoints){
 	}
 }
 
+int equals_zero(POINT p){
+	//printf("Dans equals zero: %f %f \n", p.x, p.y);
+	if(p.x != 0.0 || p.y != 0.0){
+		
+		return (0);
+	}
+	else{
+		printf("je suis ici \n");
+		return (1);
+	}
+}
+
 
 
 
@@ -339,11 +352,51 @@ int not_in(POINT tab[], POINT element, int nbPoints){
 			return 0;
 	return 1;
 }
+
+//Renvoie le cercle le plus petit passant par deux points p1 et p2
+CERCLE cerclePassantParDeuxPoints( POINT p1 , POINT p2){
+	
+	CERCLE c;
+		
+	c.x = (p1.x + p2.x)/2;
+	c.y = (p1.y + p2.y)/2;
+	c.d = sqrt((p1.x - p2.x)*(p1.x - p2.x) + (p1.y - p2.y)*(p1.y - p2.y));
+	
+	return c;	
+}
+
+
+//Renvoie le cercle le plus petit passant par trois points p1, p2, et p3
+CERCLE cerclePassantParTroisPoints( POINT p1 , POINT p2 , POINT p3){
+	
+	CERCLE c;
+
+	float det =  (p1.x - p2.x) * (p2.y - p3.y) - (p2.x - p3.x)* (p1.y - p2.y); 
+
+    	if (det == 0) { 
+		c.d = 100000000000; 
+		c.x = 0; 
+		c.y=0; 
+
+	} else {
+		int offset = pow(p2.x,2) + pow(p2.y,2);
+    		int bc =   ( pow(p1.x,2) + pow(p1.y,2) - offset )/2.0;
+    		int cd =   (offset - pow(p3.x, 2) - pow(p3.y, 2))/2.0;
+
+	    	c.x =  (bc * (p2.y - p3.y) - cd * (p1.y - p2.y)) / det;
+	    	c.y =  (cd * (p1.x - p2.x) - bc * (p2.x - p3.x)) / det;
+	    	c.d = 2 * sqrt( pow(p2.x - c.x,2) + pow(p2.y-c.y,2));
+	}
+	return c;	
+}
+
 CERCLE algorithme_fischer(POINT S[], int nbPoints){
 
 	polygon enveloppe_convexe;
 	POINT maxP; //le point le plus proche du cercle
-	int i,j;
+	POINT circumcentre; // cc(T)
+	double diametre;
+	int i,j,ok;
 	double max=0;
 
 	sort_and_remove_duplicates(S,&nbPoints);
@@ -360,46 +413,111 @@ CERCLE algorithme_fischer(POINT S[], int nbPoints){
     	}
     }
 
-	POINT T[3]={0};
+	POINT T[3];
+	init_tab(T,3);
 	T[0] = p;
 
-	POINT S_moins_T[nbPoints-2];
+	POINT S_moins_T[nbPoints-1];
+	printf("nbr de points dans S moins T: %d\n", nbPoints);
 
 	while(!appartenance_conv(c,T,3)){
+
 		printf("le point c est: %f %f\n", c.x,c.y);
+
 		printf("dans T on a:\n");
 		for(i=0;i<3;i++)
 			printf("%f %f\n", T[i].x, T[i].y);
+
 		if(appartenance_aff(c,T,3)){
 			dropping(c,T,3);
-
 		}
 
+
+		/* Calcul du circumcentre cc(T) et diametre du cercle engeindre par T*/
+
+		i=0;
+
+		while(T[i].x != 0 || T[i].y != 0)
+			i++;
+
+		if(i==1){
+			printf("circumcentre T[0] %f %f\n", T[0].x, T[0].y);
+			circumcentre = T[0];
+			diametre = 0;
+		}
+		else if(i==2){
+			printf("on calcule le circumcentre a partir de 2 points %f %f et %f %f \n", T[0].x, T[0].y, T[1].x, T[1].y);
+			circumcentre.x = cerclePassantParDeuxPoints(T[0],T[1]).x;
+			circumcentre.y = cerclePassantParDeuxPoints(T[0],T[1]).y;
+			diametre = cerclePassantParDeuxPoints(T[0],T[1]).d;
+			printf("cc.x = %f; cc.y =  %f; c.d = %f \n", circumcentre.x, circumcentre.y, diametre);
+		} else {
+			printf("on calcule le circumcentre a partir de 3 points %f %f, %f %f et %f %f \n", T[0].x, T[0].y, T[1].x, T[1].y, T[2].x, T[2].y);
+			if(cerclePassantParTroisPoints(T[0],T[1],T[2]).d!=100000000000){
+				circumcentre.x = cerclePassantParTroisPoints(T[0],T[1],T[2]).x;
+				circumcentre.y = cerclePassantParTroisPoints(T[0],T[1],T[2]).y;
+				diametre = cerclePassantParTroisPoints(T[0],T[1],T[2]).d;
+				printf("cc.x = %f; cc.y =  %f; c.d = %f \n", circumcentre.x, circumcentre.y, diametre);
+			}
+			else
+				printf("impossible calculer circumcentre, points colineaires\n");
+		}
+
+
+		/* Calcul du tableau S\T */
+
 		j=0;
-		init_tab(S_moins_T, nbPoints-2);
+		ok=0;
+		init_tab(S_moins_T, nbPoints-1);
 		printf("points de S moins T:\n");
 		for(i=0; i<nbPoints; i++){
-			if(not_in(T,S[i],3) && S[i].x != c.x && S[i].y != c.y){
+			if(not_in(T,S[i],3)) {
 				S_moins_T[j]=S[i];
-				printf("%f %f \n", S_moins_T[j].x, S_moins_T[j].y);
+
+				if(distance(S_moins_T[j],circumcentre) > diametre/2)
+					ok=1;
+
 				j++;
 			}
 
 		}
 
-		convex_hull(S_moins_T, nbPoints-3, &enveloppe_convexe);
-		max=0;
-		for(i=0;i<enveloppe_convexe.n;i++){
-			if(distance(c,enveloppe_convexe.p[i])>max){
-				max = distance(c,enveloppe_convexe.p[i]);
-				maxP = enveloppe_convexe.p[i];
+		//printf("j = %d\n",j);
+
+
+		if(ok){
+			i=0;
+			while(!equals_zero(S_moins_T[i])){
+				printf("%f %f et equalsZero = %d \n", S_moins_T[i].x, S_moins_T[i].y, equals_zero(S_moins_T[i]));
+				i++;
 			}
+
+			printf("j = %d\n",i);
+
+			convex_hull(S_moins_T, i+1, &enveloppe_convexe);
+			printf("enveloppe convexe de S moins T: \n");
+			print_polygon(&enveloppe_convexe);
+			max=0;
+			for(i=0;i<enveloppe_convexe.n;i++){
+				if(distance(c,enveloppe_convexe.p[i])>max){
+					max = distance(c,enveloppe_convexe.p[i]);
+					maxP.x = (enveloppe_convexe.p[i]).x;
+					maxP.y = (enveloppe_convexe.p[i]).y;
+				}
+			}
+
+			i=0;
+			while((T[i].x != 0 || T[i].y != 0) && i<3)
+				i++;
+			T[i].x = maxP.x;
+			T[i].y = maxP.y;
+		}
+		else{
+			c.x = circumcentre.x;
+			c.y = circumcentre.y;
 		}
 
-		i=0;
-		while(T[i].x == 0 && T[i].y == 0)
-			i++;
-		T[i] = maxP;
+		sleep(10);
 		
 	}
 

@@ -32,9 +32,9 @@ int main()
     print_polygon(&P);
 
 
-    /*CERCLE c1 = algorithme_fischer(tab1,nbPoints);
+    CERCLE c1 = algorithme_fischer(tab1,nbPoints);
     printf("Cercle solution: Coordonnées x=%f, y=%f, diamètre=%lf.\n",c1.x,c1.y,c1.d);
-    printf("Le résultat devrait être x=10, y=10, d=10\n");*/
+    printf("Le résultat devrait être x=10, y=10, d=10\n");
 
     // Test 2 : Points alignés
 
