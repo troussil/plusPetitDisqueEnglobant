@@ -11,6 +11,7 @@ void print_point(POINT* p)
 	printf("%f %f\n",p->x,p->y);
 }
 
+
 void print_polygon(polygon *p)
 {
 	for (int i=0; i<p->n; i++)
@@ -29,6 +30,8 @@ double signed_triangle_area(POINT a, POINT b, POINT c)
 	return( (a.x*b.y - a.y*b.x + a.y*c.x 
 		- a.x*c.y + b.x*c.y - c.x*b.y) / 2.0 );
 }
+
+
 
 int ccw(POINT a, POINT b, POINT c)
 {
@@ -53,6 +56,24 @@ int collinear(POINT a, POINT b, POINT c)
 	double signed_triangle_area();
 
 	return (fabs(signed_triangle_area(a,b,c)) <= EPSILON);
+}
+
+/**
+ * Teste si les points du tableau sont alignes
+ * retourne 1 si oui, 0 sinon
+**/
+int tableau_collinear(POINT T[], int nbPoints){
+	POINT a = T[0];
+	POINT b = T[1];
+	int i=2;
+	
+	while(i<nbPoints){
+		if(!collinear(a,b,T[i]))
+			return 0;
+		i++;
+	}
+	
+	return 1;
 }
 
 /**
@@ -101,11 +122,18 @@ void convex_hull(POINT in[], int n, polygon *hull)
 	}
 
 	sort_and_remove_duplicates(in,&n);
+
 	first_point.x = in[0].x;
 	first_point.y = in[0].y;
 
-
 	qsort(&in[1], n-1, sizeof(POINT), smaller_angle);
+
+	if(tableau_collinear(in,n)){
+		hull->n = 2;
+		hull->p[0]=in[0];
+		hull->p[1]=in[n-1];
+	}
+	else{
 
 	(hull->p[0]).x = first_point.x;
 	(hull->p[0]).y = first_point.y;
@@ -134,6 +162,7 @@ void convex_hull(POINT in[], int n, polygon *hull)
 
 	hull->n = top;
 }
+}
 
 
 int leftlower(POINT *p1, POINT *p2)
@@ -141,8 +170,8 @@ int leftlower(POINT *p1, POINT *p2)
 	if ((*p1).x < (*p2).x) return (-1);
 	if ((*p1).x > (*p2).x) return (1);
 
-        if ((*p1).y < (*p2).y) return (-1);
-        if ((*p1).y > (*p2).y) return (1);
+    if ((*p1).y < (*p2).y) return (-1);
+    if ((*p1).y > (*p2).y) return (1);
 
 	return(0);
 }
@@ -173,24 +202,15 @@ int estEgal( CERCLE c1, CERCLE c2 ){
         return 0;
 }
 
-
-/**
- * Teste si les points du tableau sont alignes
- * retourne 1 si oui, 0 sinon
-**/
-int tableau_collinear(POINT T[], int nbPoints){
-	POINT a = T[0];
-	POINT b = T[1];
-	int i=2;
-	
-	while(i<nbPoints){
-		if(!collinear(a,b,T[i]))
-			return 0;
-		i++;
+void init_tab(POINT tab[], int nbPoints){
+	for(int i=0;i<nbPoints;i++){
+		tab[i].x=0;
+		tab[i].y=0;
 	}
-	
-	return 1;
 }
+
+
+
 
 
 
@@ -259,10 +279,10 @@ int appartenance_conv(POINT p,POINT T[], int nbPoints){
     convex_hull(tab_initial,i,&initial);
     convex_hull(tab_a_comparer,i+1,&a_comparer);
 
-    printf("\npolygine initial: \n");
-    print_polygon(&initial);
-    printf("\npolygine a comparer: \n");
-    print_polygon(&a_comparer);
+    //printf("\npolygine initial: \n");
+    //print_polygon(&initial);
+    //printf("\npolygine a comparer: \n");
+    //print_polygon(&a_comparer);
 
     if(initial.n != a_comparer.n)
     	return 0;
@@ -312,20 +332,25 @@ void dropping(POINT c,POINT T[], int nbPoints){
 	T[nbPoints-1].y = 0;
 }
 
-void walking(POINT* c, POINT T[], int nbPoints){
-	//TODO deplace c vers cc(T)
-
+int not_in(POINT tab[], POINT element, int nbPoints){
+	int i;
+	for(i=0;i<nbPoints;i++)
+		if(tab[i].x == element.x && tab[i].y == element.y)
+			return 0;
+	return 1;
 }
-
-
 CERCLE algorithme_fischer(POINT S[], int nbPoints){
+
+	polygon enveloppe_convexe;
+	POINT maxP; //le point le plus proche du cercle
+	int i,j;
+	double max=0;
 
 	sort_and_remove_duplicates(S,&nbPoints);
 
-	POINT c = S[0]; 
-
+	POINT c = S[0];
 	POINT p; // le POINT le plus eloigne de c
-	double max=0;
+	
 	for(int i=1; i<nbPoints;i++)
     {
     	POINT q = S[i];
@@ -338,11 +363,44 @@ CERCLE algorithme_fischer(POINT S[], int nbPoints){
 	POINT T[3]={0};
 	T[0] = p;
 
+	POINT S_moins_T[nbPoints-2];
+
 	while(!appartenance_conv(c,T,3)){
+		printf("le point c est: %f %f\n", c.x,c.y);
+		printf("dans T on a:\n");
+		for(i=0;i<3;i++)
+			printf("%f %f\n", T[i].x, T[i].y);
 		if(appartenance_aff(c,T,3)){
 			dropping(c,T,3);
+
 		}
-		walking(&c, T,3);
+
+		j=0;
+		init_tab(S_moins_T, nbPoints-2);
+		printf("points de S moins T:\n");
+		for(i=0; i<nbPoints; i++){
+			if(not_in(T,S[i],3) && S[i].x != c.x && S[i].y != c.y){
+				S_moins_T[j]=S[i];
+				printf("%f %f \n", S_moins_T[j].x, S_moins_T[j].y);
+				j++;
+			}
+
+		}
+
+		convex_hull(S_moins_T, nbPoints-3, &enveloppe_convexe);
+		max=0;
+		for(i=0;i<enveloppe_convexe.n;i++){
+			if(distance(c,enveloppe_convexe.p[i])>max){
+				max = distance(c,enveloppe_convexe.p[i]);
+				maxP = enveloppe_convexe.p[i];
+			}
+		}
+
+		i=0;
+		while(T[i].x == 0 && T[i].y == 0)
+			i++;
+		T[i] = maxP;
+		
 	}
 
 	CERCLE resultat;

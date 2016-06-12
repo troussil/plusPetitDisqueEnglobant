@@ -6,7 +6,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+void print_point(POINT* p);
 
+void print_polygon(polygon *p);
+   
 double distance(POINT a, POINT b);
 
 double signed_triangle_area(POINT a, POINT b, POINT c);
