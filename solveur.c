@@ -2,8 +2,8 @@
 #include <stdlib.h> 
 #include <string.h>
 #include "structures.h"
-#include "fonctions_resolution_brute.h"
-#include "resolution_brute.h"
+#include "improved_pruning.h"
+
 
 #define TAILLEPOINT 3 //Diametre d'un point
 
@@ -69,15 +69,16 @@ void ecritureSVG(POINT tab[], FILE* file , int N){
   for(i=0; i<N; i++){
     dessinerPoint(file,(tab[i]).x, tab[i].y, TAILLEPOINT);
   }
-  //On calcul la solution brute puis on la dessine dans le SVG
-  CERCLE CercleSolution=brute(tab , N);
+  
+
+  CERCLE CercleSolution=ApxMEB1(tab , N);
   /*CERCLE CercleSolution;
   CercleSolution.x = 250;
   CercleSolution.y=250;
   CercleSolution.d = 250;*/
   dessinerCercle(file, CercleSolution.x, CercleSolution.y, CercleSolution.d);
 
-  printf(" \n*** CERCLE SOLUTION PAR METHODE BRUTE: posX = %d , posY = %d , diamètre = %lf  ***\n", CercleSolution.x, CercleSolution.y, CercleSolution.d );
+  printf(" \n*** CERCLE SOLUTION PAR METHODE IMPROVED PRUNING: posX = %d , posY = %d , diamètre = %lf  ***\n", CercleSolution.x, CercleSolution.y, CercleSolution.d );
 
 
 }
