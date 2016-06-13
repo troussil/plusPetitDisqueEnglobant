@@ -70,14 +70,17 @@ Problème : complexité en nlog(n)....
 A voir plus tard
 */
 
-void quickSortDoublet(DOUBLET tableau[], int debut, int fin){
+double quickSortDoublet(DOUBLET tableau[], int debut, int fin){
 
     int gauche = debut-1;
     int droite = fin+1;
 	const double pivot = tableau[debut].mediatrice;
 
-    if(debut >= fin)
-        return;
+    if(debut >= fin){
+        return mediane(tableau,fin+1);
+
+    }
+        
 
     while(1){
 
@@ -95,15 +98,34 @@ void quickSortDoublet(DOUBLET tableau[], int debut, int fin){
 
 void quickSortPoint(POINT tableau[], int debut, int fin){
 
+    int  i;
     int gauche = debut-1;
     int droite = fin+1;
     const double pivot = tableau[debut].x;
 
-    if(debut >= fin)
+    if(debut >= fin){
+        for(i=0;i<fin+1;i++){
+            if(tableau[i].x==tableau[i+1].x){
+                if(tableau[i].y>tableau[i+1].y)
+                echangerPoint(tableau,i,i+1);
+            }
+        }
+
         return;
+    }
+        
 
     while(1){
-
+        //problème au niveau du tri à revoir
+        //trié en fonction du y voir open classroom quickSort
+        // if(tableau[droite].x==tableau[gauche].x){
+        //     if(tableau[droite].y>=tableau[gauche].y){
+        //         droite -=1;
+        //     }
+        //     else{
+        //         gauche +=1;
+        //     }
+        // }
         do droite--; while(tableau[droite].x > pivot);
         do gauche++; while(tableau[gauche].x < pivot);
 

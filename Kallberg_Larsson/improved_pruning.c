@@ -1,7 +1,7 @@
 
 #include "structures.h"
 #include "improved_pruning.h"
-
+#include "updateball_methods.h"
 
 /**
  * Algorithme utilisant les théorèmes 2 et 4
@@ -47,8 +47,13 @@ CERCLE ApxMEB1 ( POINT P[], int nbPoints, double apx){
 
 
 		/***** UPDATEBALL ****
-		TODO: différentes possibilités avec 2 algos de Yildirim et 1 de Larsson & Källberg
-		*********************/
+		Différentes possibilités avec 2 algos de Yildirim et 1 de Larsson & Källberg et 1 de Badoiu et Clarkson */
+
+		Y = methodBadoiuClarkson( c , r , q );
+		c = Y.center;
+		r = Y.radius;
+
+		/*********************/
 
 		q = farthestPoint( P , nbPts , c );
 		R = sqrt( ( (c.x - q.x)*(c.x - q.x) ) + ( (c.y - q.y)*(c.y - q.y) ) );
@@ -57,7 +62,7 @@ CERCLE ApxMEB1 ( POINT P[], int nbPoints, double apx){
 
 	sol.x = c.x;
 	sol.y = c.y;
-	sol.d = R;
+	sol.d = 2*R;
 	return sol;
 
 }
@@ -105,8 +110,13 @@ CERCLE ApxMEB2 ( POINT P[], int nbPoints, double apx){
 		RR = R;
 
 		/***** UPDATEBALL ****
-		TODO: différentes possibilités avec 2 algos de Yildirim et 1 de Larsson & Källberg
-		*********************/
+		Différentes possibilités avec 2 algos de Yildirim et 1 de Larsson & Källberg et 1 de Badoiu et Clarkson */
+
+		Y = methodBadoiuClarkson( c , r , q );
+		c = Y.center;
+		r = Y.radius;
+
+		/*********************/
 
 		gap = sqrt( ( (c.x - cc.x)*(c.x - cc.x) ) + ( (c.y - cc.y)*(c.y - cc.y) ) );
 		delta = ( gap + sqrt(2*(RR*RR - r*r) - gap*gap) )/2;
@@ -124,7 +134,7 @@ CERCLE ApxMEB2 ( POINT P[], int nbPoints, double apx){
 
 	sol.x = c.x;
 	sol.y = c.y;
-	sol.d = R;
+	sol.d = 2*R;
 	return sol;
 
 
@@ -144,13 +154,16 @@ POINT farthestPoint (POINT P[] , int nbPoints , POINT c){
 
 	POINT fp;
 	double dist = 0.0;
+	double distTemp;
 	
 	int i;
 	for (i = 0; i < nbPoints; i++)
 	{
-		if ( sqrt( ( (c.x - P[i].x)*(c.x - P[i].x) ) + ( (c.y - P[i].y)*(c.y - P[i].y) ) ) > dist){ //formule de la distance entre 2 points ds le plan
+		distTemp = sqrt( ( (c.x - P[i].x)*(c.x - P[i].x) ) + ( (c.y - P[i].y)*(c.y - P[i].y) ) ); //formule de la distance entre 2 points ds le plan
+		if (  distTemp > dist){ 
 			fp.x = P[i].x;
 			fp.y = P[i].y;
+			dist = distTemp;
 		}
 	}
 
