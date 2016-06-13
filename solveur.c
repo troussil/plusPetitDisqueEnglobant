@@ -159,6 +159,6 @@ int main(){
   GenerationFichierSVG(tab , nbPoints);
   printf("*\nFichier SVG généré !  \n*\n");
 
-  printf("temps d'éxécution: %d sec\n", time(NULL)-debut);
+  printf("temps d'éxécution: %d sec\n", (time(NULL)-debut));
   return 0;
 }

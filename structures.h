@@ -1,3 +1,4 @@
+#include <math.h>
 #ifndef structures_h
 #define structures_h
 
@@ -6,8 +7,8 @@
 typedef struct model_point{
 	coo x;
 	coo y;
+        coo norme;
 } POINT;
-
 
 typedef struct model_cercle{
         coo x;
@@ -17,3 +18,4 @@ typedef struct model_cercle{
 
 
 #endif
+
