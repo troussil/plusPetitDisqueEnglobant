@@ -88,27 +88,6 @@ DOUBLET* tableauValeurCritique(POINT tab[],int longueur,int ordonne){
 			j+=1;
 		}
 		return critique;
-
-	//}
-	// else{
-	// 	longueur+=1;
-	// 	DOUBLET *critique=malloc((longueur/2)*sizeof(double));
-
-	// 	for(i=0;i<longueur-1;i+=2){
-	// 		valeur=(auCarre(tab[i+1].x)-auCarre(tab[i].x)+auCarre(tab[i+1].y)-auCarre(tab[i].y))/(epsilon+2*((tab[i+1].x)-(tab[i].x)));
-	// 		critique[j].mediatrice=valeur;
-	// 		critique[j].a=tab[i];
-	// 		critique[j].b=tab[i+1];
-	// 		j+=1;
-	// }
-	// 	critique[longueur].mediatrice=critique[0].mediatrice;
-	// 	critique[longueur].a=critique[0].a;
-	// 	critique[longueur].b=critique[0].b;
-	// 	return critique;
-	// }
-	
-	
-
 }
 
 /*
@@ -158,7 +137,7 @@ on regarde les xcritique > ou < à xm
 on peut enlever 1/2 de ces points
 */
 
-int pruning(POINT point[],int longueur,int ordonne){
+int pruningContraint(POINT point[],int longueur,int ordonne){
 	int i,j,compteur,solution,taille,impair;
 	double med;
 	compteur=0;
@@ -298,5 +277,22 @@ DOUBLET* calculAngleCritique(POINT tab[],int longueur){
 	}
 	return critique;
 
+}
+
+
+POINT* intersectionLigne(DOUBLET tab[],int longueur){
+	int i;
+	double angleMedian;
+	int taille=partiEntiere(longueur/2);
+	POINT *intersection=malloc(taille*sizeof(POINT));
+	angleMedian=quickSortDoubletAngle(tab,0,longueur-1);
+	calculDroite(tab,longueur);
+	for(i=0;i<taille;i++){
+		if(estParallele(tab[i],tab[longueur-i-1])!=1){
+			intersection[i]=*calculIntersection(tab[i],tab[longueur-i-1]);
+			printf("point %d | doublet %d et %d | x=%lf | y=%lf\n",i,i,longueur-i-1,intersection[i].x,intersection[i].y );
+		}
+	}
+	printf("taille tableau: %d\n",i);
 }
 

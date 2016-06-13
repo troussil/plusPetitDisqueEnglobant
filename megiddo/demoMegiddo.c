@@ -35,7 +35,7 @@ int main(int argc, char* argv []){
 	//POINT resultat[9]=pruning(tab,NB_POINTS);
 	//new_point=pruning(tab,40);
 	while(new_point>8){
-		new_point=pruning(tab,new_point,0);
+		new_point=pruningContraint(tab,new_point,0);
 		printf("après élagage %d\n",compteur);
 		compteur+=1;
 		afficherTableauPoint(tab,new_point);

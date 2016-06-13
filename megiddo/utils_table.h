@@ -8,6 +8,7 @@
 
 void afficherTableauPoint(POINT tab[],int taille);
 void afficherTableauDoublet(DOUBLET tab[],int taille);
+void afficherTableauDroite(DOUBLET tab[],int taille);
 void echangerDoublet(DOUBLET tableau[], int a, int b);
 void echangerPoint(POINT tableau[], int a, int b);
 double quickSortDoubletMediatrice(DOUBLET tableau[], int debut, int fin);

@@ -18,5 +18,7 @@ int triAbscisse(POINT tab[],int taille);
 DOUBLET* tableauValeurCritique(POINT tab[],int longueur,int ordonne);
 DOUBLET* calculAngleCritique(POINT tab[],int longueur);
 int calculPositionSolution(POINT tab[],int longueur,double mediane);
-int pruning(POINT point[],int longueur,int ordonne);
+int pruningContraint(POINT point[],int longueur,int ordonne);
+POINT* intersectionLigne(DOUBLET tab[],int longueur);
+
 #endif

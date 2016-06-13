@@ -31,3 +31,31 @@ POINT* distanceInf(POINT xm, POINT *a, POINT *b){
 int partiEntiere(int a){
 	return (int)a;
 }
+void calculDroite(DOUBLET tab[],int longueur){
+	int i;
+	double coeffDirecteur;
+	double ordonneOrigine;
+	for (i = 0; i < longueur; i++){
+		ordonneOrigine=((((tab[i].a.y)*(tab[i].b.x))-((tab[i].b.y)*(tab[i].a.x)))/((tab[i].b.x)-(tab[i].a.x)));
+		coeffDirecteur=((tab[i].a.y)-ordonneOrigine)/(tab[i].a.x);
+		tab[i].droite.p=ordonneOrigine;
+		tab[i].droite.m=coeffDirecteur;
+	}
+}
+int estParallele(DOUBLET d1, DOUBLET d2){
+	if((d1.droite.m)==(d2.droite.m)){
+		return 1;
+	}
+	else{
+		return 2;
+	}
+}
+POINT* calculIntersection(DOUBLET d1, DOUBLET d2){
+	double abscisse;
+	double ordonne;
+	POINT *intersection = malloc(sizeof(POINT));
+	abscisse=((d2.droite.p)-(d1.droite.p))/((d1.droite.m)-(d2.droite.m));
+	ordonne=((d1.droite.m)*abscisse)+(d1.droite.p);
+	intersection->x= abscisse;
+	intersection->y=ordonne;
+}

@@ -29,6 +29,16 @@ void afficherTableauDoublet(DOUBLET tab[],int taille){
 	}
 }
 
+void afficherTableauDroite(DOUBLET tab[],int taille){
+    //int taille=sizeof(tab)/sizeof(POINT);
+    int i;
+    for ( i = 0; i <taille; i++)
+    {
+        printf("doublet: %d | xi= %lf | yi= %lf | xj= %lf | yj= %lf | y=%lfx + %lf",i,tab[i].a.x,tab[i].a.y,tab[i].b.x,tab[i].b.y ,tab[i].droite.m,tab[i].droite.p);
+        printf("|\n");
+    }
+}
+
 /*Echange 2 valeurs d'un tableau
 utile pour le quickSort
 */
