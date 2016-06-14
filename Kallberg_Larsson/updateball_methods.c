@@ -16,8 +16,9 @@ POINT_AND_R methodKallbergLarsson (POINT center , double radius , POINT farthest
 
 	POINT_AND_R Y;
 	POINT c;
-	double h, r;
-	int i = 0;
+	//double h;
+	double r;
+	//int i = 0;
 
 	r = radius;
 	c = center;
