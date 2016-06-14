@@ -1,61 +1,68 @@
 #include <stdio.h>
-
-
+#include <stdlib.h>
+#include <time.h>
 #include "structures.h"
 #include "fonctions_fischer.h"
 
 
-int main()
-{
+int rand_a_b (int a, int b){
+    int res = rand()%(b-a )+a; 
+    return res;
+}
 
-    CERCLE vraiC; //Solution universelle pour les 3 tests
-    vraiC.x = 10.0; vraiC.y=10.0; vraiC.d=10.0; 
-    int nbPoints;
-
-    // Test 1 : Points cocirculaires
-
-    
-    printf("\n** Test 1 : Points cocirculaires **\n\n");
-
-    POINT tab1[] = {{10.0,15.0},{10.0,5.0},{5.0,10.0},{15.0,10.0}}; 
-    nbPoints = sizeof(tab1) / sizeof (tab1[0]);
-
-
-    CERCLE c1 = algorithme_fischer(tab1,nbPoints);
-    printf("Cercle solution: Coordonnées x=%f, y=%f, diamètre=%lf.\n",c1.x,c1.y,c1.d);
-    printf("Le résultat devrait être x=10, y=10, d=10\n");
-
-    // Test 2 : Points alignés
-
-    POINT tab2[] = {{10.0,15.0},{10.0,14.0},{10.0,5.0},{10.0,7.0}}; 
-    printf("\n** Test 2 : Points alignés **\n\n");
-    nbPoints = sizeof(tab2) / sizeof (tab2[0]);
+int main( int argc, char* argv []){
+    int N, xmin , xmax, ymin, ymax;
 
     
-    CERCLE c2 = algorithme_fischer(tab2,nbPoints);
-    printf("Cercle solution: Coordonnées x=%f, y=%f, diamètre=%lf.\n",c2.x,c2.y,c2.d);
-    printf("Le résultat devrait être x=10, y=10, d=10\n");
 
-    // Test 3 : Points confondus
-
-    POINT tab3[] = {{10.0,10.0},{10.0,10.0},{10.0,10.0},{10.0,15.0},{10.0,5.0}};    
-    printf("\n** Test 3 : Points confondus **\n\n");
-
-    nbPoints = sizeof(tab3) / sizeof (tab3[0]);
-
-    CERCLE c3 = algorithme_fischer(tab3,nbPoints);
-    printf("Cercle solution: Coordonnées x=%f, y=%f, diamètre=%lf.\n",c3.x,c3.y,c3.d);
-    printf("Le résultat devrait être x=10, y=10, d=10\n");
-
-
-
-    // Résultat
-
-    if ( estEgalCercle(c1, vraiC) && estEgalCercle(c2, vraiC) && estEgalCercle(c3, vraiC) ){
-       printf(" \n\n     => Résultat CONFORME! \n"); 
-    } else {
-       printf(" \n\n     => Résultat NON CONFORME! \n");
+    if (argc!=6 || atoi(argv[1])>500000){ //Plus de 600 000 points provoquent une segmentation fault
+        printf("usage: %s <nbDePoints (inf. à 500000)> <xmin> <xmax> <ymin> <ymax> \n\n", argv[0]); 
+        return 0;
     }
+
+    N=atoi(argv[1]);
+    
+    POINT tab[N];
+
+
+    xmin=atoi(argv[2]);   
+    xmax=atoi(argv[3]);
+    ymin=atoi(argv[4]);
+    ymax=atoi(argv[5]);
+
+
+
+    int i=0;
+
+    for (i=0;i<N;i++){
+        tab[i].x =rand_a_b(xmin,xmax);
+        tab[i].y =rand_a_b(ymin,ymax);
+    }
+
+    
+
+    clock_t now;
+    now=0;
+
+
+    printf("\n*** Algorithme brut *** \n\n");
+
+    CERCLE c1 = brute(tab , N);
+
+    printf("Time ellapsed: %lf\n", (double) (clock() - now) / CLOCKS_PER_SEC);
+    printf("Centre ( %lf , %lf ) diamètre %lf\n", c1.x , c1.y , c1.d );
+
+    
+
+    printf("*** Algorithme Fischer *** \n\n");   
+
+    now=0;
+    CERCLE c2 = algorithme_fischer(tab , N);
+
+    printf("Time ellapsed: %lf\n", (double) (clock() - now) / CLOCKS_PER_SEC);
+    printf("Centre ( %lf , %lf ) diamètre %lf\n\n", c2.x , c2.y , c2.d );
+
+    printf("contientTousPoints donne: %d \n", contientTousPoint( c2 , tab , N ));
 
     return 0;
 }

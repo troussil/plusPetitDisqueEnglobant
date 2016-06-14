@@ -1,10 +1,7 @@
 #ifndef FONCTIONS_FISCHER_H_
 #define FONCTIONS_FISCHER_H_
 
-#include "structures.h"
-#include <math.h>
-#include <stdlib.h>
-#include <stdio.h>
+
 
 /****************************** fonctions print **************************************/
 
@@ -27,7 +24,6 @@ int collinear(POINT a, POINT b, POINT c);
 
 int tableau_collinear(POINT T[], int nbPoints);
 
-int leftlower(POINT *p1, POINT *p2);
 
 int estEgalCercle( CERCLE c1, CERCLE c2 );
 
@@ -61,8 +57,23 @@ int not_in(POINT tab[], POINT element, int nbPoints);
 
 /**************************** fonctions specifiques a l'algo *************************/
 
-void dropping(POINT T[], int nbPoints);
+int dropping(POINT c,POINT T[], int nbPoints);
 
 CERCLE algorithme_fischer(POINT S[], int nbPoints);
+
+
+/**************************** fonctions resolution brute *************************/
+
+//Renvoie 1 si tous les point du tableau tab sont contenus dans le cercle c
+
+int contientTousPoint( CERCLE c , POINT tab[] , int nbPoints );
+
+int contientPoint( CERCLE c , POINT p);
+
+/**
+ * @param tab Tableau contenant les points
+ * @return cFinal CERCLE solution finale
+**/
+CERCLE brute( POINT tab[] , int nbPoints );
 
 #endif

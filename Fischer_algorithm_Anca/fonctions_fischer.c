@@ -4,6 +4,7 @@
 #include <math.h>
 
 #include "structures.h"
+#include "fonctions_fischer.h"
 
 POINT first_point;		/* first hull POINT pour le calcul de l'enveloppe convexe*/
 
@@ -141,9 +142,12 @@ int coefficients_negatifs(POINT p,POINT T[], int nbPoints){
 	for(i=0; i<nbPoints-1;i++){
 		for(int j=i+1;j<nbPoints;j++){
 			if(calculer_determinant2(T[i],T[j])!=0){
+
 				alpha=calculer_determinant2(p,T[j])/calculer_determinant2(T[i],T[j]);
-				if(alpha<0) 
+
+				if(alpha<0){
 					return i;
+				}
 				else{
 					betha=calculer_determinant2(T[i],p)/calculer_determinant2(T[i],T[j]);
 					if(betha<0) 
@@ -352,17 +356,19 @@ int not_in(POINT tab[], POINT element, int nbPoints){
 /*
  *on efface du tableau T un element qui a des coeffs negatifs dans la decomposition c = coeff[i]*T[i]
  */
-void dropping(POINT c,POINT T[], int nbPoints){
+int dropping(POINT c,POINT T[], int nbPoints){
+
 	int i;
 	int index = coefficients_negatifs(c, T, nbPoints);
 	if(index == -1){
 		printf("erreur: pas des coeffs negatifs pour le dropping");
-		exit(-1);
+		return 0;
 	}
 	for(i=index;i<nbPoints-1;i++)
 		T[i]=T[i+1];
 	T[nbPoints-1].x = 0;
 	T[nbPoints-1].y = 0;
+	return 1;
 }
 
 
@@ -411,9 +417,18 @@ CERCLE algorithme_fischer(POINT S[], int nbPoints){
 			T[0] = p; //au debut, T contient p seulement
 			nbPointsT = 1;
 
-			
+			int compteur = 0;
 
 			while(!appartenance_conv(c,T,nbPointsT)){
+
+
+				compteur++;
+				//printf("\n*** iteration %d ***\n\n", compteur);
+				//printf("c.x = %f c.y = %f\n",c.x,c.y);
+				//printf("Dans T on a %d points : \n", nbPointsT);
+				/*for(i=0;i<nbPointsT;i++){
+					printf("%f %f\n", T[i].x, T[i].y);
+				}*/
 
 				
 
@@ -422,21 +437,24 @@ CERCLE algorithme_fischer(POINT S[], int nbPoints){
 				}*/
 
 				//on calcule le nombre d'elements non nuls de T
-				i=0;
+				/*i=0;
 				while(T[i].x != 0 || T[i].y != 0)
 					i++;
 				if(i>=3)
 					nbPointsT = 3;
 				else
 					nbPointsT = i;
-
+				*/
 				
 
 				
 				if(nbPointsT>=3)
 				{
 					//on a 3 points ou plus dans T, faut enlever un par le dropping
-					dropping(c,T,3);
+					
+					if(dropping(c,T,3))
+						//printf("dropping reusi qd plus de 3 points");
+					nbPointsT--;
 				}
 				else if(nbPointsT == 1)
 				{
@@ -458,8 +476,16 @@ CERCLE algorithme_fischer(POINT S[], int nbPoints){
 				    		
 				    	}
 				    }
-				    
+
+				    //printf("on rajoute a T le point %f %f\n", p.x, p.y);
+				    nbPointsT++;
 				    T[1] = p;
+
+
+
+				    //TODO actualiser c par rapport au point qu'on vient de rajouter
+
+
 
 
 				}
@@ -471,10 +497,12 @@ CERCLE algorithme_fischer(POINT S[], int nbPoints){
 					j=0; // compteur pour S2
 					det = calculer_determinant3(T[0],T[1],c);
 					init_tab(S2, nbPoints-1);
-					if(not_in(T,S[i],3)){
-						if(det * calculer_determinant3(T[0],T[1],S[i]) >= 0 && !equals_zero(S[i])){
-							S2[j] = S[i];
-							j++;
+					for(i=0;i<nbPoints;i++){
+						if(not_in(T,S[i],3)){
+							if(det * calculer_determinant3(T[0],T[1],S[i]) >= 0 && !equals_zero(S[i])){
+								S2[j] = S[i];
+								j++;
+							}
 						}
 					}
 					nbPointsS2 = j;
@@ -499,13 +527,22 @@ CERCLE algorithme_fischer(POINT S[], int nbPoints){
 								T[2] = S2[i]; //le point sur le bord du cercle est rajoute a T
 							}
 						}
+						nbPointsT++;
 
 						//on reactualise le centre c
 						c.x = temp.x;
 						c.y = temp.y;
 					}
-					else 
-						dropping(c,T,3);
+					else{ 
+						c.x = (T[0].x + T[1].x)/2;
+						c.y = (T[0].y + T[1].y)/2;
+
+						//TODO 
+
+
+						//if(dropping(c,T,3))
+						//	printf("dropping reusi dans le else");
+					}
 
 				}
 
@@ -520,4 +557,81 @@ CERCLE algorithme_fischer(POINT S[], int nbPoints){
 			
 	}
 	return resultat;
+}
+
+
+
+
+/**************************** fonctions resolution brute *************************/
+
+//Renvoie 1 si tous les point du tableau tab sont contenus dans le cercle c
+
+int contientTousPoint( CERCLE c , POINT tab[] , int nbPoints ){
+	
+	int i = 0;	
+	int ok = 1;
+	
+	while(i<nbPoints && ok) {
+	  if (!contientPoint( c, tab[i] ))
+	    ok = 0;
+	  i++;
+	}
+	
+	return ok;
+}
+
+int contientPoint( CERCLE c , POINT p){
+
+	if(c.x + c.d/2 < p.x || c.x - c.d/2 > p.x || c.y + c.d/2 < p.y || c.y - c.d/2 > p.y)
+		return 0;
+	else
+		return 1;
+
+}
+
+/**
+ * @param tab Tableau contenant les points
+ * @return cFinal CERCLE solution finale
+**/
+CERCLE brute( POINT tab[] , int nbPoints ){
+
+	CERCLE cFinal , cTemp;
+	cFinal.d = 100000000000; cFinal.x = 0; cFinal.y=0;	
+
+	POINT p1 , p2 , p3;
+	
+	int i , j , k;
+
+	/* TESTS AVEC DUO DE POINTS */
+
+	for(i=0 ; i<nbPoints ; i++){
+		for(j=i+1 ; j<nbPoints ; j++){
+			p1 = tab[i];
+			p2 = tab[j];
+			cTemp = cerclePassantParDeuxPoints(p1 , p2);
+			if ( contientTousPoint(cTemp , tab , nbPoints) && cTemp.d < cFinal.d){
+				cFinal = cTemp;
+			}
+		}
+	}
+
+	/* TESTS AVEC TRIO DE POINTS */   
+
+	for(i=0 ; i<nbPoints ; i++){
+                for(j=0 ; j<nbPoints ; j++){
+                        for(k=0 ; k<nbPoints ; k++){
+				if(i!=j && i!=k && j!=k){
+                                	p1 = tab[i];
+                                	p2 = tab[j];
+					p3 = tab[k];
+                        	        cTemp = cerclePassantParTroisPoints(p1 , p2 , p3);
+                              	  	if ( contientTousPoint(cTemp , tab , nbPoints) && cTemp.d < cFinal.d){
+                                	        cFinal = cTemp;
+                                	}
+				}
+                        }
+                }
+        }   
+
+	return cFinal;
 }
