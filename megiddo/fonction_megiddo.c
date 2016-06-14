@@ -94,7 +94,7 @@ DOUBLET* tableauValeurCritique(POINT tab[],int longueur,int ordonne){
 Calcul la position de x* la solution par rapport à xm
 */
 
-int calculPositionSolution(POINT tab[],int longueur,double mediane){
+int calculPositionSolutionX(POINT tab[],int longueur,double mediane){
 	int i;
 	double max[2];
 	POINT *xm=malloc(sizeof(POINT));
@@ -131,6 +131,43 @@ int calculPositionSolution(POINT tab[],int longueur,double mediane){
 		return EGAL;
 	}
 
+}
+
+
+POINT* calculDemiPlanY(POINT tab[],int longueur,double ordonne){
+	int i;
+	int fin=0;
+	int compteur=1;
+	int nbpoints=2;
+	POINT *enveloppeConvexe=malloc(longueur*sizeof(POINT));
+	for(i=0;i<longueur;i++){//on centre les valeurs sur yc
+		tab[i].y=tab[i].y-ordonne;
+	}
+
+	quickSortPointY(tab,0,longueur-1);
+	enveloppeConvexe[0]=tab[0];
+	for(i=1;i<longueur;i++){
+		if(tab[i].y==tab[0].y){
+			enveloppeConvexe[i]=tab[i];
+			nbpoints+=1;
+		}
+		else{
+			break;
+		}
+	}
+	for(i=longueur-2;i>0;i--){
+		if(tab[i].y==tab[longueur-1].y){
+			enveloppeConvexe[nbpoints]=tab[i];
+			nbpoints+=1;
+		}
+		else{
+			break;
+		}
+	enveloppeConvexe[nbpoints+1]=tab[longueur-1];
+	enveloppeConvexe[0]=tab[0];
+	}
+
+return enveloppeConvexe;
 }
 /*
 on regarde les xcritique > ou < à xm
@@ -181,7 +218,7 @@ int pruningContraint(POINT point[],int longueur,int ordonne){
 	=1 xm<x*
 	=0 xm>x*
 	 */
-	solution=calculPositionSolution(point,taille,xm->x);
+	solution=calculPositionSolutionX(point,taille,xm->x);
 	if(solution==1){
 		printf("xm<x*\n");
 	}
@@ -214,9 +251,9 @@ int pruningContraint(POINT point[],int longueur,int ordonne){
 	}
 	printf("count= %d\n",count );
 	printf("valeurs à éliminer:\n");
-	quickSortPoint(elim,0,count-1);
+	quickSortPointX(elim,0,count-1);
 	afficherTableauPoint(elim,count);
-	quickSortPoint(point,0,taille-1);
+	quickSortPointX(point,0,taille-1);
 	if(impair==1){
 		taille+=1;
 	}

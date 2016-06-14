@@ -6,7 +6,7 @@
 
 int main(int argc, char* argv []){
   
-	POINT tab[NB_POINTS] = {{2,1},{3,-3},{4,0},{3,4},{7,-1},{5,-2},{8,2},{3,5},{9,-4},{10,-1},{12,3},{11,3}};	
+	POINT tab[NB_POINTS] = {{2,1},{3,-10},{4,-10},{3,4},{7,-1},{5,-2},{8,2},{3,12},{9,12},{10,-1},{12,1},{11,3}};	
 	//afficherTableau(tab);
 	// int resultat;
 	//int new_point=NB_POINTS;
@@ -25,12 +25,19 @@ int main(int argc, char* argv []){
 	// printf("---------------------\n");
 	// DOUBLET *d1=malloc(sizeof(DOUBLET));
 	// DOUBLET *d2=malloc(sizeof(DOUBLET));
-	DOUBLET *critique=malloc((NB_POINTS)*sizeof(DOUBLET));
-	POINT *intersection=malloc((NB_POINTS/4)*sizeof(POINT));
-	printf("intersections: \n");
-	critique=calculAngleCritique(tab,NB_POINTS);
-	intersection=intersectionLigne(critique,6);
-	afficherTableauPoint(intersection,3);
+	// DOUBLET *critique=malloc((NB_POINTS)*sizeof(DOUBLET));
+	// POINT *intersection=malloc((NB_POINTS/4)*sizeof(POINT));
+	// printf("intersections: \n");
+	// critique=calculAngleCritique(tab,NB_POINTS);
+	// intersection=intersectionLigne(critique,6);
+	// //afficherTableauPoint(intersection,3);
+	// double mediane=triY(tab,0,11);
+	// printf("trie selon y\n");
+	// afficherTableauPoint(tab,12);
+	// printf("mediane: %lf\n",mediane	 );
+	POINT *convexe=malloc(NB_POINTS*sizeof(POINT));
+	convexe=calculDemiPlanY(tab,NB_POINTS,0);
+	afficherTableauPoint(convexe,NB_POINTS);
 
 	// d1->a=tab[0];
 	// d1->b=tab[1];

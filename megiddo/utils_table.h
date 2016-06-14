@@ -13,11 +13,14 @@ void echangerDoublet(DOUBLET tableau[], int a, int b);
 void echangerPoint(POINT tableau[], int a, int b);
 void quickSortDoubletMediatrice(DOUBLET tableau[], int debut, int fin);
 void quickSortDoubletAngle(DOUBLET tableau[], int debut, int fin);
-void quickSortPoint(POINT tableau[], int debut, int fin);
+void quickSortPointX(POINT tableau[], int debut, int fin);
+void quickSortPointY(POINT tableau[], int debut, int fin);
 double medianeMediatrice(DOUBLET tableau[],int longueur);
 double medianeAngle(DOUBLET tableau[],int longueur);
+double medianePoint(POINT tableau[],int longueur);
 double triAngle(DOUBLET tableau[], int debut, int fin);
 double triMediatrice(DOUBLET tableau[], int debut, int fin);
+double triY(POINT tableau[], int debut, int fin);
 
 
 

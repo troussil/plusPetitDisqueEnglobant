@@ -143,8 +143,45 @@ void quickSortDoubletAngle(DOUBLET tableau[], int debut, int fin){
     quickSortDoubletAngle(tableau, droite+1, fin);
 }
 
+double triY(POINT tableau[], int debut, int fin){
+    quickSortPointY(tableau,debut,fin);
+    return medianePoint(tableau,fin+1);
+}
 
-void quickSortPoint(POINT tableau[], int debut, int fin){
+void quickSortPointY(POINT tableau[], int debut, int fin){
+
+    int  i;
+    int gauche = debut-1;
+    int droite = fin+1;
+    const double pivot = tableau[debut].y;
+
+    if(debut >= fin){
+        for(i=0;i<fin+1;i++){
+            if(tableau[i].y==tableau[i+1].y){
+                if(tableau[i].x>tableau[i+1].x)
+                echangerPoint(tableau,i,i+1);
+            }
+        }
+
+        return;
+    }
+        
+
+    while(1){
+
+        do droite--; while(tableau[droite].y > pivot);
+        do gauche++; while(tableau[gauche].y < pivot);
+
+        if(gauche < droite)
+            echangerPoint(tableau, gauche, droite);
+        else break;
+    }
+    quickSortPointY(tableau, debut, droite);
+    quickSortPointY(tableau, droite+1, fin);
+}
+
+
+void quickSortPointX(POINT tableau[], int debut, int fin){
 
     int  i;
     int gauche = debut-1;
@@ -172,8 +209,8 @@ void quickSortPoint(POINT tableau[], int debut, int fin){
             echangerPoint(tableau, gauche, droite);
         else break;
     }
-    quickSortPoint(tableau, debut, droite);
-    quickSortPoint(tableau, droite+1, fin);
+    quickSortPointX(tableau, debut, droite);
+    quickSortPointX(tableau, droite+1, fin);
 }
 
 /*Calcul de la valeur médiane d'un tableau*/
@@ -200,5 +237,18 @@ double medianeAngle(DOUBLET tableau[],int longueur){
         valeur=((tableau[((longueur+1)/2)-1].angle));
         return valeur;
     }
+}
+
+double medianePoint(POINT tableau[],int longueur){
+    double valeur;
+    if (longueur%2 == 0){
+        valeur=(((tableau[(longueur/2)-1].y)+(tableau[(longueur/2)].y))/2);
+        return valeur;
+    }
+    else{
+        valeur=((tableau[((longueur+1)/2)-1].y));
+        return valeur;
+    }
+
 }
 
