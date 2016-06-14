@@ -53,10 +53,10 @@ int main()
     print_polygon(&Q);
     
 
-    //printf("Nombre de points: %d\n",nbPoints);
-    /*CERCLE c2 = algorithme_fischer(tab2,nbPoints);
+    
+    CERCLE c2 = algorithme_fischer(tab2,nbPoints);
     printf("Cercle solution: Coordonnées x=%f, y=%f, diamètre=%lf.\n",c2.x,c2.y,c2.d);
-    printf("Le résultat devrait être x=10, y=10, d=10\n");*/
+    printf("Le résultat devrait être x=10, y=10, d=10\n");
 
     // Test 3 : Points confondus
 
@@ -66,24 +66,23 @@ int main()
     for(i=0;i<nbPoints;i++)
         printf("%f %f; ", tab3[i].x, tab3[i].y);
     nbPoints = sizeof(tab3) / sizeof (tab3[0]);
-    printf("\nNombre de points: %d\n",nbPoints);
     sort_and_remove_duplicates(tab3,&nbPoints);
     printf("Apres le tri: %d points et les elements restants sont: ",nbPoints);
     for(i=0;i<nbPoints;i++)
         printf("%f %f; ", tab3[i].x, tab3[i].y);
-    /*CERCLE c3 = algorithme_fischer(tab3,nbPoints);
+    CERCLE c3 = algorithme_fischer(tab3,nbPoints);
     printf("Cercle solution: Coordonnées x=%f, y=%f, diamètre=%lf.\n",c3.x,c3.y,c3.d);
-    printf("Le résultat devrait être x=10, y=10, d=10\n");*/
+    printf("Le résultat devrait être x=10, y=10, d=10\n");
 
 
 
     // Résultat
 
-    /*if ( estEgal(c1, vraiC) && estEgal(c2, vraiC) && estEgal(c3, vraiC) ){
+    if ( estEgalCercle(c1, vraiC) && estEgalCercle(c2, vraiC) && estEgalCercle(c3, vraiC) ){
        printf(" \n\n     => Résultat CONFORME! \n"); 
     } else {
        printf(" \n\n     => Résultat NON CONFORME! \n");
-    }*/
+    }
 
     return 0;
 }

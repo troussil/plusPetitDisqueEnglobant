@@ -28,7 +28,9 @@ int smaller_angle(POINT *p1, POINT *p2);
 
 void convex_hull(POINT in[], int n, polygon *hull);
 
-int estEgal( CERCLE c1, CERCLE c2 );
+int estEgalCercle( CERCLE c1, CERCLE c2 );
+
+int estEgalPoint( POINT p1, POINT p2 );
 
 int tableau_collinear(POINT T[], int nbPoints);
 
