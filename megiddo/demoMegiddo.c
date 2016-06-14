@@ -3,6 +3,7 @@
 #include "structure.h"
 #include "utils_table.h"
 #include "solveur_megiddo.h"
+#include "utils.h"
 
 int main(int argc, char* argv []){
 	if(argc!=2){

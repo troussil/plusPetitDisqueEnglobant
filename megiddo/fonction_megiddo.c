@@ -164,7 +164,7 @@ int pruningContraint(POINT point[],int longueur,int ordonne){
 	afficherTableauDoublet(doublet,taille/2);
 
 	/*Trie des valeurs pour trouver la médiane + gestion des cas impairs*/
-	med=quickSortDoubletMediatrice(doublet,0,taille/2-1);
+	med=triMediatrice(doublet,0,taille/2-1);
 	printf("tableau de doublets trié pour trouver la médiane\n");
 	afficherTableauDoublet(doublet,taille/2);
 	
@@ -285,14 +285,16 @@ POINT* intersectionLigne(DOUBLET tab[],int longueur){
 	double angleMedian;
 	int taille=partiEntiere(longueur/2);
 	POINT *intersection=malloc(taille*sizeof(POINT));
-	angleMedian=quickSortDoubletAngle(tab,0,longueur-1);
+	angleMedian=triAngle(tab,0,longueur-1);
+	printf("angle médian:%lf\n",angleMedian );
 	calculDroite(tab,longueur);
 	for(i=0;i<taille;i++){
 		if(estParallele(tab[i],tab[longueur-i-1])!=1){
 			intersection[i]=*calculIntersection(tab[i],tab[longueur-i-1]);
-			printf("point %d | doublet %d et %d | x=%lf | y=%lf\n",i,i,longueur-i-1,intersection[i].x,intersection[i].y );
+			//printf("point %d | doublet %d et %d | x=%lf | y=%lf\n",i,i,longueur-i-1,intersection[i].x,intersection[i].y );
 		}
 	}
-	printf("taille tableau: %d\n",i);
+	//printf("taille tableau: %d\n",i);
+	return intersection;
 }
 

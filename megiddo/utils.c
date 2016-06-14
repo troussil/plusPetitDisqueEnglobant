@@ -58,4 +58,5 @@ POINT* calculIntersection(DOUBLET d1, DOUBLET d2){
 	ordonne=((d1.droite.m)*abscisse)+(d1.droite.p);
 	intersection->x= abscisse;
 	intersection->y=ordonne;
+	return intersection;
 }

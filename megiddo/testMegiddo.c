@@ -2,6 +2,7 @@
 #include "fonction_megiddo.h"
 #include "structure.h"
 #include "utils_table.h"
+#include "utils.h"
 
 int main(int argc, char* argv []){
   
@@ -29,6 +30,7 @@ int main(int argc, char* argv []){
 	printf("intersections: \n");
 	critique=calculAngleCritique(tab,NB_POINTS);
 	intersection=intersectionLigne(critique,6);
+	afficherTableauPoint(intersection,3);
 
 	// d1->a=tab[0];
 	// d1->b=tab[1];

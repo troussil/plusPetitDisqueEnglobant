@@ -82,15 +82,20 @@ void echangerPoint(POINT tableau[], int a, int b){
 Problème : complexité en nlog(n)....
 A voir plus tard
 */
+double triMediatrice(DOUBLET tableau[], int debut, int fin){
+    quickSortDoubletMediatrice(tableau,debut,fin);
+    return medianeMediatrice(tableau,fin+1);
+}
 
-double quickSortDoubletMediatrice(DOUBLET tableau[], int debut, int fin){
+
+void quickSortDoubletMediatrice(DOUBLET tableau[], int debut, int fin){
 
     int gauche = debut-1;
     int droite = fin+1;
 	const double pivot = tableau[debut].mediatrice;
 
     if(debut >= fin){
-        return medianeMediatrice(tableau,fin+1);
+        return;
 
     }
         
@@ -108,14 +113,19 @@ double quickSortDoubletMediatrice(DOUBLET tableau[], int debut, int fin){
     quickSortDoubletMediatrice(tableau, droite+1, fin);
 }
 
-double quickSortDoubletAngle(DOUBLET tableau[], int debut, int fin){
+double triAngle(DOUBLET tableau[], int debut, int fin){
+    quickSortDoubletAngle(tableau,debut,fin);
+    return  medianeAngle(tableau,fin+1);
+}
+
+void quickSortDoubletAngle(DOUBLET tableau[], int debut, int fin){
 
     int gauche = debut-1;
     int droite = fin+1;
     const double pivot = tableau[debut].angle;
 
     if(debut >= fin){
-        return medianeAngle(tableau,fin+1);
+        return;
 
     }
         
@@ -154,16 +164,7 @@ void quickSortPoint(POINT tableau[], int debut, int fin){
         
 
     while(1){
-        //problème au niveau du tri à revoir
-        //trié en fonction du y voir open classroom quickSort
-        // if(tableau[droite].x==tableau[gauche].x){
-        //     if(tableau[droite].y>=tableau[gauche].y){
-        //         droite -=1;
-        //     }
-        //     else{
-        //         gauche +=1;
-        //     }
-        // }
+
         do droite--; while(tableau[droite].x > pivot);
         do gauche++; while(tableau[gauche].x < pivot);
 
