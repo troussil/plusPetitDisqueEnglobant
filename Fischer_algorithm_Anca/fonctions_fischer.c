@@ -8,7 +8,7 @@
 POINT first_point;		/* first hull POINT pour le calcul de l'enveloppe convexe*/
 
 
-/********** fonctions print *************/
+/****************************** fonctions print **************************************/
 
 void print_point(POINT* p)
 {
@@ -27,9 +27,11 @@ void print_polygon(polygon *p)
     	print_point(&p->p[i]);
 }
 
-/******************************************/
+/*************************************************************************************/
 
 
+
+/****************************** fonctions geometriques *******************************/
 
 /**
  * calcule la distance entre les points a et b
@@ -42,20 +44,6 @@ double signed_triangle_area(POINT a, POINT b, POINT c)
 {
 	return( (a.x*b.y - a.y*b.x + a.y*c.x 
 		- a.x*c.y + b.x*c.y - c.x*b.y) / 2.0 );
-}
-
-int ccw(POINT a, POINT b, POINT c)
-{
-	double signed_triangle_area();
-
-	return (signed_triangle_area(a,b,c) > EPSILON);
-}
-
-int cw(POINT a, POINT b, POINT c)
-{
-	double signed_triangle_area();
-
-	return (signed_triangle_area(a,b,c) < - EPSILON);
 }
 
 
@@ -87,122 +75,6 @@ int tableau_collinear(POINT T[], int nbPoints){
 	return 1;
 }
 
-/**
- * tri des points et enlevement des dupliques
-**/
-void sort_and_remove_duplicates(POINT in[], int *n)
-{
-    int i;                  /* counter */
-    int oldn;               /* number of points before deletion */
-    int hole;               /* index marked for potential deletion */
-	int leftlower();
-
-	qsort(in, *n, sizeof(POINT), leftlower);
-
-    oldn = *n;
-	hole = 1;
-        for (i=1; i<oldn; i++) {
-		if ((in[hole-1].x == in[i].x) && (in[hole-1].y == in[i].y)) 
-            (*n)--;
-        else {
-            in[hole].x = in[i].x;
-            in[hole].y = in[i].y;
-            hole = hole + 1;
-        }
-    }
-    in[hole].x = in[oldn-1].x;
-    in[hole].y = in[oldn-1].y;
-}
-
-
-/**
- * calcule l'enveloppe convexe grace a l'algorithme de Graham
-**/
-void convex_hull(POINT in[], int n, polygon *hull)
-{
-	int i;			/* input counter */
-	int top;		/* current hull size */
-	int smaller_angle();
-	
-	if (n <= 3) { 		/* all points on hull! */
-		for (i=0; i<n; i++)
-			(hull->p[i]).x = in[i].x;
-			(hull->p[i]).y = in[i].y;
-		hull->n = n;
-		return;
-	}
-
-	sort_and_remove_duplicates(in,&n);
-
-	first_point.x = in[0].x;
-	first_point.y = in[0].y;
-
-	qsort(&in[1], n-1, sizeof(POINT), smaller_angle);
-
-	if(tableau_collinear(in,n)){
-		hull->n = 2;
-		hull->p[0]=in[0];
-		hull->p[1]=in[n-1];
-	}
-	else{
-
-	(hull->p[0]).x = first_point.x;
-	(hull->p[0]).y = first_point.y;
-
-
-	(hull->p[1]).x = in[1].x;
-	(hull->p[1]).y = in[1].y;
-
-	/* sentinel to avoid special case */
-	in[n].x = first_point.x;
-	in[n].y = first_point.y;
-
-	top = 1;
-	i = 2;
-
-	while (i <= n) {
-		if (!ccw(hull->p[top-1], hull->p[top], in[i])) 
-			top = top-1;	/* top not on hull */
-		else {
-			top = top+1;
-			(hull->p[top]).x= in[i].x;
-			(hull->p[top]).y= in[i].y;
-			i = i+1;
-		}
-	}
-
-	hull->n = top;
-}
-}
-
-//pour calcul du convex_hull
-int leftlower(POINT *p1, POINT *p2)
-{
-	if ((*p1).x < (*p2).x) return (-1);
-	if ((*p1).x > (*p2).x) return (1);
-
-    if ((*p1).y < (*p2).y) return (-1);
-    if ((*p1).y > (*p2).y) return (1);
-
-	return(0);
-}
-
-//pour calcul du convex_hull
-int smaller_angle(POINT *p1, POINT *p2)
-{
-	if (collinear(first_point,*p1,*p2)) {
-		if (distance(first_point,*p1) <= distance(first_point,*p2))
-			return(-1);
-		else
-			return(1);
-	}
-
-	if (ccw(first_point,*p1,*p2))
-		return(-1);
-	else
-		return(1);
-}
-
 
 /**
  * Teste si deux cercles c1 et c2 sont égaux
@@ -222,18 +94,6 @@ int estEgalPoint( POINT p1, POINT p2 ){
         return 1;
     else
         return 0;
-}
-
-
-/*
- * initialisation tableau avec {0,0} partout
- */
-void init_tab(POINT tab[], int nbPoints){
-	int i;
-	for(i=0;i<nbPoints;i++){
-		tab[i].x=0;
-		tab[i].y=0;
-	}
 }
 
 /*
@@ -373,36 +233,6 @@ int appartenance_aff(POINT p,POINT T[], int nbPoints){
 }
 
 /*
- *on efface du tableau T un element qui a des coeffs negatifs dans la decomposition c = coeff[i]*T[i]
- */
-void dropping(POINT c,POINT T[], int nbPoints){
-	int i;
-	int index = coefficients_negatifs(c, T, nbPoints);
-	if(index == -1){
-		printf("erreur: pas des coeffs negatifs pour le dropping");
-		exit(-1);
-	}
-	for(i=index;i<nbPoints-1;i++)
-		T[i]=T[i+1];
-	T[nbPoints-1].x = 0;
-	T[nbPoints-1].y = 0;
-}
-
-
-/*
- * verifie si le POINT element se trouve dans le tableau tab
- * retourne 0 si on trouve l'element dans le tableau, 1 sinon
- */
-int not_in(POINT tab[], POINT element, int nbPoints){
-	int i;
-	for(i=0;i<nbPoints;i++)
-		if(estEgalPoint(tab[i], element))
-			return 0;
-	return 1;
-}
-
-
-/*
  * Renvoie le cercle le plus petit passant par deux points p1 et p2
  */
 CERCLE cerclePassantParDeuxPoints( POINT p1 , POINT p2){
@@ -442,6 +272,97 @@ CERCLE cerclePassantParTroisPoints( POINT p1 , POINT p2 , POINT p3){
 	    	c.d = 2 * sqrt( pow(p2.x - c.x,2) + pow(p2.y-c.y,2));
 	}
 	return c;	
+}
+
+
+/**************************** fonctions pour les tableaux ****************************/
+
+/**
+ * tri des points et enlevement des dupliques
+**/
+void sort_and_remove_duplicates(POINT in[], int *n)
+{
+    int i;                  /* counter */
+    int oldn;               /* number of points before deletion */
+    int hole;               /* index marked for potential deletion */
+	int leftlower();
+
+	qsort(in, *n, sizeof(POINT), leftlower);
+
+    oldn = *n;
+	hole = 1;
+        for (i=1; i<oldn; i++) {
+		if ((in[hole-1].x == in[i].x) && (in[hole-1].y == in[i].y)) 
+            (*n)--;
+        else {
+            in[hole].x = in[i].x;
+            in[hole].y = in[i].y;
+            hole = hole + 1;
+        }
+    }
+    in[hole].x = in[oldn-1].x;
+    in[hole].y = in[oldn-1].y;
+}
+
+
+
+//pour le tri
+int leftlower(POINT *p1, POINT *p2)
+{
+	if ((*p1).x < (*p2).x) return (-1);
+	if ((*p1).x > (*p2).x) return (1);
+
+    if ((*p1).y < (*p2).y) return (-1);
+    if ((*p1).y > (*p2).y) return (1);
+
+	return(0);
+}
+
+
+/*
+ * initialisation tableau avec {0,0} partout
+ */
+void init_tab(POINT tab[], int nbPoints){
+	int i;
+	for(i=0;i<nbPoints;i++){
+		tab[i].x=0;
+		tab[i].y=0;
+	}
+}
+
+/*
+ * verifie si le POINT element se trouve dans le tableau tab
+ * retourne 0 si on trouve l'element dans le tableau, 1 sinon
+ */
+int not_in(POINT tab[], POINT element, int nbPoints){
+	int i;
+	for(i=0;i<nbPoints;i++)
+		if(estEgalPoint(tab[i], element))
+			return 0;
+	return 1;
+}
+
+
+
+/**************************** fonctions specifiques a l'algo *************************/
+
+
+
+
+/*
+ *on efface du tableau T un element qui a des coeffs negatifs dans la decomposition c = coeff[i]*T[i]
+ */
+void dropping(POINT c,POINT T[], int nbPoints){
+	int i;
+	int index = coefficients_negatifs(c, T, nbPoints);
+	if(index == -1){
+		printf("erreur: pas des coeffs negatifs pour le dropping");
+		exit(-1);
+	}
+	for(i=index;i<nbPoints-1;i++)
+		T[i]=T[i+1];
+	T[nbPoints-1].x = 0;
+	T[nbPoints-1].y = 0;
 }
 
 
@@ -539,7 +460,7 @@ CERCLE algorithme_fischer(POINT S[], int nbPoints){
 				    }
 				    
 				    T[1] = p;
-				    
+
 
 				}
 				else if(nbPointsT==2) 

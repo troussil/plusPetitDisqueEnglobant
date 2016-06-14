@@ -23,19 +23,11 @@ double distance(POINT a, POINT b);
 
 double signed_triangle_area(POINT a, POINT b, POINT c);
 
-int ccw(POINT a, POINT b, POINT c);
-
-int cw(POINT a, POINT b, POINT c);
-
 int collinear(POINT a, POINT b, POINT c);
 
 int tableau_collinear(POINT T[], int nbPoints);
 
 int leftlower(POINT *p1, POINT *p2);
-
-int smaller_angle(POINT *p1, POINT *p2);
-
-void convex_hull(POINT in[], int n, polygon *hull);
 
 int estEgalCercle( CERCLE c1, CERCLE c2 );
 
