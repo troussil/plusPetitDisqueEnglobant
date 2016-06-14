@@ -2,7 +2,7 @@
 #define structures_h
 
 #define coo double	/* coordonates */
-#define EPSILON	0.000001	/* a quantity small enough to be zero */
+#define EPSILON	0.0001	/* a quantity small enough to be zero */
 #define MAXPOLY	200	/* maximum number of points in a polygon */
 
 typedef struct model_point{
@@ -17,8 +17,8 @@ typedef struct model_cercle{
 } CERCLE;
 
 typedef struct {
-	int n;			/* number of points in polygon */
-	POINT p[MAXPOLY];	/* array of points in polygon */
-} polygon;
+	double a;
+	double b;
+} DROITE; //modelise la droite d'equation y=ax+b;
 
 #endif

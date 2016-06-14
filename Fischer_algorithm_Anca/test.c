@@ -54,7 +54,7 @@ int main( int argc, char* argv []){
 
     
 
-    printf("*** Algorithme Fischer *** \n\n");   
+    printf("\n*** Algorithme Fischer *** \n\n");   
 
     now=0;
     CERCLE c2 = algorithme_fischer(tab , N);
@@ -62,7 +62,7 @@ int main( int argc, char* argv []){
     printf("Time ellapsed: %lf\n", (double) (clock() - now) / CLOCKS_PER_SEC);
     printf("Centre ( %lf , %lf ) diamètre %lf\n\n", c2.x , c2.y , c2.d );
 
-    printf("contientTousPoints donne: %d \n", contientTousPoint( c2 , tab , N ));
+    //printf("contientTousPoints donne: %d \n", contientTousPoint( c2 , tab , N ));
 
     return 0;
 }

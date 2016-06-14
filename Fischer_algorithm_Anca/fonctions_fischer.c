@@ -13,19 +13,17 @@ POINT first_point;		/* first hull POINT pour le calcul de l'enveloppe convexe*/
 
 void print_point(POINT* p)
 {
-	printf(" ------ %f %f\n",p->x,p->y);
+	printf(" ........ %f %f\n",p->x,p->y);
+}
+
+void print_droite(DROITE* d)
+{
+	printf(" ------ %f %f\n",d->a,d->b);
 }
 
 void print_cercle(CERCLE* c)
 {
 	printf("centre: %f %f, diametre: %f\n",c->x,c->y,c->d);
-}
-
-void print_polygon(polygon *p)
-{
-	int i;
-	for (i=0; i<p->n; i++)
-    	print_point(&p->p[i]);
 }
 
 /*************************************************************************************/
@@ -278,6 +276,30 @@ CERCLE cerclePassantParTroisPoints( POINT p1 , POINT p2 , POINT p3){
 	return c;	
 }
 
+DROITE mediatrice(POINT p1, POINT p2)
+{
+	DROITE res;
+	res.a = (-1.0)/ ((p1.y - p2.y)/(p1.x - p2.x));
+	res.b = ((p1.y + p2.y)/2.0) - res.a * ((p1.x + p2.x)/2.0);
+	return res;
+}
+
+POINT intersection(DROITE d1, DROITE d2)
+{
+	POINT res;
+	res.x = (d1.b - d2.b)/(d2.a - d1.a);
+	res.y = d1.a * res.x + d1.b;
+	return res;
+}
+
+DROITE droitePassantParPoints(POINT p1, POINT p2)
+{
+	DROITE res;
+	res.a = (p1.y - p2.y)/(p1.x - p2.x);
+	res.b = p1.y - res.a * p1.x ;
+	return res;
+}
+
 
 /**************************** fonctions pour les tableaux ****************************/
 
@@ -423,13 +445,14 @@ CERCLE algorithme_fischer(POINT S[], int nbPoints){
 
 
 				compteur++;
-				//printf("\n*** iteration %d ***\n\n", compteur);
-				//printf("c.x = %f c.y = %f\n",c.x,c.y);
-				//printf("Dans T on a %d points : \n", nbPointsT);
-				/*for(i=0;i<nbPointsT;i++){
+				/*
+				printf("\n*** iteration %d ***\n\n", compteur);
+				printf("c.x = %f c.y = %f\n",c.x,c.y);
+				printf("Dans T on a %d points : \n", nbPointsT);
+				for(i=0;i<nbPointsT;i++){
 					printf("%f %f\n", T[i].x, T[i].y);
-				}*/
-
+				}
+				*/
 				
 
 				/*if(appartenance_aff(c,T,3)){
@@ -452,9 +475,10 @@ CERCLE algorithme_fischer(POINT S[], int nbPoints){
 				{
 					//on a 3 points ou plus dans T, faut enlever un par le dropping
 					
-					if(dropping(c,T,3))
+					if(dropping(c,T,3)){
 						//printf("dropping reusi qd plus de 3 points");
-					nbPointsT--;
+						nbPointsT--;
+					}
 				}
 				else if(nbPointsT == 1)
 				{
@@ -481,9 +505,20 @@ CERCLE algorithme_fischer(POINT S[], int nbPoints){
 				    nbPointsT++;
 				    T[1] = p;
 
+				    //on actualise c par rapport au point qui vient de nous arreter
 
+				    if(!collinear(c,T[0],T[1])){
+				    	DROITE d1 = mediatrice(T[0],T[1]);
+				    	DROITE d2 = droitePassantParPoints(T[0],c);
 
-				    //TODO actualiser c par rapport au point qu'on vient de rajouter
+				    	c = intersection(d1,d2);
+
+				    	
+				    }
+				    else{
+				    	c.x = (T[0].x + T[1].x)/2;
+				    	c.y = (T[0].y + T[1].y)/2;
+				    }
 
 
 
@@ -498,8 +533,10 @@ CERCLE algorithme_fischer(POINT S[], int nbPoints){
 					det = calculer_determinant3(T[0],T[1],c);
 					init_tab(S2, nbPoints-1);
 					for(i=0;i<nbPoints;i++){
-						if(not_in(T,S[i],3)){
-							if(det * calculer_determinant3(T[0],T[1],S[i]) >= 0 && !equals_zero(S[i])){
+						if(not_in(T,S[i],3))
+						{
+							if(det * calculer_determinant3(T[0],T[1],S[i]) >= 0)
+							{
 								S2[j] = S[i];
 								j++;
 							}
@@ -530,18 +567,17 @@ CERCLE algorithme_fischer(POINT S[], int nbPoints){
 						nbPointsT++;
 
 						//on reactualise le centre c
-						c.x = temp.x;
-						c.y = temp.y;
+
+						DROITE d1 = mediatrice(T[0],T[1]);
+						DROITE d2 = mediatrice(T[0],T[2]);
+						c = intersection(d1,d2);
 					}
-					else{ 
+					else
+					{ 
 						c.x = (T[0].x + T[1].x)/2;
 						c.y = (T[0].y + T[1].y)/2;
 
-						//TODO 
 
-
-						//if(dropping(c,T,3))
-						//	printf("dropping reusi dans le else");
 					}
 
 				}
@@ -554,7 +590,8 @@ CERCLE algorithme_fischer(POINT S[], int nbPoints){
 			resultat.x = c.x;
 			resultat.y = c.y;
 			resultat.d = 2*distance(c,T[0]);
-			
+
+	printf("\non a fait %d iterations \n",compteur);			
 	}
 	return resultat;
 }
@@ -572,9 +609,13 @@ int contientTousPoint( CERCLE c , POINT tab[] , int nbPoints ){
 	int ok = 1;
 	
 	while(i<nbPoints && ok) {
-	  if (!contientPoint( c, tab[i] ))
-	    ok = 0;
-	  i++;
+
+		if (!contientPoint( c, tab[i] ))
+		{
+			ok = 0;
+		}
+
+	   	i++;
 	}
 	
 	return ok;
@@ -582,7 +623,7 @@ int contientTousPoint( CERCLE c , POINT tab[] , int nbPoints ){
 
 int contientPoint( CERCLE c , POINT p){
 
-	if(c.x + c.d/2 < p.x || c.x - c.d/2 > p.x || c.y + c.d/2 < p.y || c.y - c.d/2 > p.y)
+	if(c.x + c.d/2 < p.x + EPSILON || c.x - c.d/2 > p.x - EPSILON || c.y + c.d/2 < p.y + EPSILON || c.y - c.d/2 > p.y - EPSILON)
 		return 0;
 	else
 		return 1;
@@ -601,11 +642,13 @@ CERCLE brute( POINT tab[] , int nbPoints ){
 	POINT p1 , p2 , p3;
 	
 	int i , j , k;
+	int compteur = 0;
 
 	/* TESTS AVEC DUO DE POINTS */
 
 	for(i=0 ; i<nbPoints ; i++){
 		for(j=i+1 ; j<nbPoints ; j++){
+			compteur ++;
 			p1 = tab[i];
 			p2 = tab[j];
 			cTemp = cerclePassantParDeuxPoints(p1 , p2);
@@ -618,20 +661,21 @@ CERCLE brute( POINT tab[] , int nbPoints ){
 	/* TESTS AVEC TRIO DE POINTS */   
 
 	for(i=0 ; i<nbPoints ; i++){
-                for(j=0 ; j<nbPoints ; j++){
-                        for(k=0 ; k<nbPoints ; k++){
+        for(j=0 ; j<nbPoints ; j++){
+            for(k=0 ; k<nbPoints ; k++){
+            	compteur ++;
 				if(i!=j && i!=k && j!=k){
-                                	p1 = tab[i];
-                                	p2 = tab[j];
+                	p1 = tab[i];
+                	p2 = tab[j];
 					p3 = tab[k];
-                        	        cTemp = cerclePassantParTroisPoints(p1 , p2 , p3);
-                              	  	if ( contientTousPoint(cTemp , tab , nbPoints) && cTemp.d < cFinal.d){
-                                	        cFinal = cTemp;
-                                	}
+        	        cTemp = cerclePassantParTroisPoints(p1 , p2 , p3);
+              	  	if ( contientTousPoint(cTemp , tab , nbPoints) && cTemp.d < cFinal.d){
+                	        cFinal = cTemp;
+                	}
 				}
-                        }
-                }
-        }   
-
+            }
+        }
+    }   
+    printf("\non a fait %d iterations \n",compteur);
 	return cFinal;
 }
