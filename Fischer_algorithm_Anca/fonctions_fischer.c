@@ -15,7 +15,8 @@ void print_point(POINT* p)
 
 void print_polygon(polygon *p)
 {
-	for (int i=0; i<p->n; i++)
+	int i;
+	for (i=0; i<p->n; i++)
     	print_point(&p->p[i]);
 }
 
@@ -204,7 +205,8 @@ int estEgal( CERCLE c1, CERCLE c2 ){
 }
 
 void init_tab(POINT tab[], int nbPoints){
-	for(int i=0;i<nbPoints;i++){
+	int i;
+	for(i=0;i<nbPoints;i++){
 		tab[i].x=0;
 		tab[i].y=0;
 	}
@@ -251,7 +253,8 @@ double calculer_determinant2(POINT a, POINT b){
 int coefficients_negatifs(POINT p,POINT T[], int nbPoints){
 	int alpha;
 	int betha;
-	for(int i=0; i<nbPoints-1;i++){
+	int i;
+	for(i=0; i<nbPoints-1;i++){
 		for(int j=i+1;j<nbPoints;j++){
 			if(calculer_determinant2(T[i],T[j])!=0){
 				alpha=calculer_determinant2(p,T[j])/calculer_determinant2(T[i],T[j]);
@@ -334,12 +337,13 @@ int appartenance_aff(POINT p,POINT T[], int nbPoints){
 
 //on efface du tableau T un element qui a des coeffs negatifs dans la decomposition c = coeff[i]*T[i]
 void dropping(POINT c,POINT T[], int nbPoints){
+	int i;
 	int index = coefficients_negatifs(c, T, nbPoints);
 	if(index == -1){
 		printf("erreur: pas des coeffs negatifs pour le dropping");
 		exit(-1);
 	}
-	for(int i=index;i<nbPoints-1;i++)
+	for(i=index;i<nbPoints-1;i++)
 		T[i]=T[i+1];
 	T[nbPoints-1].x = 0;
 	T[nbPoints-1].y = 0;
@@ -404,7 +408,7 @@ CERCLE algorithme_fischer(POINT S[], int nbPoints){
 	POINT c = S[0];
 	POINT p; // le POINT le plus eloigne de c
 	
-	for(int i=1; i<nbPoints;i++)
+	for(i=1; i<nbPoints;i++)
     {
     	POINT q = S[i];
     	if(max < distance(c,q)){

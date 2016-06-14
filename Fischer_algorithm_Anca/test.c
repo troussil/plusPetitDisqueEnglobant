@@ -10,7 +10,7 @@ int main()
 
     CERCLE vraiC; //Solution universelle pour les 3 tests
     vraiC.x = 10.0; vraiC.y=10.0; vraiC.d=10.0; 
-    int nbPoints;
+    int nbPoints,i;
 
     // Test 1 : Points cocirculaires
 
@@ -21,7 +21,7 @@ int main()
     nbPoints = sizeof(tab1) / sizeof (tab1[0]);
 
     printf("Tableau donnee: ");
-    for(int i=0;i<nbPoints;i++)
+    for(i=0;i<nbPoints;i++)
         printf("%f %f; ", tab1[i].x, tab1[i].y);
     
     printf("\nLe polygone convexe est:\n");
@@ -42,7 +42,7 @@ int main()
     printf("\n** Test 2 : Points alignés **\n\n");
     nbPoints = sizeof(tab2) / sizeof (tab2[0]);
     printf("Tableau donnee: ");
-    for(int i=0;i<nbPoints;i++)
+    for(i=0;i<nbPoints;i++)
         printf("%f %f; ", tab2[i].x, tab2[i].y);
     printf("\n Le determinant donnee par les 3 premiers points devrait etre 0, la fonction donne %f \n",calculer_determinant3(tab2[0],tab2[1],tab2[2]));
     printf("L'enveloppe convexe devrait etre 10 15; 10 5; \n La fonction donne:\n");
@@ -63,13 +63,13 @@ int main()
     POINT tab3[] = {{10.0,10.0},{10.0,10.0},{10.0,10.0},{10.0,15.0},{10.0,5.0}};    
     printf("\n** Test 3 : Points confondus **\n\n");
     printf("Tableau initial: ");
-    for(int i=0;i<nbPoints;i++)
+    for(i=0;i<nbPoints;i++)
         printf("%f %f; ", tab3[i].x, tab3[i].y);
     nbPoints = sizeof(tab3) / sizeof (tab3[0]);
     printf("\nNombre de points: %d\n",nbPoints);
     sort_and_remove_duplicates(tab3,&nbPoints);
     printf("Apres le tri: %d points et les elements restants sont: ",nbPoints);
-    for(int i=0;i<nbPoints;i++)
+    for(i=0;i<nbPoints;i++)
         printf("%f %f; ", tab3[i].x, tab3[i].y);
     /*CERCLE c3 = algorithme_fischer(tab3,nbPoints);
     printf("Cercle solution: Coordonnées x=%f, y=%f, diamètre=%lf.\n",c3.x,c3.y,c3.d);
