@@ -12,7 +12,7 @@ POINT first_point;		/* first hull POINT pour le calcul de l'enveloppe convexe*/
 
 void print_point(POINT* p)
 {
-	printf("%f %f\n",p->x,p->y);
+	printf(" ------ %f %f\n",p->x,p->y);
 }
 
 void print_cercle(CERCLE* c)
@@ -246,7 +246,6 @@ int equals_zero(POINT p){
 		return (0);
 	}
 	else{
-		printf("je suis ici \n");
 		return (1);
 	}
 }
@@ -298,38 +297,43 @@ int coefficients_negatifs(POINT p,POINT T[], int nbPoints){
 
 /*
  * retourne 1 si p appartient a conv(T), 0 sinon
- * calcule l'enveloppe convexe de T et celui te T+p et verifie si c'est le meme
  *
  */
-int appartenance_conv(POINT p,POINT T[], int nbPoints){
+int appartenance_conv(POINT p,POINT T[], int nbPoints)
+{
 	
-    polygon initial;
-    polygon a_comparer;
-
-	POINT tab_initial[nbPoints];
-	POINT tab_a_comparer[nbPoints];
-
-	int i;
-
-	while(T[i].x != 0 && T[i].y !=0){
-		tab_initial[i]=T[i];
-		tab_a_comparer[i]=T[i];
-		i++;
-	}
-	tab_a_comparer[i]=p;
-
-    convex_hull(tab_initial,i,&initial);
-    convex_hull(tab_a_comparer,i+1,&a_comparer);
-
-    if(initial.n != a_comparer.n)
-    	return 0;
-    else{
-    	for (i=0; i<initial.n; i++)
-            if(distance(initial.p[i],a_comparer.p[i])!=0)
-        		return 0;
+    if(nbPoints == 1)
+    {
+    	//si on a 1 seul point, les points doivent etre confondus
+    	if(distance(p,T[0])<=EPSILON)
+    		return 1;
+    	else
+    		return 0;
+    } 
+    else if(nbPoints==2)
+    {
+    	//si on a 2 points dans T, p doit etre sur le segment qu'elles determinent
+    	//les 3 points doivent etre donc colineailres et le produit scalaire pT[0] , pT[1] doit etre negatif ou nul
+    	if( collinear(T[0],T[1],p) && (((T[0].x - p.x)*(T[1].x - p.x) + (T[0].y - p.y)*(T[1].y - p.y)) <= 0 ))
+    		return 1;
+    	else
+    		return 0;
     }
-
-	return 1;
+    else
+    {
+    	//sinon on a 3 points, et donc p doit etre dans un triangle
+    	//si pour chaque segment du triangle p et l'autre point sont de meme cote, alors p est dans le triangle
+    	if(calculer_determinant3(T[0],T[1],p)*calculer_determinant3(T[0],T[1],T[2]) >= 0)
+    		if(calculer_determinant3(T[0],T[2],p)*calculer_determinant3(T[0],T[2],T[1]) >= 0)
+    			if(calculer_determinant3(T[2],T[1],p)*calculer_determinant3(T[2],T[1],T[0]) >= 0)
+    				return 1;
+    			else
+    				return 0;
+    		else 
+    			return 0;
+    	else
+    		return 0;
+    }
 }
 
 
@@ -392,7 +396,7 @@ void dropping(POINT c,POINT T[], int nbPoints){
 int not_in(POINT tab[], POINT element, int nbPoints){
 	int i;
 	for(i=0;i<nbPoints;i++)
-		if(tab[i].x == element.x && tab[i].y == element.y)
+		if(estEgalPoint(tab[i], element))
 			return 0;
 	return 1;
 }
@@ -446,8 +450,10 @@ CERCLE cerclePassantParTroisPoints( POINT p1 , POINT p2 , POINT p3){
  */
 CERCLE algorithme_fischer(POINT S[], int nbPoints){
 
+	CERCLE resultat;
 	CERCLE temp; //un cercle temporaire 
 	POINT centreTemp;
+	POINT tabTemp[2]; //tableau temporaire
 
 	POINT S2[nbPoints-2]; //l'ensemble des points de S qui se trouvent du bon côté de la droite passant par les deux points de T
 
@@ -460,117 +466,137 @@ CERCLE algorithme_fischer(POINT S[], int nbPoints){
 	//les iterations sont faites pour les paires c,T
 	//c est le centre du cercle courant et T le set des points support
 
-	POINT c = S[0]; //au debut, c est pris au hasard
-	POINT p; // le POINT le plus eloigne de c
-	POINT q; //un point temporaire pour trouver p
-	
-	for(i=1; i<nbPoints;i++)
-    {
-    	q = S[i];
-    	if(max < distance(c,q)){
-    		max = distance(c,q);
-    		p = q;
-    	}
-    }
-
-	POINT T[3];
-	init_tab(T,3);
-	T[0] = p; //au debut, T contient p seulement
-
-	
-
-	while(!appartenance_conv(c,T,3)){
-
-		printf("le point c est: %f %f\n", c.x,c.y);
-
-		printf("dans T on a:\n");
-		for(i=0;i<3;i++)
-			printf("%f %f\n", T[i].x, T[i].y);
-
-		/*if(appartenance_aff(c,T,3)){
-			dropping(c,T,3);
-		}*/
-
-		//on calcule le nombre d'elements non nuls de T
-		i=0;
-		while(T[i].x != 0 || T[i].y != 0)
-			i++;
-		nbPointsT = i;
-
-		
-		if(nbPointsT>=3)
-		{
-			//on a 3 points ou plus dans T, faut enlever un par le dropping
-			dropping(c,T,3);
-		}
-		else if(nbPointsT == 1)
-		{
-			//on a 1 seul point, faut rajouter encore 1 point dans T
-			//on rajoute le 2eme plus loin par rapport a c
-			max=0;
-			for(i=0; i<nbPoints;i++)
+	if(tableau_collinear(S,nbPoints))
+	{
+		resultat = cerclePassantParDeuxPoints(S[0],S[nbPoints-1]);
+	}
+	else
+	{
+			POINT c = S[0]; //au debut, c est pris au hasard
+			POINT p; // le POINT le plus eloigne de c
+			POINT q; //un point temporaire pour trouver p
+			
+			for(i=1; i<nbPoints;i++)
 		    {
 		    	q = S[i];
-		    	if(max < distance(c,q) && !estEgalPoint(q,T[0])){
+		    	if(max < distance(c,q)){
 		    		max = distance(c,q);
 		    		p = q;
 		    	}
 		    }
 
-		    T[1] = p;
+			POINT T[3];
+			init_tab(T,3);
+			T[0] = p; //au debut, T contient p seulement
+			nbPointsT = 1;
 
-		}
-		else if(nbPointsT==2) 
-		{
-			// Calcul du tableau S2 (les points de S/T du meme cote que c)
-			// le calcul est fait seulement dans le cas ou on a 2 points dans T
-
-			j=0; // compteur pour S2
-			det = calculer_determinant3(T[0],T[1],c);
-			init_tab(S2, nbPoints-1);
-			if(not_in(T,S[i],3)){
-				if(det<0 && calculer_determinant3(T[0],T[1],S[i])<0){
-					S2[j] = S[i];
-					j++;
-				}
-				else if(det>0 && calculer_determinant3(T[0],T[1],S[i])>0){
-					S2[j] = S[i];
-					j++;
-				}
-			}
-			nbPointsS2 = j;
-
-			//calcul du cercle temp passant par les 2 points de T et 1 point de S2 
-			temp = cerclePassantParTroisPoints(T[0], T[1], S2[0]);
-			centreTemp.x = temp.x;
-			centreTemp.y = temp.y;
-			T[2] = S2[0]; //le point sur le bord du cercle est rajoute a T
 			
-			for(i=1;i<nbPointsS2;i++){
-				//si S2[i] est en dehors du cercle temp, on reactualise le cercle
-				if(distance(centreTemp,S2[i]) > temp.d){
-					//temp devient le cercle passant par T[0], T[1], S2[i]
-					temp = cerclePassantParTroisPoints(T[0], T[1], S2[i]);
-					centreTemp.x = temp.x;
-					centreTemp.y = temp.y;
-					T[2] = S2[i]; //le point sur le bord du cercle est rajoute a T
+
+			while(!appartenance_conv(c,T,nbPointsT)){
+
+				
+
+				/*if(appartenance_aff(c,T,3)){
+					dropping(c,T,3);
+				}*/
+
+				//on calcule le nombre d'elements non nuls de T
+				i=0;
+				while(T[i].x != 0 || T[i].y != 0)
+					i++;
+				if(i>=3)
+					nbPointsT = 3;
+				else
+					nbPointsT = i;
+
+				
+
+				
+				if(nbPointsT>=3)
+				{
+					//on a 3 points ou plus dans T, faut enlever un par le dropping
+					dropping(c,T,3);
 				}
+				else if(nbPointsT == 1)
+				{
+					
+					//on a 1 seul point, faut rajouter encore 1 point dans T
+					//on rajoute le 2eme plus loin par rapport a c
+					max=0;
+					tabTemp[0] = T[0];
+					tabTemp[1] = c;
+					for(i=0; i<nbPoints;i++)
+				    {
+				    	q = S[i];
+
+
+				    	if(max < distance(c,q) && !estEgalPoint(q,T[0]) && !appartenance_conv(q,tabTemp,2) )
+				    	{		    		
+				    		max = distance(c,q);
+				    		p = q;
+				    		
+				    	}
+				    }
+				    
+				    T[1] = p;
+				    
+
+				}
+				else if(nbPointsT==2) 
+				{
+					// Calcul du tableau S2 (les points de S/T du meme cote que c)
+					// le calcul est fait seulement dans le cas ou on a 2 points dans T
+
+					j=0; // compteur pour S2
+					det = calculer_determinant3(T[0],T[1],c);
+					init_tab(S2, nbPoints-1);
+					if(not_in(T,S[i],3)){
+						if(det * calculer_determinant3(T[0],T[1],S[i]) >= 0 && !equals_zero(S[i])){
+							S2[j] = S[i];
+							j++;
+						}
+					}
+					nbPointsS2 = j;
+
+					if(nbPointsS2!=0){
+
+						//calcul du cercle temp passant par les 2 points de T et 1 point de S2 
+						temp = cerclePassantParTroisPoints(T[0], T[1], S2[0]);
+						centreTemp.x = temp.x;
+						centreTemp.y = temp.y;
+						
+
+						T[2] = S2[0]; //le point sur le bord du cercle est rajoute a T
+						
+						for(i=1;i<nbPointsS2;i++){
+							//si S2[i] est en dehors du cercle temp, on reactualise le cercle
+							if(distance(centreTemp,S2[i]) > temp.d){
+								//temp devient le cercle passant par T[0], T[1], S2[i]
+								temp = cerclePassantParTroisPoints(T[0], T[1], S2[i]);
+								centreTemp.x = temp.x;
+								centreTemp.y = temp.y;
+								T[2] = S2[i]; //le point sur le bord du cercle est rajoute a T
+							}
+						}
+
+						//on reactualise le centre c
+						c.x = temp.x;
+						c.y = temp.y;
+					}
+					else 
+						dropping(c,T,3);
+
+				}
+
+				//sleep(10);
+				
 			}
 
-			//on reactualise le centre c
-			c.x = temp.x;
-			c.y = temp.y;
-
-		}
-
-		sleep(10);
-		
+		    //on renvoye le cercle resultat de centre c et diametre 2 * distance (c,T[0])
+			resultat.x = c.x;
+			resultat.y = c.y;
+			resultat.d = 2*distance(c,T[0]);
+			
 	}
-
-    //on renvoye le cercle resultat de centre c et diametre 2 * distance (c,T[0])
-	CERCLE resultat;
-	resultat.x = c.x;
-	resultat.y = c.y;
-	resultat.d = 2*distance(c,T[0]);
 	return resultat;
 }
