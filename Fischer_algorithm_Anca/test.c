@@ -20,7 +20,7 @@ int main()
     POINT tab1[] = {{10.0,15.0},{10.0,5.0},{5.0,10.0},{15.0,10.0}}; 
     nbPoints = sizeof(tab1) / sizeof (tab1[0]);
 
-    printf("Tableau donnee: ");
+    /*printf("Tableau donnee: ");
     for(i=0;i<nbPoints;i++)
         printf("%f %f; ", tab1[i].x, tab1[i].y);
     
@@ -29,7 +29,7 @@ int main()
     polygon P;
     convex_hull(tab1,nbPoints,&P);
     printf("\n");
-    print_polygon(&P);
+    print_polygon(&P);*/
 
 
     CERCLE c1 = algorithme_fischer(tab1,nbPoints);
