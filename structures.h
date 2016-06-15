@@ -10,8 +10,9 @@ typedef struct model_point{
 
 
 typedef struct model_cercle{
-        coo x;
-        coo y;
+  coo vide; // si cercle vide, vide=1
+  coo x;
+  coo y;
 	double d;
 } CERCLE;
 
