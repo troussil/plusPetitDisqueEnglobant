@@ -12,9 +12,74 @@ int rand_a_b (int a, int b){
 
 int main( int argc, char* argv []){
 
+    /*
+
+    POINT a;
+    POINT b;
+    POINT c;
+
+    POINT p;
+    POINT q;
+
+    double x,y;
+
+    printf("\nVeuilles rentrer les coordonnes du point a:");
+
+    scanf("%lf", &x);
+    scanf("%lf", &y);
+    a.x = x;
+    a.y = y;
+    printf("\nPoint a = %lf %lf\n", a.x, a.y);
+
+    printf("\nVeuilles rentrer les coordonnes du point b:");
+
+    scanf("%lf", &x);
+    scanf("%lf", &y);
+    b.x = x;
+    b.y = y;
+    printf("\nPoint b = %lf %lf\n", b.x, b.y);
+
+    printf("\nVeuilles rentrer les coordonnes du point c:");
+
+    scanf("%lf", &x);
+    scanf("%lf", &y);
+    c.x = x;
+    c.y = y;
+    printf("\nPoint c = %lf %lf\n", c.x, c.y);
+
+    printf("\ndistance ab = %lf et ba = %lf\n", distance(a,b), distance(b,a));
+    printf("distance aa = %lf\n", distance(a,a));
+
+    printf("\ndeterminant a,b,c avec la methode calculer_determinant3: %lf\n", calculer_determinant3(a,b,c));
+
+    p.x = a.x - c.x;
+    p.y = a.y - c.y;
+
+    q.x = b.x - c.x;
+    q.y = b.y - c.y;
+
+    printf("determinant a,b,c par reduction avec calculer_determinant2: %lf\n", calculer_determinant2(p,q));
+
+
+    POINT tab[]={a,b,c};
+    int nbPoints = (int)(sizeof(tab)/sizeof(POINT));
+    printf("\nMaintenant on teste le dropping. Veullez rentrer encore un point p: ");
+    scanf("%lf", &x);
+    scanf("%lf", &y);
+    p.x = x;
+    p.y = y;
+    printf("\nPoint p = %lf %lf\n", p.x, p.y);
+    printf("\nappartennance_aff de p dans {a,b,c} donne: %d\n",appartenance_aff(p,tab,nbPoints));
+    printf("\nappartennance_conv de p dans {a,b,c} donne: %d\n",appartenance_conv(p,tab,nbPoints));
+    */
 
 
 
+
+
+
+
+    //Tests et comparaison algorithme
 
 
     int N, xmin , xmax, ymin, ymax;
@@ -66,7 +131,6 @@ int main( int argc, char* argv []){
     printf("Time ellapsed: %lf\n", (double) (clock() - now) / CLOCKS_PER_SEC);
     printf("Centre ( %lf , %lf ) diamètre %lf\n\n", c2.x , c2.y , c2.d );
 
-    //printf("contientTousPoints donne: %d \n", contientTousPoint( c2 , tab , N ));
 
     return 0;
 }
