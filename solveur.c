@@ -150,15 +150,16 @@ void GenerationFichierSVG(POINT tab[] , int N){
 }
 
 int main(){
-  time_t debut;
-  debut = time(NULL);
+  clock_t debut=0;
 
   POINT *tab = convertirEntree();
+  
   printf("*\nPoints lus sur le stdin et convertis !\n*\n");
   printf("TRAITEMENT...\n"); 
+  
   GenerationFichierSVG(tab , nbPoints);
-  printf("*\nFichier SVG généré !  \n*\n");
 
-  printf("temps d'éxécution: %d sec\n", (time(NULL)-debut));
+  printf("*\nFichier SVG généré !  \n*\n");
+  printf("temps d'éxécution: %lf\n", (double) (clock() - debut) / CLOCKS_PER_SEC);
   return 0;
 }

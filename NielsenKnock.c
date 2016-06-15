@@ -12,6 +12,7 @@ CERCLE SimpleIterativeBall(POINT*tab, int N, float e);
 void display(POINT* tab, int N);
 void calculNorme (POINT* tab, int N);
 CERCLE ApproximateCoreSet(POINT*tab, int N, float e);
+double distanceCoreSet(POINT *tab1,int N1, POINT *tab2, int N2);
 
 /**
  * Calcul la norme de tous les points d'un tableau de points donné et met à jour la structure de chaque point
@@ -56,15 +57,15 @@ int argmax2(POINT point, POINT* tab, int N){
   double distanceCourante, distanceMax=0; 
   for(i=0;i<N;i++){
     if(sqrt(tab[i].norme+point.norme+2*sqrt(tab[i].norme*point.norme))>distanceMax){
-		  distanceCourante=distance(point, tab[i]);
-		  if(distanceCourante>distanceMax){
-		    argMax=i;
-		    distanceMax=distanceCourante;
-		  }
+      distanceCourante=distance(point, tab[i]);
+      if(distanceCourante>distanceMax){
+        argMax=i;
+        distanceMax=distanceCourante;
+      }
     }
   }
   return argMax; 
-}
+}               
 
 /**
  * Calcul la distance entre deux POINT
@@ -76,7 +77,27 @@ double distance(POINT point1, POINT point2){
   double d=sqrt(pow(point1.x-point2.x,2)+pow(point1.y-point2.y,2));
   return d;
 }
-CERCLE ApproximateCoreSet(POINT*tab, int N, float e)
+
+/**
+ * Calcul la distance entre deux ensembles de POINT
+ * @param tab1 et tab2 des tableaux de points
+ * @param N1 et N2 les tailles respectives des tableaux tab1 et tab2
+ * @return la distance entre les deux ensembles de POINT
+**/
+double distanceCoreSet(POINT *tab1,int N1, POINT *tab2, int N2){
+  int i, j;
+  double distanceMin=distance(tab1[0],tab2[0]), distanceCourante;
+  for (i=0;i<N1;i++){
+    for (j=0;j<N2;j++){
+      if(distanceCourante=distance(tab1[i],tab2[j])<distanceMin){
+        distanceMin=distanceCourante;
+      }
+    }
+  }
+}
+
+
+
 /**
  * Affiche un tableau de points de taille N
  * @param tab le tableau de points
@@ -113,7 +134,7 @@ CERCLE SimpleIterativeBall(POINT*tab, int N, float e){
   a=1/(e*e);
 
   while(i<=a){
-    m=argmax2(centre, tab, N);
+    m=argmax(centre, tab, N);
     centre.x+=((tab[m].x-centre.x)/(1+i));
     centre.y+=((tab[m].y-centre.y)/(1+i));
     i++;
@@ -135,11 +156,12 @@ CERCLE ApproximateCoreSet(POINT*tab, int N, float e){
   double gama=e/3, delta=e/3, rayon=0;
   int i=1, k;
   CERCLE cercle;
-  POINT centre;
+  POINT* C1=malloc (sizeof(POINT)*N);
+  C1[0]=tab[0];
   centre.x=tab[0].x;
   centre.y=tab[0].y;
   
-  while(distance(centre,tab)>=(1+delta)*rayon){
+  while(distanceCOREsET(centre,tab)>=(1+delta)*rayon){
     k=argmax2
   
   
