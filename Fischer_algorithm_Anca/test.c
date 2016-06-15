@@ -11,9 +11,13 @@ int rand_a_b (int a, int b){
 }
 
 int main( int argc, char* argv []){
-    int N, xmin , xmax, ymin, ymax;
 
-    
+
+
+
+
+
+    int N, xmin , xmax, ymin, ymax;
 
     if (argc!=6 || atoi(argv[1])>500000){ //Plus de 600 000 points provoquent une segmentation fault
         printf("usage: %s <nbDePoints (inf. à 500000)> <xmin> <xmax> <ymin> <ymax> \n\n", argv[0]); 

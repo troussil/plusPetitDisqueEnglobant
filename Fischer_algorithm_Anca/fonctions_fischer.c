@@ -404,8 +404,9 @@ CERCLE algorithme_fischer(POINT S[], int nbPoints){
 	CERCLE temp; //un cercle temporaire 
 	POINT centreTemp;
 	double diametreTemp;
-	POINT r;
+	POINT c,r,p,q;
 
+	POINT T[3];
 	POINT S2[nbPoints-2]; //l'ensemble des points de S qui se trouvent du bon côté de la droite passant par les deux points de T
 
 	double det; //pour stocker la valeur du determinant
@@ -423,9 +424,7 @@ CERCLE algorithme_fischer(POINT S[], int nbPoints){
 	}
 	else
 	{
-			POINT c = S[0]; //au debut, c est pris au hasard
-			POINT p; // le POINT le plus eloigne de c
-			POINT q; //un point temporaire pour trouver p
+			c = S[0]; //au debut, c est pris au hasard
 			
 			for(i=1; i<nbPoints;i++)
 		    {
@@ -436,7 +435,6 @@ CERCLE algorithme_fischer(POINT S[], int nbPoints){
 		    	}
 		    }
 
-			POINT T[3];
 			init_tab(T,3);
 			T[0] = p; //au debut, T contient p seulement
 			nbPointsT = 1;
@@ -461,8 +459,11 @@ CERCLE algorithme_fischer(POINT S[], int nbPoints){
 					//on a 3 points ou plus dans T, faut enlever un par le dropping
 					
 					if(dropping(c,T,3)){
-						//printf("dropping reusi qd plus de 3 points");
 						nbPointsT--;
+					}
+					else{
+						//ajouter point T ??
+
 					}
 				}
 				else if(nbPointsT == 1)
