@@ -136,9 +136,9 @@ double calculer_determinant2(POINT a, POINT b){
 int coefficients_negatifs(POINT p,POINT T[], int nbPoints){
 	int alpha;
 	int betha;
-	int i;
+	int i,j;
 	for(i=0; i<nbPoints-1;i++){
-		for(int j=i+1;j<nbPoints;j++){
+		for(j=i+1;j<nbPoints;j++){
 			if(calculer_determinant2(T[i],T[j])!=0){
 
 				alpha=calculer_determinant2(p,T[j])/calculer_determinant2(T[i],T[j]);
@@ -400,15 +400,17 @@ int dropping(POINT c,POINT T[], int nbPoints){
 CERCLE algorithme_fischer(POINT S[], int nbPoints){
 
 	CERCLE resultat;
+
 	CERCLE temp; //un cercle temporaire 
 	POINT centreTemp;
-	POINT tabTemp[2]; //tableau temporaire
+	double diametreTemp;
+	POINT r;
 
 	POINT S2[nbPoints-2]; //l'ensemble des points de S qui se trouvent du bon côté de la droite passant par les deux points de T
 
 	double det; //pour stocker la valeur du determinant
-	int i,j,nbPointsT,nbPointsS2;
 	double max=0;
+	int i,j,nbPointsT,nbPointsS2;
 
 	sort_and_remove_duplicates(S,&nbPoints); //on enleve les points dupliques de S pour faire moins de calculs et eviter les ambiguites
 
@@ -445,33 +447,16 @@ CERCLE algorithme_fischer(POINT S[], int nbPoints){
 
 
 				compteur++;
-				/*
-				printf("\n*** iteration %d ***\n\n", compteur);
+				
+				/*printf("\n*** iteration %d ***\n\n", compteur);
 				printf("c.x = %f c.y = %f\n",c.x,c.y);
 				printf("Dans T on a %d points : \n", nbPointsT);
 				for(i=0;i<nbPointsT;i++){
 					printf("%f %f\n", T[i].x, T[i].y);
-				}
-				*/
-				
-
-				/*if(appartenance_aff(c,T,3)){
-					dropping(c,T,3);
 				}*/
 
-				//on calcule le nombre d'elements non nuls de T
-				/*i=0;
-				while(T[i].x != 0 || T[i].y != 0)
-					i++;
-				if(i>=3)
-					nbPointsT = 3;
-				else
-					nbPointsT = i;
-				*/
-				
-
-				
-				if(nbPointsT>=3)
+								
+				if(nbPointsT>=3 || appartenance_aff(c,T,3))
 				{
 					//on a 3 points ou plus dans T, faut enlever un par le dropping
 					
@@ -484,45 +469,53 @@ CERCLE algorithme_fischer(POINT S[], int nbPoints){
 				{
 					
 					//on a 1 seul point, faut rajouter encore 1 point dans T
-					//on rajoute le 2eme plus loin par rapport a c
-					max=0;
-					tabTemp[0] = T[0];
-					tabTemp[1] = c;
-					for(i=0; i<nbPoints;i++)
-				    {
-				    	q = S[i];
+					
 
+					//calcul du tableau S2 = S\T
 
-				    	if(max < distance(c,q) && !estEgalPoint(q,T[0]) && !appartenance_conv(q,tabTemp,2) )
-				    	{		    		
-				    		max = distance(c,q);
-				    		p = q;
-				    		
-				    	}
-				    }
+					init_tab(S2, nbPoints-1);
+					j=0;
 
-				    //printf("on rajoute a T le point %f %f\n", p.x, p.y);
-				    nbPointsT++;
-				    T[1] = p;
+					for(i=0;i<nbPoints;i++){
+						if(not_in(T,S[i],3)){
+							S2[j] = S[i];
+							j++;
+						}
+					}
+					nbPointsS2=j;
 
-				    //on actualise c par rapport au point qui vient de nous arreter
+					q = S2[0];
 
-				    if(!collinear(c,T[0],T[1])){
-				    	DROITE d1 = mediatrice(T[0],T[1]);
-				    	DROITE d2 = droitePassantParPoints(T[0],c);
+					r.x =0;
+					r.y =0;
+					
+					for(i=1;i<nbPointsS2;i++){
+						DROITE d1 = mediatrice(T[0],q);
+						DROITE d2 = droitePassantParPoints(T[0],c);
 
-				    	c = intersection(d1,d2);
+						centreTemp = intersection(d1,d2);
+						diametreTemp = 2 * distance(centreTemp, q);
 
-				    	
-				    }
-				    else{
-				    	c.x = (T[0].x + T[1].x)/2;
-				    	c.y = (T[0].y + T[1].y)/2;
-				    }
+						temp.x = centreTemp.x;
+						temp.y = centreTemp.y;
+						temp.d = diametreTemp;
 
+						if(!contientPoint(temp, S2[i])){
+							r = S2[i];
+							c = centreTemp;
+						}
 
+					}
 
-
+					if(!equals_zero(r)){
+						T[1] = r;
+						nbPointsT++;
+					}
+					else{
+						//printf("nous n'avons pas pu rajouter un 2eme point car r.x = %f et r.y = %f", r.x, r.y);
+						c.x = (T[0].x + c.x)/2.0;
+						c.y = (T[0].y + c.y)/2.0;
+					}
 				}
 				else if(nbPointsT==2) 
 				{
@@ -581,11 +574,8 @@ CERCLE algorithme_fischer(POINT S[], int nbPoints){
 					}
 
 				}
-
-				//sleep(10);
-				
+				//sleep(10);	
 			}
-
 		    //on renvoye le cercle resultat de centre c et diametre 2 * distance (c,T[0])
 			resultat.x = c.x;
 			resultat.y = c.y;
