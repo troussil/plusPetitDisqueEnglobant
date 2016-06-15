@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include <math.h>
 
 /**
  * Genere un entier entre a et b
@@ -17,7 +16,7 @@ int main( int argc, char* argv []){
   srand(time(NULL));
   if (argc!=6){
     printf ("nb invalide d'arguments\n");
-    printf("usage: %s <nbDePoints> <xmin> <xmax> <ymin> <ymax>\n", argv[0]);
+    printf("usage: %s <nbDePoints> <xmin> <xmax> <ymin> <ymax>\n", argv[0]); 
     return 1;
   }
 

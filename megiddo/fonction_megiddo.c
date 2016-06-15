@@ -88,34 +88,13 @@ DOUBLET* tableauValeurCritique(POINT tab[],int longueur,int ordonne){
 			j+=1;
 		}
 		return critique;
-
-	//}
-	// else{
-	// 	longueur+=1;
-	// 	DOUBLET *critique=malloc((longueur/2)*sizeof(double));
-
-	// 	for(i=0;i<longueur-1;i+=2){
-	// 		valeur=(auCarre(tab[i+1].x)-auCarre(tab[i].x)+auCarre(tab[i+1].y)-auCarre(tab[i].y))/(epsilon+2*((tab[i+1].x)-(tab[i].x)));
-	// 		critique[j].mediatrice=valeur;
-	// 		critique[j].a=tab[i];
-	// 		critique[j].b=tab[i+1];
-	// 		j+=1;
-	// }
-	// 	critique[longueur].mediatrice=critique[0].mediatrice;
-	// 	critique[longueur].a=critique[0].a;
-	// 	critique[longueur].b=critique[0].b;
-	// 	return critique;
-	// }
-	
-	
-
 }
 
 /*
 Calcul la position de x* la solution par rapport à xm
 */
 
-int calculPositionSolution(POINT tab[],int longueur,double mediane){
+int calculPositionSolutionX(POINT tab[],int longueur,double mediane){
 	int i;
 	double max[2];
 	POINT *xm=malloc(sizeof(POINT));
@@ -153,12 +132,49 @@ int calculPositionSolution(POINT tab[],int longueur,double mediane){
 	}
 
 }
+
+
+POINT* calculDemiPlanY(POINT tab[],int longueur,double ordonne){
+	int i;
+	int fin=0;
+	int compteur=1;
+	int nbpoints=2;
+	POINT *enveloppeConvexe=malloc(longueur*sizeof(POINT));
+	for(i=0;i<longueur;i++){//on centre les valeurs sur yc
+		tab[i].y=tab[i].y-ordonne;
+	}
+
+	quickSortPointY(tab,0,longueur-1);
+	enveloppeConvexe[0]=tab[0];
+	for(i=1;i<longueur;i++){
+		if(tab[i].y==tab[0].y){
+			enveloppeConvexe[i]=tab[i];
+			nbpoints+=1;
+		}
+		else{
+			break;
+		}
+	}
+	for(i=longueur-2;i>0;i--){
+		if(tab[i].y==tab[longueur-1].y){
+			enveloppeConvexe[nbpoints]=tab[i];
+			nbpoints+=1;
+		}
+		else{
+			break;
+		}
+	enveloppeConvexe[nbpoints+1]=tab[longueur-1];
+	enveloppeConvexe[0]=tab[0];
+	}
+
+return enveloppeConvexe;
+}
 /*
 on regarde les xcritique > ou < à xm
 on peut enlever 1/2 de ces points
 */
 
-int pruning(POINT point[],int longueur,int ordonne){
+int pruningContraint(POINT point[],int longueur,int ordonne){
 	int i,j,compteur,solution,taille,impair;
 	double med;
 	compteur=0;
@@ -185,7 +201,7 @@ int pruning(POINT point[],int longueur,int ordonne){
 	afficherTableauDoublet(doublet,taille/2);
 
 	/*Trie des valeurs pour trouver la médiane + gestion des cas impairs*/
-	med=quickSortDoublet(doublet,0,taille/2-1);
+	med=triMediatrice(doublet,0,taille/2-1);
 	printf("tableau de doublets trié pour trouver la médiane\n");
 	afficherTableauDoublet(doublet,taille/2);
 	
@@ -202,7 +218,7 @@ int pruning(POINT point[],int longueur,int ordonne){
 	=1 xm<x*
 	=0 xm>x*
 	 */
-	solution=calculPositionSolution(point,taille,xm->x);
+	solution=calculPositionSolutionX(point,taille,xm->x);
 	if(solution==1){
 		printf("xm<x*\n");
 	}
@@ -235,9 +251,9 @@ int pruning(POINT point[],int longueur,int ordonne){
 	}
 	printf("count= %d\n",count );
 	printf("valeurs à éliminer:\n");
-	quickSortPoint(elim,0,count-1);
+	quickSortPointX(elim,0,count-1);
 	afficherTableauPoint(elim,count);
-	quickSortPoint(point,0,taille-1);
+	quickSortPointX(point,0,taille-1);
 	if(impair==1){
 		taille+=1;
 	}
@@ -263,6 +279,59 @@ int pruning(POINT point[],int longueur,int ordonne){
 }
 
 
+/*Calcul l'angle avec la droite x=0 */
+
+DOUBLET* calculAngleCritique(POINT tab[],int longueur){
+	int i;
+	double angle;
+	
+	POINT *milieu=malloc(sizeof(POINT));
+	POINT *xcritique=malloc(sizeof(POINT));
+	DOUBLET *critique=malloc(partiEntiere(longueur/2)*sizeof(DOUBLET));
+
+	critique=tableauValeurCritique(tab,longueur,0);
+
+	for(i=0;i<partiEntiere(longueur/2);i++){
+		xcritique->x=critique[i].mediatrice;
+		xcritique->y=0;
+		milieu->x=((critique[i].a.x)+(critique[i].b.x))/2;
+		milieu->y=((critique[i].a.y)+(critique[i].b.y))/2;
+		angle=atan2((milieu->y),((milieu->x)-(xcritique->x)));
+		if(angle>(PI/2)){
+			angle=angle -PI;
+		}
+		else if(angle<(-PI/2)){
+			angle=angle +PI;
+		}
+		if (critique[i].a.x!=critique[i].b.x){
+			critique[i].angle=angle;
+		}
+		else{
+			critique[i].angle=0;
+		}
+		
+
+	}
+	return critique;
+
+}
 
 
+POINT* intersectionLigne(DOUBLET tab[],int longueur){
+	int i;
+	double angleMedian;
+	int taille=partiEntiere(longueur/2);
+	POINT *intersection=malloc(taille*sizeof(POINT));
+	angleMedian=triAngle(tab,0,longueur-1);
+	printf("angle médian:%lf\n",angleMedian );
+	calculDroite(tab,longueur);
+	for(i=0;i<taille;i++){
+		if(estParallele(tab[i],tab[longueur-i-1])!=1){
+			intersection[i]=*calculIntersection(tab[i],tab[longueur-i-1]);
+			//printf("point %d | doublet %d et %d | x=%lf | y=%lf\n",i,i,longueur-i-1,intersection[i].x,intersection[i].y );
+		}
+	}
+	//printf("taille tableau: %d\n",i);
+	return intersection;
+}
 
