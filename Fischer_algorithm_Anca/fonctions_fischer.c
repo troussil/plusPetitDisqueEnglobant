@@ -137,18 +137,21 @@ int coefficients_negatifs(POINT p,POINT T[], int nbPoints){
 	double alpha;
 	double betha;
 	int i,j;
+
 	for(i=0; i<nbPoints-1;i++){
 		for(j=i+1;j<nbPoints;j++){
 			if(calculer_determinant2(T[i],T[j])!=0){
 
 				alpha=calculer_determinant2(p,T[j])/calculer_determinant2(T[i],T[j]);
+				//printf("alpha = %lf", alpha);
 
-				if(alpha<0){
+				if(alpha<=0){
 					return i;
 				}
 				else{
 					betha=calculer_determinant2(T[i],p)/calculer_determinant2(T[i],T[j]);
-					if(betha<0) 
+					//printf("betha = %lf", betha);
+					if(betha<=0) 
 						return j;
 				}
 			}
@@ -459,20 +462,19 @@ CERCLE algorithme_fischer(POINT S[], int nbPoints){
 
 				compteur++;
 				
-				/*printf("\n*** iteration %d ***\n\n", compteur);
+				printf("\n*** iteration %d ***\n\n", compteur);
 				printf("c.x = %f c.y = %f\n",c.x,c.y);
 				printf("Dans T on a %d points : \n", nbPointsT);
 				for(i=0;i<nbPointsT;i++){
 					printf("%f %f\n", T[i].x, T[i].y);
 				}
-				*/
 
 								
 				if(nbPointsT>=3 || appartenance_aff(c,T,nbPointsT) )
 				{
 					//on a 3 points ou plus dans T, faut enlever un par le dropping
 					
-					if(dropping(c,T,3)){
+					if(dropping(c,T,nbPointsT)){
 						nbPointsT--;
 					}
 					else{
@@ -490,7 +492,7 @@ CERCLE algorithme_fischer(POINT S[], int nbPoints){
 					j=0;
 
 					for(i=0;i<nbPoints;i++){
-						if(not_in(T,S[i],3)){
+						if(not_in(T,S[i],nbPointsT)){
 							S2[j] = S[i];
 							j++;
 						}
@@ -541,7 +543,7 @@ CERCLE algorithme_fischer(POINT S[], int nbPoints){
 					det = calculer_determinant3(T[0],T[1],c);
 					init_tab(S2, nbPoints-1);
 					for(i=0;i<nbPoints;i++){
-						if(not_in(T,S[i],3))
+						if(not_in(T,S[i],nbPointsT))
 						{
 							if(det * calculer_determinant3(T[0],T[1],S[i]) > 0)
 							{
@@ -564,7 +566,7 @@ CERCLE algorithme_fischer(POINT S[], int nbPoints){
 						
 						for(i=1;i<nbPointsS2;i++){
 							//si S2[i] est en dehors du cercle temp, on reactualise le cercle
-							if(distance(centreTemp,S2[i]) > temp.d){
+							if(!contientPoint(temp,S2[i])){
 								//temp devient le cercle passant par T[0], T[1], S2[i]
 								temp = cerclePassantParTroisPoints(T[0], T[1], S2[i]);
 								centreTemp.x = temp.x;
@@ -581,7 +583,11 @@ CERCLE algorithme_fischer(POINT S[], int nbPoints){
 						c = intersection(d1,d2);
 					}
 					else
-					{ 
+					{
+						if(!not_in(S,c,nbPoints)){
+							T[2]=c;
+							nbPointsT++;
+						} 
 						c.x = (T[0].x + T[1].x)/2;
 						c.y = (T[0].y + T[1].y)/2;
 
@@ -589,7 +595,7 @@ CERCLE algorithme_fischer(POINT S[], int nbPoints){
 					}
 
 				}
-				//sleep(10);	
+				//sleep(5);	
 			}
 		    //on renvoye le cercle resultat de centre c et diametre 2 * distance (c,T[0])
 			resultat.x = c.x;

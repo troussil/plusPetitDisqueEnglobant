@@ -12,7 +12,8 @@ int rand_a_b (int a, int b){
 
 int main( int argc, char* argv []){
 
-    /*
+    /****************************** Tests unitaires **************************************/
+
 
     POINT a;
     POINT b;
@@ -71,17 +72,24 @@ int main( int argc, char* argv []){
     printf("\nPoint p = %lf %lf\n", p.x, p.y);
     printf("\nappartennance_aff de p dans {a,b,c} donne: %d\n",appartenance_aff(p,tab,nbPoints));
     printf("\nappartennance_conv de p dans {a,b,c} donne: %d\n",appartenance_conv(p,tab,nbPoints));
-    */
+
+    int index = coefficients_negatifs(p, tab, nbPoints);
+
+    if(index==0)
+        printf("\nla methde coefficients_negatifs indique d'eliminer le point a\n");
+    else if(index==2)
+        printf("\nla methde coefficients_negatifs indique d'eliminer le point b\n");
+    else if(index==3)
+        printf("\nla methde coefficients_negatifs indique d'eliminer le point c\n");
+    else
+        printf("\non ne peut eliminer aucun point %d\n",index);
 
 
 
 
+    /****************************** Tests et comparaison algorithme **************************************/
 
-
-
-    //Tests et comparaison algorithme
-
-
+/*
     int N, xmin , xmax, ymin, ymax;
 
     if (argc!=6 || atoi(argv[1])>500000){ //Plus de 600 000 points provoquent une segmentation fault
@@ -120,6 +128,7 @@ int main( int argc, char* argv []){
 
     printf("Time ellapsed: %lf\n", (double) (clock() - now) / CLOCKS_PER_SEC);
     printf("Centre ( %lf , %lf ) diamètre %lf\n", c1.x , c1.y , c1.d );
+    printf("contientTousPoints donne: %d\n", contientTousPoint(c1,tab,N));
 
     
 
@@ -130,6 +139,9 @@ int main( int argc, char* argv []){
 
     printf("Time ellapsed: %lf\n", (double) (clock() - now) / CLOCKS_PER_SEC);
     printf("Centre ( %lf , %lf ) diamètre %lf\n\n", c2.x , c2.y , c2.d );
+    printf("contientTousPoints donne: %d\n", contientTousPoint(c2,tab,N));
+
+    */
 
 
     return 0;
