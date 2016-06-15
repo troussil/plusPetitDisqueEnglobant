@@ -1,7 +1,7 @@
 all:	test generateur demo
 
-fonction_megiddo.o:	fonction_megiddo.c fonction_megiddo.h structure.h utils.o
-	gcc -Wall -c -lm fonction_megiddo.c utils.o -o fonction_megiddo.o
+fonction_megiddo.o:	fonction_megiddo.c fonction_megiddo.h structure.h 
+	gcc -Wall -c -lm fonction_megiddo.c  -o fonction_megiddo.o
 
 utils_table.o:	utils_table.c utils_table.h structure.h
 	gcc -Wall -c -lm utils_table.c -o utils_table.o

@@ -20,10 +20,18 @@ typedef struct model_cercle{
 	double d;
 } CERCLE;
 
+typedef struct model_droite{
+	double m;
+	double p;
+} DROITE;
+
 typedef struct model_doublet{
 	POINT a;
 	POINT b;
+	DROITE droite;
 	double mediatrice;
+	double angle;
 } DOUBLET;
+
 
 #endif
