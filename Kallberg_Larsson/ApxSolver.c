@@ -1,6 +1,5 @@
 #include "improved_pruning.h"
 #include "updateball_methods.h"
-//#include "structures.h"
 #include <time.h>
 #include "../resolution_brute.h"
 
@@ -34,6 +33,7 @@ int main( int argc, char* argv []){
   for (i=0;i<N;i++){
     tab[i].x =rand_a_b(xmin,xmax);
     tab[i].y =rand_a_b(ymin,ymax);
+    printf("Point %d {%lf , %lf}\n",i,tab[i].x,tab[i].y );
   }
 
   printf("Algorithme de mise à jour utilisé: ");
@@ -70,7 +70,13 @@ int main( int argc, char* argv []){
   now=0;
   CERCLE c3 = brute(tab,N);
   printf("Time ellapsed: %lf\n", (double) (clock() - now) / CLOCKS_PER_SEC);
-  printf("Centre ( %lf , %lf ) diamètre %lf\n\n", c3.x , c3.y , c3.d );
+  printf("Centre ( %lf , %lf ) diamètre %lf\n", c3.x , c3.y , c3.d );
  
+
+  printf("\n__ Comparaison:\n\n");
+  printf("On veut r <= (1 + apx)r*  où r* est le rayon du vrai cercle englobant minimum.\n");
+  printf("On a ici r=%lf par ApxMEB1 et r=%lf par ApxMEB2, or (1+apx)r*=%lf par méthode brute. \n",c1.d/2,c2.d/2,(1+apx)*c3.d/2);
+
+
 	return 0;
 }

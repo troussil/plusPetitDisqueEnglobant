@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-
 #include "fonctions_resolution_brute.h"
 
 
@@ -19,6 +18,7 @@ CERCLE brute( POINT tab[] , int nbPoints){
 
 	/* TESTS AVEC DUO DE POINTS */
 
+
 	printf("Tests avec duo de points...\n");
 
 	for(i=0 ; i<nbPoints ; i++){
@@ -33,25 +33,29 @@ CERCLE brute( POINT tab[] , int nbPoints){
 		}
 	}
 
-	/* TESTS AVEC TRIO DE POINTS */   
 
+	/* TESTS AVEC TRIO DE POINTS */ 
+
+	  
 	printf("Tests avec trio de points...\n");
 
 	for(i=0 ; i<nbPoints ; i++){
                 for(j=0 ; j<nbPoints ; j++){
                         for(k=0 ; k<nbPoints ; k++){
-				if(i!=j && i!=k && j!=k){
-                                	p1 = tab[i];
-                                	p2 = tab[j];
-					p3 = tab[k];
-                        	        cTemp = cerclePassantParTroisPoints(p1 , p2 , p3);
-                              	  	if ( contientTousPoint(cTemp , tab , nbPoints) && cTemp.d < cFinal.d){
-                                	        cFinal = cTemp;
-                                	}
-				}
+							if(i!=j && i!=k && j!=k){
+                                p1 = tab[i];
+                                p2 = tab[j];
+								p3 = tab[k];
+                        	    cTemp = cerclePassantParTroisPoints(p1 , p2 , p3);
+                              	if ( contientTousPoint(cTemp , tab , nbPoints) && cTemp.d < cFinal.d){
+                                	cFinal = cTemp;
+                                }
+							}
                         }
                 }
-        }   
+    }
+
+       
 
 	return cFinal;
 }
