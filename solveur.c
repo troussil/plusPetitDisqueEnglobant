@@ -121,7 +121,7 @@ void ecritureSVG(POINT tab[], FILE* file , int N){
 /****************************************************NIELSEN & KNOCK***************************************************************/
 
   double e =(0.01);
-  CERCLE CercleNK=SimpleIterativeBall(tab , N, e);
+  CERCLE CercleNK=ApproximateCoreSet(tab , N, e);
   dessinerCercle(file, CercleNK.x, CercleNK.y, CercleNK.d/2,"blue");
   printf(" \n*** CERCLE SOLUTION PAR METHODE NIELSEN & KNOCK: posX = %lf , posY = %lf , diamètre = %lf  ***\n", CercleNK.x, CercleNK.y, CercleNK.d );
 }

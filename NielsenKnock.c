@@ -8,11 +8,11 @@
 int argmax(POINT point, POINT* tab, int N);
 int argmax2(POINT point, POINT* tab, int N);
 double distance(POINT point1, POINT point2);
-CERCLE SimpleIterativeBall(POINT*tab, int N, float e);
+CERCLE SimpleIterativeBall(POINT*tab, int N, double e);
 void display(POINT* tab, int N);
 void calculNorme (POINT* tab, int N);
-CERCLE ApproximateCoreSet(POINT*tab, int N, float e);
-double distanceCoreSet(POINT *tab1,int N1, POINT *tab2, int N2);
+CERCLE ApproximateCoreSet(POINT*tab, int N, double e);
+double distanceCoreSet(POINT point, POINT *tab, int N);
 
 /**
  * Calcul la norme de tous les points d'un tableau de points donné et met à jour la structure de chaque point
@@ -84,16 +84,18 @@ double distance(POINT point1, POINT point2){
  * @param N1 et N2 les tailles respectives des tableaux tab1 et tab2
  * @return la distance entre les deux ensembles de POINT
 **/
-double distanceCoreSet(POINT *tab1,int N1, POINT *tab2, int N2){
-  int i, j;
-  double distanceMin=distance(tab1[0],tab2[0]), distanceCourante;
-  for (i=0;i<N1;i++){
-    for (j=0;j<N2;j++){
-      if(distanceCourante=distance(tab1[i],tab2[j])<distanceMin){
-        distanceMin=distanceCourante;
-      }
+double distanceCoreSet(POINT point, POINT *tab, int N){
+  int i;
+  double distanceMax=0, distanceCourante;
+  for (i=1;i<N;i++){
+    distanceCourante=distance(tab[i],point);
+    if(distanceCourante>distanceMax){
+      distanceMax=distanceCourante;
+      //printf("d2=%lf\n",distanceMax);
     }
+  //printf("distcourante=%lf\n",distanceCourante);
   }
+  return distanceMax;
 }
 
 
@@ -117,9 +119,9 @@ void display(POINT* tab, int N){
  * @param tab un tableau de POINT
  * @param N le nombre de points dans tab
  * @param e la précision de l'approximation
- * @return l'argument recherché
+ * @return une approximation du plus petit cercle englobant
 **/
-CERCLE SimpleIterativeBall(POINT*tab, int N, float e){
+CERCLE SimpleIterativeBall(POINT*tab, int N, double e){
   int i, m;
   double a;
   CERCLE cercle;
@@ -150,20 +152,25 @@ CERCLE SimpleIterativeBall(POINT*tab, int N, float e){
  * @param tab un tableau de POINT
  * @param N le nombre de points dans tab
  * @param e la précision de l'approximation
- * @return l'argument recherché
-*
-CERCLE ApproximateCoreSet(POINT*tab, int N, float e){
+ * @return une approximation du plus petit cercle englobant
+**/
+CERCLE ApproximateCoreSet(POINT*tab, int N, double e){
   double gama=e/3, delta=e/3, rayon=0;
   int i=1, k;
   CERCLE cercle;
-  POINT* C1=malloc (sizeof(POINT)*N);
-  C1[0]=tab[0];
-  centre.x=tab[0].x;
-  centre.y=tab[0].y;
+  POINT* tabIteratif=malloc (sizeof(POINT)*N); tabIteratif[0]=tab[0];
+  POINT centre; centre.x=tab[0].x; centre.y=tab[0].y;
   
-  while(distanceCOREsET(centre,tab)>=(1+delta)*rayon){
-    k=argmax2
-  
-  
+  while(distanceCoreSet(centre,tab,N)>=(1+delta)*rayon){
+    k=argmax(centre, tab, N);
+    tabIteratif[i]=tab[k];
+    cercle=SimpleIterativeBall(tabIteratif,i+1,gama);
+    centre.x=cercle.x;
+    centre.y=cercle.y;
+    rayon=cercle.d/2;
+    printf("i=%d gama=%lf \ncercle.x=%lf cercle.y=%lf cercle.d=%lf\n", i, gama, cercle.x, cercle.y, cercle.d);
+    printf("centre.x=%lf centre.y=%lf rayon=%lf\n", centre.x, centre.y, rayon);
+    i++;
+  }
+  return cercle;
 }
-*/

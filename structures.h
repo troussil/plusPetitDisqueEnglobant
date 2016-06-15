@@ -13,7 +13,7 @@ typedef struct model_point{
 typedef struct model_cercle{
         coo x;
         coo y;
-	double d;
+	coo d;
 } CERCLE;
 
 
