@@ -16,6 +16,8 @@ CERCLE ApxMEB1 ( POINT P[], int nbPoints, double apx){
 	int nbPts = nbPoints;
 	POINTS_AND_NB X;
 	
+	int maj = 0;
+
 	CERCLE sol; //Cercle solution
 
 	POINT c;	//Centre du cercle solution
@@ -42,6 +44,7 @@ CERCLE ApxMEB1 ( POINT P[], int nbPoints, double apx){
 		crit = sqrt((r*r)+(delta*delta)) - delta;
 		
 		X = prune( P, nbPts, c, crit);
+	
 		P = X.tab;
 		nbPts = X.nbPoints;
 
@@ -49,9 +52,21 @@ CERCLE ApxMEB1 ( POINT P[], int nbPoints, double apx){
 		/***** UPDATEBALL ****
 		Différentes possibilités avec 2 algos de Yildirim et 1 de Larsson & Källberg et 1 de Badoiu et Clarkson */
 
-		Y = methodBadoiuClarkson( c , r , q );
+
+		switch(MODE){
+			case 1: 
+				Y = methodBadoiuClarkson( c , r , q );
+				break;
+			case 2: 
+				Y = methodKallbergLarsson( c , r , q , apx/2);
+				break;
+			default: exit(-1);
+		}
+
 		c = Y.center;
 		r = Y.radius;
+
+		maj++;
 
 		/*********************/
 
@@ -59,6 +74,12 @@ CERCLE ApxMEB1 ( POINT P[], int nbPoints, double apx){
 		R = sqrt( ( (c.x - q.x)*(c.x - q.x) ) + ( (c.y - q.y)*(c.y - q.y) ) );
 
 	}
+
+	if(maj>0){
+		free(P);
+	}
+
+	printf("\nMises à jour apx1: %d\n",maj);
 
 	sol.x = c.x;
 	sol.y = c.y;
@@ -81,17 +102,19 @@ CERCLE ApxMEB2 ( POINT P[], int nbPoints, double apx){
 
 	int nbPts = nbPoints;
 	POINTS_AND_SPD Z;
+
+	int maj = 0;
 	
 	CERCLE sol; //Cercle solution
 
 	POINT c;	//Centre du cercle solution
-	int r;		//Rayon du cercle solution
+	double r;		//Rayon du cercle solution
 
 	POINT q;	//Point extrême
-	int R;		//Distance
+	double R;		//Distance
 
 	POINT cc;	//Centre temporaire
-	int RR;		//Distance temporaire
+	double RR;		//Distance temporaire
 
 	double delta; //distance entre centre du cercle min et centre cercle en cours
 	double gap;	  //distance entre c et cc (delta minuscule dans l'article)
@@ -116,6 +139,9 @@ CERCLE ApxMEB2 ( POINT P[], int nbPoints, double apx){
 		c = Y.center;
 		r = Y.radius;
 
+		maj++;
+		
+
 		/*********************/
 
 		gap = sqrt( ( (c.x - cc.x)*(c.x - cc.x) ) + ( (c.y - cc.y)*(c.y - cc.y) ) );
@@ -123,7 +149,7 @@ CERCLE ApxMEB2 ( POINT P[], int nbPoints, double apx){
 		crit = sqrt(r*r + delta*delta) - delta;
 
 		Z = farthPtPrune( P , nbPts , c , crit);
-
+		
 		P = Z.tab;
 		nbPts = Z.nbPoints;
 		R = Z.distance;
@@ -131,6 +157,13 @@ CERCLE ApxMEB2 ( POINT P[], int nbPoints, double apx){
 
 
 	}	
+
+	if(maj>0){
+		free(P);
+	}
+	
+
+	printf("\nMises à jour apx2: %d\n",maj);
 
 	sol.x = c.x;
 	sol.y = c.y;
@@ -183,6 +216,8 @@ POINT farthestPoint (POINT P[] , int nbPoints , POINT c){
 
 POINTS_AND_NB prune (POINT P[] , int nbPoints , POINT c , double dist){
 
+	static int callCounter = 0;
+
 	POINTS_AND_NB X; // Structure à retourner
 	
 	int nbPointsOk = 0; //nbre de points ne vérifiant pas le critère de pruning
@@ -191,6 +226,8 @@ POINTS_AND_NB prune (POINT P[] , int nbPoints , POINT c , double dist){
 	/* Nouveau tableau qui contiendra uniquement les points non "prunés" */
  	POINT* Q = (POINT*) malloc(nbPoints * sizeof(POINT));
 
+ 	//printf("\nPointeur mallocé: %p\n",Q );
+
 	/* Ajouter au nouveau tableau tous les points ne vérifiant pas le critère de pruning */
 	for (i = 0; i < nbPoints; i++){
 		if ( (( (c.x - P[i].x)*(c.x - P[i].x) ) + ( (c.y - P[i].y)*(c.y - P[i].y) )) > dist*dist ){
@@ -198,6 +235,17 @@ POINTS_AND_NB prune (POINT P[] , int nbPoints , POINT c , double dist){
 			nbPointsOk++;
 		}
 	}
+
+
+	if(callCounter>0){
+		//printf("Pointeur précédent à libérer: %p\n",P );
+		free(P);
+	} else {
+		//printf("Aucun pointeur à libérer\n",P );
+	}
+
+	callCounter++;
+
 
 	/* On remplit la structure POINTS_AND_NB avec le tableau pruné et le nombre de points restant */
 	X.tab = Q;
@@ -216,10 +264,13 @@ POINTS_AND_NB prune (POINT P[] , int nbPoints , POINT c , double dist){
 
 POINTS_AND_SPD farthPtPrune (POINT P[] , int nbPoints , POINT c , double dist){
 
+	static int callCounter = 0;
 
 	POINTS_AND_SPD X; //structure à retourner
 
 	POINT* Q = (POINT*) malloc(nbPoints * sizeof(POINT)); //Nouveau tableau qui contiendra uniquement les points non "prunés"
+
+	//printf("\nPointeur mallocé: %p\n",Q);
 
 	POINT q = {0,0};
 	double x = -DBL_MAX;	// =-79769e+308  != -infini (limite de l'algorithme)
@@ -253,6 +304,13 @@ POINTS_AND_SPD farthPtPrune (POINT P[] , int nbPoints , POINT c , double dist){
 		}
 	}
 
+	if(callCounter>0){
+		//printf("Pointeur précédent à libérer: %p\n",P );
+		free(P);
+	} else {
+		//printf("Aucun pointeur à libérer\n",P );
+	}
+	callCounter++;
 
 	X.tab = Q;
 	X.nbPoints = nbPointsOk;
@@ -264,7 +322,7 @@ POINTS_AND_SPD farthPtPrune (POINT P[] , int nbPoints , POINT c , double dist){
 }
 
 /**
- * Initalise une boule à partir de deux points les plus loin parmi un ensemble.
+ * Initalise une boule à partir de deux points les plus loin d'un point au hasard parmi un ensemble.
  * @param P ensemble de points
  * @param nbPoints nombre de points
  * @return X le centre initialisé + le rayon

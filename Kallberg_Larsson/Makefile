@@ -4,7 +4,7 @@ CFLAGS= -Wall
 
 #Commandes
 
-all: test_improved_pruning test_updateball_methods
+all: test_improved_pruning test_updateball_methods ApxSolver
 
 ###
 
@@ -12,6 +12,9 @@ test_improved_pruning: improved_pruning.o test_improved_pruning.o updateball_met
 	$(CC) $(CFLAGS) $^ -lm -o $@
 
 test_updateball_methods: updateball_methods.o test_updateball_methods.o improved_pruning.o
+	$(CC) $(CFLAGS) $^ -lm -o $@
+
+ApxSolver: ApxSolver.o updateball_methods.o improved_pruning.o
 	$(CC) $(CFLAGS) $^ -lm -o $@
 
 ###
@@ -28,8 +31,11 @@ updateball_methods.o: updateball_methods.c
 test_updateball_methods.o: test_updateball_methods.c
 	$(CC) -c $(CFLAGS) $< -lm -o $@
 
+ApxSolver.o: ApxSolver.c
+	$(CC) -c $(CFLAGS) $< -lm -o $@
+
 #Nettoyage
 clean: 
 	rm -f *.o
 	rm -f *~
-	rm test_improved_pruning test_updateball_methods
+	rm test_improved_pruning test_updateball_methods ApxSolver

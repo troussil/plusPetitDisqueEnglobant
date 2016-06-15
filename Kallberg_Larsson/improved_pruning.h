@@ -5,6 +5,7 @@
 #include <float.h>
 
 
+
 /**
  * Algorithme utilisant les théorèmes 2 et 4
  * @param P tableau des points du plan
