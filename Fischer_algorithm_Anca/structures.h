@@ -6,7 +6,7 @@
 typedef struct model_point{
 	coo x;
 	coo y;
-} POINT;
+}POINT;
 
 
 typedef struct model_cercle{

@@ -1,7 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-
 #include "structures.h"
 #include "fonctions_resolution_brute.h"
 
@@ -15,7 +11,7 @@ CERCLE cerclePassantParDeuxPoints( POINT p1 , POINT p2){
 	c.y = (p1.y + p2.y)/2;
 	c.d = sqrt((p1.x - p2.x)*(p1.x - p2.x) + (p1.y - p2.y)*(p1.y - p2.y));
 	
-	printf("cercle renvoye : x = %d, y = %d, d = %f\n", c.x, c.y, c.d);
+	//printf("cercle renvoye : x = %d, y = %d, d = %f\n", c.x, c.y, c.d);
 	return c;	
 }
 
@@ -41,7 +37,7 @@ CERCLE cerclePassantParTroisPoints( POINT p1 , POINT p2 , POINT p3){
 	    	c.y =  (cd * (p1.x - p2.x) - bc * (p2.x - p3.x)) / det;
 	    	c.d = 2 * sqrt( pow(p2.x - c.x,2) + pow(p2.y-c.y,2));
 	}
-	printf("cercle renvoye : x = %d, y = %d, d = %f\n", c.x, c.y, c.d);
+	//printf("cercle renvoye : x = %d, y = %d, d = %f\n", c.x, c.y, c.d);
 	return c;	
 }
 
