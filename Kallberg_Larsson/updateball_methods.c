@@ -16,35 +16,20 @@ POINT_AND_R methodKallbergLarsson (POINT center , double radius , POINT farthest
 
 	POINT_AND_R Y;
 	POINT c;
-	//double h;
+	double h;
 	double r;
-	//int i = 0;
 
 	r = radius;
 	c = center;
 
-	/* NE FONCTIONNE PAS POUR LE MOMENT.
+	
+	h = sqrt( ( (c.x - farthest.x)*(c.x - farthest.x) ) + ( (c.y - farthest.y)*(c.y - farthest.y) ) );	
 
-	while( i<(int)2/repeat ){
+	r = ((r*r/h)+h)/2;
 
-		h = sqrt( ( (c.x - farthest.x)*(c.x - farthest.x) ) + ( (c.y - farthest.y)*(c.y - farthest.y) ) );	
+	c.x = farthest.x + (r/h)*(center.x - farthest.x);
+	c.y = farthest.y + (r/h)*(center.y - farthest.y);
 
-		printf("Boucle début\n");
-
-		if(h>r*(1+repeat)){
-			break;
-		}
-
-		r = ((r*r/h)+h)/2;
-
-		c.x = farthest.x + (r/h)*(center.x - farthest.x);
-		c.y = farthest.y + (r/h)*(center.y - farthest.y);
-
-		i++;
-		printf("Boucle fin\n");
-	}
-
-	*/
 
 	Y.center = c;
 	Y.radius = r;
