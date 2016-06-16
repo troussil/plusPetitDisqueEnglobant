@@ -134,30 +134,40 @@ double calculer_determinant2(POINT a, POINT b){
 //retourne l'index d'un POINT avec des coeffs negatifs dans l'ecriture p = alpha*T[i] + betha*T[j]
 //on utilise Cramer pour un systeme de dimension 2
 int coefficients_negatifs(POINT p,POINT T[], int nbPoints){
-	double alpha;
-	double betha;
-	int i,j;
+	//double alpha;
+	//double betha;
+	//int i,j;
+	//int index=0;
+	//printf("nr points %lf %lf %lf \n", T[0].x, T[1].x, T[2].x);
 
-	for(i=0; i<nbPoints-1;i++){
+	/*for(i=0; i<nbPoints;i++){
 		for(j=i+1;j<nbPoints;j++){
+			printf("det: %lf\n", calculer_determinant2(T[i],T[j]));
 			if(calculer_determinant2(T[i],T[j])!=0){
 
 				alpha=calculer_determinant2(p,T[j])/calculer_determinant2(T[i],T[j]);
 				betha=calculer_determinant2(T[i],p)/calculer_determinant2(T[i],T[j]);
-				//printf("alpha = %lf", alpha);
-				//printf("betha = %lf", betha);
+
+				printf("alpha = %lf pour T %d\n", alpha, i);
+				printf("betha = %lf pour T %d\n", betha,j);
 
 				if(alpha<0){
-					return i;
+					index = i;
 				}
 				else if(betha<0){
-						return j;
+						index = j;
 				}
 			}
 		}
-	}
+	}*/
+
+	if(calculer_determinant3(T[2],T[1],T[0]) * calculer_determinant3(T[2],T[1],p) <0)
+		return 0;
+	else if(calculer_determinant3(T[2],T[0],T[1]) * calculer_determinant3(T[2],T[0],p) <0)
+		return 1;
+	else return 2;
 	//si on n'a pas trouve d'index, l'equation a une infinite de solutions et donc on peut eliminer n'importe quel point
-	return 0;
+	//return index;
 }
 
 /**
@@ -416,6 +426,7 @@ int dropping(POINT c,POINT T[], int nbPoints){
 
 	int i;
 	int index = coefficients_negatifs(c, T, nbPoints);
+	//printf("index: %d\n",index);
 	if(index <0){
 		printf("erreur: pas des coeffs negatifs pour le dropping");
 		return 0;
@@ -443,7 +454,7 @@ CERCLE algorithme_fischer(POINT S[], int nbPoints){
 	POINT T[3];
 	POINT S2[nbPoints-2]; //l'ensemble des points de S qui se trouvent du bon côté de la droite passant par les deux points de T
 
-	double det; //pour stocker la valeur du determinant
+	//double det; //pour stocker la valeur du determinant
 	double max=0;
 	int i,j,nbPointsT,nbPointsS2;
 
@@ -471,34 +482,41 @@ CERCLE algorithme_fischer(POINT S[], int nbPoints){
 
 			init_tab(T,3);
 			T[0] = p; //au debut, T contient p seulement
-			printf("distance: %lf\n",distance(c,p));
+			
 			nbPointsT = 1;
 
 			int compteur = 0;
 
-			printf("Dans S on a %d points : \n", nbPoints);
+			/*printf("Dans S on a %d points : \n", nbPoints);
 				for(i=0;i<nbPoints;i++){
 					printf("%lf %lf\n", S[i].x, S[i].y);
-				}
+				}*/
 
 			while(!appartenance_conv(c,T,nbPointsT)){
 
 
 				compteur++;
 				
-				printf("\n*** iteration %d ***\n\n", compteur);
+				/*printf("\n*** iteration %d ***\n\n", compteur);
 				printf("c.x = %lf c.y = %lf\n",c.x,c.y);
 				printf("Dans T on a %d points : \n", nbPointsT);
 				for(i=0;i<nbPointsT;i++){
 					printf("%lf %lf\n", T[i].x, T[i].y);
-				}
+				}*/
 				
 
 								
 				if(appartenance_aff(c,T,nbPointsT))
 				{
-					if(dropping(c,T,nbPointsT))
+					if(nbPointsT==3){
+						temp=cerclePassantParTroisPoints(T[0],T[1],T[2]);
+						c.x = temp.x;
+						c.y = temp.y;
+					}
+					if(dropping(c,T,nbPointsT)){
 						nbPointsT--;
+					}
+					
 				}
 				
 
@@ -572,9 +590,9 @@ CERCLE algorithme_fischer(POINT S[], int nbPoints){
 						*/
 
 						if(contientTousPoint(temp,S,nbPoints)){
-							printf("on resctualise r:\n");
+							//printf("on resctualise r:\n");
 							r=S2[i];
-							print_point(&r);
+							//print_point(&r);
 							c.x = centreTemp.x;
 							c.y = centreTemp.y;
 							ok=1;
@@ -595,9 +613,9 @@ CERCLE algorithme_fischer(POINT S[], int nbPoints){
 							c.x = (T[0].x + T[1].x)/2.0;
 							c.y = (T[0].y + T[1].y)/2.0;
 						}
-						else{
+						/*else{
 							c=T[0];
-						}
+						}*/
 					}
 				}
 				else if(nbPointsT==2) 
@@ -605,13 +623,16 @@ CERCLE algorithme_fischer(POINT S[], int nbPoints){
 					// Calcul du tableau S2 (les points de S/T du meme cote que c)
 					// le calcul est fait seulement dans le cas ou on a 2 points dans T
 
-					j=0; // compteur pour S2
-					det = calculer_determinant3(T[0],T[1],c);
+					temp=cerclePassantParDeuxPoints(T[0],T[1]);
+					if(!contientTousPoint(temp,S,nbPoints)){
+						j=0; // compteur pour S2
+					//det = calculer_determinant3(T[0],T[1],c);
 					init_tab(S2, nbPoints-1);
 					for(i=0;i<nbPoints;i++){
 						if(not_in(T,S[i],nbPointsT))
 						{
-							if(det * calculer_determinant3(T[0],T[1],S[i]) > 0)
+							//if(det * calculer_determinant3(T[0],T[1],S[i]) > 0)
+							if(1)
 							{
 								S2[j] = S[i];
 								j++;
@@ -642,10 +663,20 @@ CERCLE algorithme_fischer(POINT S[], int nbPoints){
 						}
 						nbPointsT++;*/
 
-						i=0;
+						//i=0;
 						//T[2]=S2[0];
 						nbPointsT++;
-						while(!contientTousPoint(temp,S,nbPoints)){
+						
+						//while(!contientTousPoint(temp,S,nbPoints))
+							
+						max = 0;
+
+						POINT cc;
+						cc.x = (T[0].x+T[1].x)/2;
+						cc.y = (T[0].y+T[1].y)/2;
+						
+						for(i=0;i<nbPointsS2;i++)
+						{
 							DROITE d1 = mediatrice(T[0],T[1]);
 							DROITE d2 = mediatrice(T[0],S2[i]);
 							if(d1.a == 0 && d1.b == 0){
@@ -663,17 +694,20 @@ CERCLE algorithme_fischer(POINT S[], int nbPoints){
 							temp.x  = centreTemp.x;
 							temp.y = centreTemp.y;
 							temp.d = 2*distance(centreTemp,T[0]);
-
-							T[2]=S2[i];
-							//centreTemp.x = temp.x;
-							//centreTemp.y = temp.y;
-							i++;
+							
+							if(contientTousPoint(temp,S,nbPoints) && distance(cc,S2[i])>max){
+								//printf("reactualisation T2 : \n");
+								//print_point(&S2[i]);
+								T[2]=S2[i];
+								max=distance(cc,S2[i]);
+								c=centreTemp;
+							}
 						}
 
 						//on reactualise le centre c
 
-						T[2] = S2[i];
-						c = centreTemp;
+						//T[2] = S2[i];
+						//c = centreTemp;
 					}
 					else
 					{
@@ -686,6 +720,15 @@ CERCLE algorithme_fischer(POINT S[], int nbPoints){
 
 
 					}
+					//printf("on a rajoute le point:\n");
+					//print_point(&T[2]);
+					}
+					else{
+						c.x = (T[0].x + T[1].x)/2;
+						c.y = (T[0].y + T[1].y)/2;
+					}
+
+					
 
 				}
 				//sleep(5);	
@@ -772,6 +815,11 @@ CERCLE brute( POINT tab[] , int nbPoints ){
 
 				if ( contientTousPoint(cTemp , tab , nbPoints) && cTemp.d < cFinal.d){
 					cFinal = cTemp;
+					/*printf("algo donnee par:");
+					print_point(&p1);
+					print_point(&p2);
+					printf("************");
+					*/
 					
 				}
 			}
@@ -790,6 +838,12 @@ CERCLE brute( POINT tab[] , int nbPoints ){
 	        	        cTemp = cerclePassantParTroisPoints(p1 , p2 , p3);
 	              	  	if ( contientTousPoint(cTemp , tab , nbPoints) && cTemp.d < cFinal.d){
 	                	        cFinal = cTemp;
+	                	        /*printf("algo donnee par:");
+								print_point(&p1);
+								print_point(&p2);
+								print_point(&p3);
+								printf("************");
+								*/
 	                	}
 					}
 	            }
