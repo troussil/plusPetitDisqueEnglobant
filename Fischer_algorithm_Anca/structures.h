@@ -2,7 +2,7 @@
 #define structures_h
 
 #define coo double	/* coordonates */
-#define EPSILON	0.001	/* a quantity small enough to be zero */
+#define EPSILON	0.0001	/* a quantity small enough to be zero */
 #define MAXPOLY	200	/* maximum number of points in a polygon */
 
 typedef struct model_point{

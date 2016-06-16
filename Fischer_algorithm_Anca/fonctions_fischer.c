@@ -143,27 +143,27 @@ int coefficients_negatifs(POINT p,POINT T[], int nbPoints){
 			if(calculer_determinant2(T[i],T[j])!=0){
 
 				alpha=calculer_determinant2(p,T[j])/calculer_determinant2(T[i],T[j]);
+				betha=calculer_determinant2(T[i],p)/calculer_determinant2(T[i],T[j]);
 				//printf("alpha = %lf", alpha);
+				//printf("betha = %lf", betha);
 
-				if(alpha<=0){
+				if(alpha<0){
 					return i;
 				}
-				else{
-					betha=calculer_determinant2(T[i],p)/calculer_determinant2(T[i],T[j]);
-					//printf("betha = %lf", betha);
-					if(betha<=0) 
+				else if(betha<0){
 						return j;
 				}
 			}
 		}
 	}
-	return -1;
+	//si on n'a pas trouve d'index, l'equation a une infinite de solutions et donc on peut eliminer n'importe quel point
+	return 0;
 }
 
-/*
+/**
  * retourne 1 si p appartient a conv(T), 0 sinon
  *
- */
+**/
 int appartenance_conv(POINT p,POINT T[], int nbPoints)
 {
 	
@@ -295,24 +295,42 @@ CERCLE cerclePassantParTroisPoints( POINT p1 , POINT p2 , POINT p3){
 DROITE mediatrice(POINT p1, POINT p2)
 {
 	DROITE res;
-	res.a = (-1.0)/ ((p1.y - p2.y)/(p1.x - p2.x));
-	res.b = ((p1.y + p2.y)/2.0) - res.a * ((p1.x + p2.x)/2.0);
+	if(p1.y != p2.y){
+		res.a = (-1.0)/ ((p1.y - p2.y)/(p1.x - p2.x));
+		res.b = ((p1.y + p2.y)/2.0) - res.a * ((p1.x + p2.x)/2.0);
+	} else{
+		res.a = 0;
+		res.b = 0;
+	}
 	return res;
 }
 
 POINT intersection(DROITE d1, DROITE d2)
 {
 	POINT res;
-	res.x = (d1.b - d2.b)/(d2.a - d1.a);
-	res.y = d1.a * res.x + d1.b;
+	if(d2.a - d1.a!=0)
+	{
+		res.x = (d1.b - d2.b)/(d2.a - d1.a);
+		res.y = d1.a * res.x + d1.b;
+	}
+	else{
+		res.x=0;
+		res.y=0;
+	}
 	return res;
 }
 
 DROITE droitePassantParPoints(POINT p1, POINT p2)
 {
 	DROITE res;
-	res.a = (p1.y - p2.y)/(p1.x - p2.x);
-	res.b = p1.y - res.a * p1.x ;
+	if(p1.x != p2.x){
+		res.a = (p1.y - p2.y)/(p1.x - p2.x);
+		res.b = p1.y - res.a * p1.x ;
+	}
+	else{
+		res.a = 0;
+		res.b = 0;
+	}
 	return res;
 }
 
@@ -398,7 +416,7 @@ int dropping(POINT c,POINT T[], int nbPoints){
 
 	int i;
 	int index = coefficients_negatifs(c, T, nbPoints);
-	if(index == -1){
+	if(index <0){
 		printf("erreur: pas des coeffs negatifs pour le dropping");
 		return 0;
 	}
@@ -419,7 +437,7 @@ CERCLE algorithme_fischer(POINT S[], int nbPoints){
 
 	CERCLE temp; //un cercle temporaire 
 	POINT centreTemp;
-	double diametreTemp;
+	//double diametreTemp;
 	POINT c,r,p,q;
 
 	POINT T[3];
@@ -429,7 +447,7 @@ CERCLE algorithme_fischer(POINT S[], int nbPoints){
 	double max=0;
 	int i,j,nbPointsT,nbPointsS2;
 
-	sort_and_remove_duplicates(S,&nbPoints); //on enleve les points dupliques de S pour faire moins de calculs et eviter les ambiguites
+	//sort_and_remove_duplicates(S,&nbPoints); //on enleve les points dupliques de S pour faire moins de calculs et eviter les ambiguites
 
 	//les iterations sont faites pour les paires c,T
 	//c est le centre du cercle courant et T le set des points support
@@ -453,9 +471,15 @@ CERCLE algorithme_fischer(POINT S[], int nbPoints){
 
 			init_tab(T,3);
 			T[0] = p; //au debut, T contient p seulement
+			printf("distance: %lf\n",distance(c,p));
 			nbPointsT = 1;
 
 			int compteur = 0;
+
+			printf("Dans S on a %d points : \n", nbPoints);
+				for(i=0;i<nbPoints;i++){
+					printf("%lf %lf\n", S[i].x, S[i].y);
+				}
 
 			while(!appartenance_conv(c,T,nbPointsT)){
 
@@ -463,28 +487,23 @@ CERCLE algorithme_fischer(POINT S[], int nbPoints){
 				compteur++;
 				
 				printf("\n*** iteration %d ***\n\n", compteur);
-				printf("c.x = %f c.y = %f\n",c.x,c.y);
+				printf("c.x = %lf c.y = %lf\n",c.x,c.y);
 				printf("Dans T on a %d points : \n", nbPointsT);
 				for(i=0;i<nbPointsT;i++){
-					printf("%f %f\n", T[i].x, T[i].y);
+					printf("%lf %lf\n", T[i].x, T[i].y);
 				}
+				
 
 								
-				if(nbPointsT>=3 || appartenance_aff(c,T,nbPointsT) )
+				if(appartenance_aff(c,T,nbPointsT))
 				{
-					//on a 3 points ou plus dans T, faut enlever un par le dropping
-					
-					if(dropping(c,T,nbPointsT)){
+					if(dropping(c,T,nbPointsT))
 						nbPointsT--;
-					}
-					else{
-						//ajouter point T ??
-
-					}
 				}
-				else if(nbPointsT == 1)
-				{
-					
+				
+
+				if(nbPointsT == 1)
+				{	
 					//on a 1 seul point, faut rajouter encore 1 point dans T
 					
 					//calcul du tableau S2 = S\T
@@ -499,39 +518,86 @@ CERCLE algorithme_fischer(POINT S[], int nbPoints){
 					}
 					nbPointsS2=j;
 
-					q = S2[0];
-
 					r.x =0;
 					r.y =0;
-					
-					for(i=1;i<nbPointsS2;i++){
-						DROITE d1 = mediatrice(T[0],q);
+					i=nbPointsS2-1;
+					int ok=0;
+					while(i>=0 && !ok){
+						DROITE d1 = mediatrice(T[0],S2[i]);
 						DROITE d2 = droitePassantParPoints(T[0],c);
-
-						centreTemp = intersection(d1,d2);
-						diametreTemp = 2 * distance(centreTemp, q);
-
-						temp.x = centreTemp.x;
-						temp.y = centreTemp.y;
-						temp.d = diametreTemp;
-
-						if(!contientPoint(temp, S2[i])){
-							r = S2[i];
-							c = centreTemp;
+						
+						if(d1.a == 0 && d1.b == 0){
+							centreTemp.x = T[0].x;
+							centreTemp.y = d2.a * T[0].x + d2.b;
 						}
+						else if(d2.a == 0 && d2.b == 0){
+							centreTemp.x = T[0].x;
+							centreTemp.y = d1.a * T[0].x + d1.b;
+						}
+						else{
+							centreTemp = intersection(d1,d2);
+							
+						}
+						/*printf("intersection entre la mediatrice de:\n");
+							print_point(&T[0]);
+							print_point(&S2[i]);
+						printf("avec la droite:\n");
+							print_point(&T[0]);
+							print_point(&c);
+						printf("*************");
+						print_point(&centreTemp);
+						printf("*************");*/
 
+						//printf("distance: %lf\n",distance(c,S2[i]));
+
+						if(!equals_zero(centreTemp)){
+							temp.x = centreTemp.x;
+							temp.y = centreTemp.y;
+							temp.d = 2 * distance(centreTemp, T[0]);
+						}
+						else{
+							centreTemp = c;
+							temp.x = centreTemp.x;
+							temp.y = centreTemp.y;
+							temp.d = 2 * distance(centreTemp, T[0]);
+						}
+						/*
+						print_point(&S2[i]);
+
+						print_cercle(&temp);
+
+						for(j=1;j<nbPoints;j++){
+							printf("contient point de %lf %lf = %d car distance = %f \n", S[j].x, S[j].y, contientPoint(temp,S[j]), 2*distance(centreTemp,S[j]));
+						}
+						*/
+
+						if(contientTousPoint(temp,S,nbPoints)){
+							printf("on resctualise r:\n");
+							r=S2[i];
+							print_point(&r);
+							c.x = centreTemp.x;
+							c.y = centreTemp.y;
+							ok=1;
+						}
+						i--;
 					}
 
+					
 					if(!equals_zero(r)){
 						T[1] = r;
 						nbPointsT++;
 					}
 					else{
 						//printf("nous n'avons pas pu rajouter un 2eme point car r.x = %f et r.y = %f", r.x, r.y);
-						T[1] = c;
-						nbPointsT++;
-						c.x = (T[0].x + T[1].x)/2.0;
-						c.y = (T[0].y + T[1].y)/2.0;
+						if(!not_in(S,c,nbPoints)){
+							T[1] = c;
+							nbPointsT++;
+							c.x = (T[0].x + T[1].x)/2.0;
+							c.y = (T[0].y + T[1].y)/2.0;
+						}
+						else{
+							c=T[0];
+						}
 					}
 				}
 				else if(nbPointsT==2) 
@@ -557,12 +623,12 @@ CERCLE algorithme_fischer(POINT S[], int nbPoints){
 					if(nbPointsS2!=0){
 
 						//calcul du cercle temp passant par les 2 points de T et 1 point de S2 
-						temp = cerclePassantParTroisPoints(T[0], T[1], S2[0]);
-						centreTemp.x = temp.x;
-						centreTemp.y = temp.y;
+						//temp = cerclePassantParTroisPoints(T[0], T[1], S2[0]);
+						//centreTemp.x = temp.x;
+						//centreTemp.y = temp.y;
 						
 
-						T[2] = S2[0]; //le point sur le bord du cercle est rajoute a T
+						/*T[2] = S2[0]; //le point sur le bord du cercle est rajoute a T
 						
 						for(i=1;i<nbPointsS2;i++){
 							//si S2[i] est en dehors du cercle temp, on reactualise le cercle
@@ -574,13 +640,40 @@ CERCLE algorithme_fischer(POINT S[], int nbPoints){
 								T[2] = S2[i]; //le point sur le bord du cercle est rajoute a T
 							}
 						}
+						nbPointsT++;*/
+
+						i=0;
+						//T[2]=S2[0];
 						nbPointsT++;
+						while(!contientTousPoint(temp,S,nbPoints)){
+							DROITE d1 = mediatrice(T[0],T[1]);
+							DROITE d2 = mediatrice(T[0],S2[i]);
+							if(d1.a == 0 && d1.b == 0){
+									centreTemp.x = T[0].x;
+									centreTemp.y = d2.a * T[0].x + d2.b;
+								}
+								else if(d2.a == 0 && d2.b == 0){
+									centreTemp.x = T[0].x;
+									centreTemp.y = d1.a * T[0].x + d1.b;
+								}
+								else{
+									centreTemp = intersection(d1,d2);
+									
+								}
+							temp.x  = centreTemp.x;
+							temp.y = centreTemp.y;
+							temp.d = 2*distance(centreTemp,T[0]);
+
+							T[2]=S2[i];
+							//centreTemp.x = temp.x;
+							//centreTemp.y = temp.y;
+							i++;
+						}
 
 						//on reactualise le centre c
 
-						DROITE d1 = mediatrice(T[0],T[1]);
-						DROITE d2 = mediatrice(T[0],T[2]);
-						c = intersection(d1,d2);
+						T[2] = S2[i];
+						c = centreTemp;
 					}
 					else
 					{
@@ -634,8 +727,13 @@ int contientTousPoint( CERCLE c , POINT tab[] , int nbPoints ){
 
 int contientPoint( CERCLE c , POINT p){
 
-	if(c.x + c.d/2 < p.x + EPSILON || c.x - c.d/2 > p.x - EPSILON || c.y + c.d/2 < p.y + EPSILON || c.y - c.d/2 > p.y - EPSILON)
+	POINT temp;
+	temp.x = c.x;
+	temp.y = c.y;
+
+	if(distance(temp,p) * 2 - c.d > EPSILON){
 		return 0;
+	}
 	else
 		return 1;
 
@@ -664,14 +762,17 @@ CERCLE brute( POINT tab[] , int nbPoints ){
 	{
 		/* TESTS AVEC DUO DE POINTS */
 	
-		for(i=0 ; i<nbPoints ; i++){
+		for(i=0 ; i<nbPoints-1 ; i++){
 			for(j=i+1 ; j<nbPoints ; j++){
 				compteur ++;
 				p1 = tab[i];
 				p2 = tab[j];
 				cTemp = cerclePassantParDeuxPoints(p1 , p2);
+				
+
 				if ( contientTousPoint(cTemp , tab , nbPoints) && cTemp.d < cFinal.d){
 					cFinal = cTemp;
+					
 				}
 			}
 		}

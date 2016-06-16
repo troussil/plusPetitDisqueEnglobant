@@ -14,7 +14,7 @@ int main( int argc, char* argv []){
 
     /****************************** Tests unitaires **************************************/
 
-
+    /*
     POINT a;
     POINT b;
     POINT c;
@@ -23,6 +23,8 @@ int main( int argc, char* argv []){
     POINT q;
 
     double x,y;
+
+    int i;
 
     printf("\nVeuilles rentrer les coordonnes du point a:");
 
@@ -46,7 +48,7 @@ int main( int argc, char* argv []){
     scanf("%lf", &y);
     c.x = x;
     c.y = y;
-    printf("\nPoint c = %lf %lf\n", c.x, c.y);
+    printf("\nPoint c = %lf %lf\n", c.x, c.y);              
 
     printf("\ndistance ab = %lf et ba = %lf\n", distance(a,b), distance(b,a));
     printf("distance aa = %lf\n", distance(a,a));
@@ -84,12 +86,18 @@ int main( int argc, char* argv []){
     else
         printf("\non ne peut eliminer aucun point %d\n",index);
 
+    dropping(p,tab,nbPoints);
 
+    printf("\n apres le dropping il nous reste:\n");
+    for(i=0;i<nbPoints;i++)
+        print_point(&tab[i]);
+
+  */  
 
 
     /****************************** Tests et comparaison algorithme **************************************/
 
-/*
+
     int N, xmin , xmax, ymin, ymax;
 
     if (argc!=6 || atoi(argv[1])>500000){ //Plus de 600 000 points provoquent une segmentation fault
@@ -141,7 +149,6 @@ int main( int argc, char* argv []){
     printf("Centre ( %lf , %lf ) diamètre %lf\n\n", c2.x , c2.y , c2.d );
     printf("contientTousPoints donne: %d\n", contientTousPoint(c2,tab,N));
 
-    */
 
 
     return 0;
