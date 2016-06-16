@@ -12,6 +12,20 @@ CERCLE brute( POINT tab[] , int nbPoints){
 	CERCLE cFinal , cTemp;
 	cFinal.d = 100000000000; cFinal.x = 0; cFinal.y=0;	
 
+	/* Cas particuliers */
+
+	if (nbPoints==1)
+	{
+		cFinal.x = tab[0].x;cFinal.y=tab[0].y;cFinal.d=0.0;
+		return cFinal;
+	}
+	if (nbPoints==2)
+	{
+		cFinal = cerclePassantParDeuxPoints(tab[0] , tab[1]);
+		return cFinal;
+	}
+	
+
 	POINT p1 , p2 , p3;
 	
 	int i , j , k;

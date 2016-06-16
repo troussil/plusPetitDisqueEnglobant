@@ -21,10 +21,10 @@ CERCLE ApxMEB1 ( POINT P[], int nbPoints, double apx){
 	CERCLE sol; //Cercle solution
 
 	POINT c;	//Centre du cercle solution
-	int r;		//Rayon du cercle solution
+	double r;		//Rayon du cercle solution
 
 	POINT q;	//Point extrême
-	int R;		//Distance
+	double R;		//Distance
 
 	double delta; //distance entre centre du cercle min et centre cercle en cours
 	double crit;  //critère de pruning (distance)

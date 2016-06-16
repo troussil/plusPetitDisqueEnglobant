@@ -65,9 +65,17 @@ int contientTousPoint( CERCLE c , POINT tab[] , int nbPoints ){
 
 int contientPoint( CERCLE c , POINT p){
 
-	if(c.x + c.d/2 < p.x || c.x - c.d/2 > p.x || c.y + c.d/2 < p.y || c.y - c.d/2 > p.y)
+	POINT temp;
+	temp.x = c.x;
+	temp.y = c.y;
+
+	if(distance(temp,p) * 2 > c.d)
 		return 0;
 	else
 		return 1;
 
+}
+
+double distance(POINT a, POINT b){
+	return sqrt((a.x - b.x)*(a.x - b.x) + (a.y - b.y)*(a.y - b.y));
 }

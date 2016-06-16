@@ -51,7 +51,9 @@ int main(){
 
 	// Test 4 : Points en carré
 
-	POINT tab4[] = {{0,10},{10,10},{0,0},{10,0}};	
+	POINT tab4[] = {{0,10},{10,10},{0,0},{10,0},	//Forme un carré de coté 10 -> Diamètre solution = diagonale = 14.142...
+					{0,5},{5,10},{10,5},{5,0}};	
+					
 	printf("\n** Test 4 : Points en carrés **\n\n");
 	nbPoints = sizeof(tab4) / sizeof (tab4[0]);
 	printf("Nombre de points: %d\n",nbPoints);
