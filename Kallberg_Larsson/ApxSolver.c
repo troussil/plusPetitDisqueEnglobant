@@ -1,7 +1,8 @@
 #include "improved_pruning.h"
 #include "updateball_methods.h"
-#include "structures.h"
+//#include "structures.h"
 #include <time.h>
+#include "../resolution_brute.h"
 
 int rand_a_b (int a, int b){
   return rand()%(b-a )+a;
@@ -38,13 +39,16 @@ int main( int argc, char* argv []){
   printf("Algorithme de mise à jour utilisé: ");
   switch(MODE){
       case 1: 
-        printf("BadoiuClarkson\n");
+        printf("BadoiuClarkson (MODE 1)\n");
         break;
       case 2: 
-        printf("KallbergLarsson\n");
+        printf("KallbergLarsson (MODE 2)\n");
         break;
-      default: exit(-1);
+      default: 
+        exit(-1);
     }
+
+
 
   printf("\n__ ApxMEB1:");
 
@@ -59,8 +63,14 @@ int main( int argc, char* argv []){
 	now=0;
   CERCLE c2 = ApxMEB2(tab , N , apx);
   printf("Time ellapsed: %lf\n", (double) (clock() - now) / CLOCKS_PER_SEC);
-  printf("Centre ( %lf , %lf ) diamètre %lf\n\n", c2.x , c2.y , c2.d );
- 
+  printf("Centre ( %lf , %lf ) diamètre %lf\n", c2.x , c2.y , c2.d );
 
+  printf("\n__ BRUTE:\n");
+
+  now=0;
+  CERCLE c3 = brute(tab,N);
+  printf("Time ellapsed: %lf\n", (double) (clock() - now) / CLOCKS_PER_SEC);
+  printf("Centre ( %lf , %lf ) diamètre %lf\n\n", c3.x , c3.y , c3.d );
+ 
 	return 0;
 }

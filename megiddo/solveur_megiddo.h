@@ -8,7 +8,8 @@
 
 
 POINT* convertirEntree (int N);
-char* dessinerCercle(FILE *file, int x, int y, int r);
+char* dessinerCercleAmeliore(FILE *file,CERCLE c);
+char* dessinerCercleBrute(FILE *file,CERCLE c);
 char* dessinerPoint(FILE *file, double x, double y, int r);
-void ecritureSVG(POINT tab[], FILE* file , int N);
-void GenerationFichierSVG(POINT tab[] , int N);
+void ecritureSVG(POINT tab[], FILE* file , int N,int yc);
+void GenerationFichierSVG(POINT tab[] , int N, int yc);

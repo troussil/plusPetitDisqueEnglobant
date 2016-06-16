@@ -1,56 +1,72 @@
 #include <stdio.h>
-
-#include "hashset.h"
-#include "hashset_itr.h"
+#include <stdlib.h>
+#include <time.h>
 #include "structures.h"
 #include "fonctions_fischer.h"
 
-int main()
-{
-    //test creation set points 
-    printf("Test creation set points: \n");
 
-    POINT p1 = {10,15};
-    POINT p2 = {10,5};
-    POINT p3 = {5,10};
-    POINT p4 = {15,10};
-    POINT p5 = {0,0};
-    POINT *items[] = {&p1,&p2,&p3,&p4,NULL}; 
-    size_t ii, nitems = 4;
-    hashset_t set = hashset_create();
-    hashset_itr_t iter = hashset_iterator(set);
+int rand_a_b (int a, int b){
+    int res = rand()%(b-a )+a; 
+    return res;
+}
 
-    if (set == NULL) {
-        fprintf(stderr, "failed to create hashset instance\n");
-        abort();
+int main( int argc, char* argv []){
+
+
+
+
+
+
+    int N, xmin , xmax, ymin, ymax;
+
+    if (argc!=6 || atoi(argv[1])>500000){ //Plus de 600 000 points provoquent une segmentation fault
+        printf("usage: %s <nbDePoints (inf. à 500000)> <xmin> <xmax> <ymin> <ymax> \n\n", argv[0]); 
+        return 0;
     }
 
-    for (ii = 0; ii < nitems; ++ii) {
-        hashset_add(set, items[ii]);
+    N=atoi(argv[1]);
+    
+    POINT tab[N];
+
+
+    xmin=atoi(argv[2]);   
+    xmax=atoi(argv[3]);
+    ymin=atoi(argv[4]);
+    ymax=atoi(argv[5]);
+
+
+
+    int i=0;
+
+    for (i=0;i<N;i++){
+        tab[i].x =rand_a_b(xmin,xmax);
+        tab[i].y =rand_a_b(ymin,ymax);
     }
 
-    for (ii = 0; ii < nitems; ++ii) {
-        printf("%d\n",hashset_is_member(set, items[ii]));
-    }
+    
 
-    printf("%d\n",hashset_is_member(set,&p5));
-    
-    printf("Le set contient %d points\n", (int)set->nitems);
-    
-    //test iterateur set points
-    printf("Test iterateur set points: \n");
+    clock_t now;
+    now=0;
 
-    while(hashset_iterator_has_next(iter))
-    {
-        
-        printf("%d %d\n",((POINT*)hashset_iterator_value(iter))->x, ((POINT*)hashset_iterator_value(iter))->y);
-        hashset_iterator_next(iter);
-    }
+
+    printf("\n*** Algorithme brut *** \n\n");
+
+    CERCLE c1 = brute(tab , N);
+
+    printf("Time ellapsed: %lf\n", (double) (clock() - now) / CLOCKS_PER_SEC);
+    printf("Centre ( %lf , %lf ) diamètre %lf\n", c1.x , c1.y , c1.d );
+
     
-    //test algorithme
-    CERCLE* seb = algorithme_fischer(set);
-    
-    printf("resultat: le cercle de centre {%d,%d} et rayon %f\n", seb->x, seb->y, seb->d);
+
+    printf("\n*** Algorithme Fischer *** \n\n");   
+
+    now=0;
+    CERCLE c2 = algorithme_fischer(tab , N);
+
+    printf("Time ellapsed: %lf\n", (double) (clock() - now) / CLOCKS_PER_SEC);
+    printf("Centre ( %lf , %lf ) diamètre %lf\n\n", c2.x , c2.y , c2.d );
+
+    //printf("contientTousPoints donne: %d \n", contientTousPoint( c2 , tab , N ));
 
     return 0;
 }

@@ -137,15 +137,15 @@ int estContenuCercle(CERCLE c,POINT a){
 }
 
 
-int main(){
+// int main(){
 
-	POINT tab[8] = {{-3,-1},{-2,4},{1,1},{2,2},{3,3},{0,0},{3.133918,2},{0,6}};	
-	CERCLE *c=malloc(sizeof(CERCLE));
-	TABPOINT* tabpoint=malloc(sizeof(TABPOINT));
-	c=solutionBruteContrainte(tab,8,0);
-	printf("solution: cercle c de centre x=%lf y=%lf et de rayon %lf\n",c->centre.x,c->centre.y,c->d );
-	 tabpoint=compteurCercle(*c,tab,8);
-	 afficherTableauPoint(tabpoint->t,tabpoint->longueur);
+// 	POINT tab[8] = {{-3,-1},{-2,4},{1,1},{2,2},{3,3},{0,0},{3.133918,2},{0,6}};	
+// 	CERCLE *c=malloc(sizeof(CERCLE));
+// 	TABPOINT* tabpoint=malloc(sizeof(TABPOINT));
+// 	c=solutionBruteContrainte(tab,8,0);
+// 	printf("solution: cercle c de centre x=%lf y=%lf et de rayon %lf\n",c->centre.x,c->centre.y,c->d );
+// 	 tabpoint=compteurCercle(*c,tab,8);
+// 	 afficherTableauPoint(tabpoint->t,tabpoint->longueur);
 
 
-}
+// }

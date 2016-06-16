@@ -37,5 +37,9 @@ typedef struct model_tabpoint{
 	int longueur;
 }TABPOINT;
 
+typedef struct model_tabdoublet{
+	DOUBLET *t;
+	int longueur;
+}TABDOUBLET;
 
 #endif

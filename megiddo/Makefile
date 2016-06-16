@@ -1,4 +1,4 @@
-all:	test generateur demo solutionBrute
+all:	test generateur solveur
 
 fonction_megiddo.o:	fonction_megiddo.c fonction_megiddo.h structure.h 
 	gcc -Wall -c -lm fonction_megiddo.c  -o fonction_megiddo.o
@@ -12,19 +12,17 @@ utils.o:	utils.c utils.h structure.h
 generateur:	generateur.c
 	gcc -Wall generateur.c -o generateur
 
-solveur.o:	solveur.c structure.h solveur_megiddo.h
-	gcc -c -Wall solveur.c -o solveur.o
+solveur:	solveur.c structure.h solveur_megiddo.h fonction_megiddo.o solution_brute_contrainte.o utils.o utils_table.o
+	gcc  -Wall solveur.c fonction_megiddo.o solution_brute_contrainte.o utils.o utils_table.o -o solveur -lm
         
         
 test:	fonction_megiddo.o utils_table.o utils.o testMegiddo.c
 	gcc -Wall fonction_megiddo.o utils_table.o utils.o testMegiddo.c -o test -lm -g
 
-demo:	fonction_megiddo.o utils_table.o utils.o demoMegiddo.c solveur.o
-	gcc -Wall fonction_megiddo.o solveur.o utils_table.o utils.o demoMegiddo.c -o demo -lm -g
  
-solutionBrute:	solution_brute_contrainte.c solution_brute_contrainte.h structure.h utils.o utils_table.o
-	gcc -Wall solution_brute_contrainte.c utils.o utils_table.o -o solutionBrute -lm -g
+solution_brute_contrainte.o:	solution_brute_contrainte.c solution_brute_contrainte.h structure.h utils.o utils_table.o
+	gcc -Wall -c solution_brute_contrainte.c utils.o utils_table.o -o solution_brute_contrainte.o -lm -g
 
 clean:
-	rm *.o test generateur demo solutionBrute
+	rm *.o test generateur solveur
 	rm *.svg

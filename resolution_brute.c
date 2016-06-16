@@ -8,7 +8,7 @@
  * @param tab Tableau contenant les points
  * @return cFinal CERCLE solution finale
 **/
-CERCLE brute( POINT tab[] , int nbPoints ){
+CERCLE brute( POINT tab[] , int nbPoints){
 
 	CERCLE cFinal , cTemp;
 	cFinal.d = 100000000000; cFinal.x = 0; cFinal.y=0;	
@@ -28,6 +28,7 @@ CERCLE brute( POINT tab[] , int nbPoints ){
 			cTemp = cerclePassantParDeuxPoints(p1 , p2);
 			if ( contientTousPoint(cTemp , tab , nbPoints) && cTemp.d < cFinal.d){
 				cFinal = cTemp;
+				
 			}
 		}
 	}

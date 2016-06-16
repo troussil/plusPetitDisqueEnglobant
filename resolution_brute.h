@@ -7,4 +7,4 @@
  * @param tab Tableau contenant les points
  * @return cFinal CERCLE solution finale
 **/
-CERCLE brute( POINT tab[] , int nbPoints );
+CERCLE brute( POINT tab[] , int nbPoints);
