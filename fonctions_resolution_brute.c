@@ -46,13 +46,18 @@ CERCLE cerclePassantParTroisPoints( POINT p1 , POINT p2 , POINT p3){
 
 int contientTousPoint( CERCLE c , POINT tab[] , int nbPoints ){
 	
+	
 	int i = 0;	
 	int ok = 1;
+
+
 	
 	while(i<nbPoints && ok) {
-	  if (!contientPoint( c, tab[i] ))
-	    ok = 0;
-	  i++;
+		if (!contientPoint( c, tab[i] )){
+	    	ok = 0;
+		}else{
+	 		i++;
+	 	}
 	}
 	
 	return ok;
