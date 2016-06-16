@@ -6,7 +6,7 @@
 
 int main(int argc, char* argv []){
   
-	POINT tab[NB_POINTS] = {{2,1},{3,-10},{4,-10},{3,4},{7,-1},{5,-2},{8,2},{3,12},{9,12},{10,-1},{12,1},{11,3}};	
+	POINT tab[NB_POINTS] = {{10,1},{10,-13},{10,-1},{20,-11},{20,13},{20,13},{8,-10},{8,-12},{12,-1},{10,-1},{12,1},{11,3}};	
 	//afficherTableau(tab);
 	// int resultat;
 	//int new_point=NB_POINTS;
@@ -35,9 +35,8 @@ int main(int argc, char* argv []){
 	// printf("trie selon y\n");
 	// afficherTableauPoint(tab,12);
 	// printf("mediane: %lf\n",mediane	 );
-	POINT *convexe=malloc(NB_POINTS*sizeof(POINT));
-	convexe=calculDemiPlanY(tab,NB_POINTS,0);
-	afficherTableauPoint(convexe,NB_POINTS);
+	int taille=triAbscisseEgales(tab,NB_POINTS);
+	afficherTableauPoint(tab,taille);
 
 	// d1->a=tab[0];
 	// d1->b=tab[1];

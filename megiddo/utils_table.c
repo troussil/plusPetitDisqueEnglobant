@@ -252,3 +252,43 @@ double medianePoint(POINT tableau[],int longueur){
 
 }
 
+int triAbscisseEgales(POINT tab[],int longueur){
+    int i;
+    int j;
+    int compteur=0;
+    int p=0;
+    int l=0;
+    POINT *temp=malloc(longueur*sizeof(POINT));
+    quickSortPointX(tab,0,longueur-1);
+
+    for(i=0;i<longueur;i++){
+
+        while(tab[p].x==tab[i].x){
+            temp[j]=tab[i];
+            i+=1;
+            l+=1;
+            j+=1;
+        }
+        p+=l;
+        tab[compteur]=*plusGrand(temp,l);
+        l=0;
+        compteur+=1;
+        j=0;
+        i-=1;
+    }
+    return compteur;
+}
+
+POINT* plusGrand(POINT tab[],int longueur){
+    int i;
+    POINT *p=malloc(sizeof(POINT));
+    p->x=tab[0].x;
+    p->y=tab[0].y;
+    for(i=0;i<longueur;i++){
+        if(auCarre(tab[i].y)>=auCarre(p->y)){
+            p->y=tab[i].y;
+        }
+    }
+    return p;
+}
+

@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include "structure.h"
+#include "utils.h"
 
 void afficherTableauPoint(POINT tab[],int taille);
 void afficherTableauDoublet(DOUBLET tab[],int taille);
@@ -21,6 +22,8 @@ double medianePoint(POINT tableau[],int longueur);
 double triAngle(DOUBLET tableau[], int debut, int fin);
 double triMediatrice(DOUBLET tableau[], int debut, int fin);
 double triY(POINT tableau[], int debut, int fin);
+POINT* plusGrand(POINT tab[],int longueur);
+int triAbscisseEgales(POINT tab[],int longueur);
 
 
 
