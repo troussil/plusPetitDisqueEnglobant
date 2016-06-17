@@ -446,300 +446,172 @@ CERCLE algorithme_fischer(POINT S[], int nbPoints){
 
 	CERCLE resultat;
 
-	CERCLE temp; //un cercle temporaire 
 	POINT centreTemp;
-	//double diametreTemp;
-	POINT c,r,p,q;
+	POINT c,p,cc;
 
-	POINT T[3];
-	POINT S2[nbPoints-2]; //l'ensemble des points de S qui se trouvent du bon côté de la droite passant par les deux points de T
+	POINT T[3]; // le set support
+	POINT S2[nbPoints-1]; //l'ensemble des points de S qui se trouvent du bon côté de la droite passant par les deux points de T
 
-	//double det; //pour stocker la valeur du determinant
+	DROITE d1;
+	DROITE d2;
+
 	double max=0;
-	int i,j,nbPointsT,nbPointsS2;
+	double det;
 
-	//sort_and_remove_duplicates(S,&nbPoints); //on enleve les points dupliques de S pour faire moins de calculs et eviter les ambiguites
+	int i,j,nbPointsT,nbPointsS2;
+	int compteur = 0;
 
 	//les iterations sont faites pour les paires c,T
 	//c est le centre du cercle courant et T le set des points support
 
-	if(tableau_collinear(S,nbPoints))
-	{
-		resultat = cerclePassantParDeuxPoints(S[0],S[nbPoints-1]);
-	}
-	else
-	{
-			c = S[0]; //au debut, c est pris au hasard
-			
-			for(i=1; i<nbPoints;i++)
-		    {
-		    	q = S[i];
-		    	if(max < distance(c,q)){
-		    		max = distance(c,q);
-		    		p = q;
-		    	}
-		    }
+	c = S[0]; //au debut, c est pris au hasard
+	
+	//on cherche le point le plus eloigne de c
+	for(i=1; i<nbPoints;i++)
+    {
+    	if(max < distance(c,S[i])){
+    		max = distance(c,S[i]);
+    		p = S[i];
+    	}
+    }
 
-			init_tab(T,3);
-			T[0] = p; //au debut, T contient p seulement
-			
-			nbPointsT = 1;
+	init_tab(T,3);
+	T[0] = p; //au debut, T contient p seulement
+	nbPointsT = 1;
+	
+	while(!appartenance_conv(c,T,nbPointsT)){
+		compteur++;
 
-			int compteur = 0;
-
-			/*printf("Dans S on a %d points : \n", nbPoints);
-				for(i=0;i<nbPoints;i++){
-					printf("%lf %lf\n", S[i].x, S[i].y);
-				}*/
-
-			while(!appartenance_conv(c,T,nbPointsT)){
-
-
-				compteur++;
-				
-				/*printf("\n*** iteration %d ***\n\n", compteur);
-				printf("c.x = %lf c.y = %lf\n",c.x,c.y);
-				printf("Dans T on a %d points : \n", nbPointsT);
-				for(i=0;i<nbPointsT;i++){
-					printf("%lf %lf\n", T[i].x, T[i].y);
-				}*/
-				
-
-								
-				if(appartenance_aff(c,T,nbPointsT))
-				{
-					if(nbPointsT==3){
-						temp=cerclePassantParTroisPoints(T[0],T[1],T[2]);
-						c.x = temp.x;
-						c.y = temp.y;
-					}
-					if(dropping(c,T,nbPointsT)){
-						nbPointsT--;
-					}
-					
-				}
-				
-
-				if(nbPointsT == 1)
-				{	
-					//on a 1 seul point, faut rajouter encore 1 point dans T
-					
-					//calcul du tableau S2 = S\T
-					init_tab(S2, nbPoints-1);
-					j=0;
-
-					for(i=0;i<nbPoints;i++){
-						if(not_in(T,S[i],nbPointsT)){
-							S2[j] = S[i];
-							j++;
-						}
-					}
-					nbPointsS2=j;
-
-					r.x =0;
-					r.y =0;
-					i=nbPointsS2-1;
-					int ok=0;
-					while(i>=0 && !ok){
-						DROITE d1 = mediatrice(T[0],S2[i]);
-						DROITE d2 = droitePassantParPoints(T[0],c);
+	
+		/*printf("\n*** iteration %d ***\n\n", compteur);
+		printf("c.x = %lf c.y = %lf\n",c.x,c.y);
+		printf("Dans T on a %d points : \n", nbPointsT);
+		for(i=0;i<nbPointsT;i++){
+			printf("%lf %lf\n", T[i].x, T[i].y);
+		}*/
 						
-						if(d1.a == 0 && d1.b == 0){
-							centreTemp.x = T[0].x;
-							centreTemp.y = d2.a * T[0].x + d2.b;
-						}
-						else if(d2.a == 0 && d2.b == 0){
-							centreTemp.x = T[0].x;
-							centreTemp.y = d1.a * T[0].x + d1.b;
-						}
-						else{
-							centreTemp = intersection(d1,d2);
-							
-						}
-						/*printf("intersection entre la mediatrice de:\n");
-							print_point(&T[0]);
-							print_point(&S2[i]);
-						printf("avec la droite:\n");
-							print_point(&T[0]);
-							print_point(&c);
-						printf("*************");
-						print_point(&centreTemp);
-						printf("*************");*/
+		if(appartenance_aff(c,T,nbPointsT))
+		{
+			if(dropping(c,T,nbPointsT)){
+				nbPointsT--;
+			}			
+		}
+		
+		if(nbPointsT == 1)
+		{	
+			//on a 1 seul point, faut rajouter encore 1 point dans T
+			
+			p.x =0;
+			p.y =0;
+			max=0;
 
-						//printf("distance: %lf\n",distance(c,S2[i]));
+			for(i=0;i<nbPoints-1;i++){
 
-						if(!equals_zero(centreTemp)){
-							temp.x = centreTemp.x;
-							temp.y = centreTemp.y;
-							temp.d = 2 * distance(centreTemp, T[0]);
-						}
-						else{
-							centreTemp = c;
-							temp.x = centreTemp.x;
-							temp.y = centreTemp.y;
-							temp.d = 2 * distance(centreTemp, T[0]);
-						}
-						/*
-						print_point(&S2[i]);
+				if(not_in(T,S[i],nbPointsT)){
+					d1 = mediatrice(T[0],S[i]);
+					d2 = droitePassantParPoints(T[0],c);
+					if(d1.a == 0 && d1.b == 0){
+						centreTemp.x = T[0].x;
+						centreTemp.y = d2.a * T[0].x + d2.b;
+					}
+					else if(d2.a == 0 && d2.b == 0){
+						centreTemp.x = T[0].x;
+						centreTemp.y = d1.a * T[0].x + d1.b;
+					}
+					else{
+						centreTemp = intersection(d1,d2);	
+					}
 
-						print_cercle(&temp);
-
-						for(j=1;j<nbPoints;j++){
-							printf("contient point de %lf %lf = %d car distance = %f \n", S[j].x, S[j].y, contientPoint(temp,S[j]), 2*distance(centreTemp,S[j]));
-						}
-						*/
-
-						if(contientTousPoint(temp,S,nbPoints)){
-							//printf("on resctualise r:\n");
-							r=S2[i];
-							//print_point(&r);
+					if(!equals_zero(centreTemp)){
+						if(distance(centreTemp,S[i]) > max){
+							p=S[i];
 							c.x = centreTemp.x;
 							c.y = centreTemp.y;
-							ok=1;
+							max = distance(centreTemp,S[i]);
 						}
-						i--;
-					}
-
-					
-					if(!equals_zero(r)){
-						T[1] = r;
-						nbPointsT++;
-					}
-					else{
-						//printf("nous n'avons pas pu rajouter un 2eme point car r.x = %f et r.y = %f", r.x, r.y);
-						if(!not_in(S,c,nbPoints)){
-							T[1] = c;
-							nbPointsT++;
-							c.x = (T[0].x + T[1].x)/2.0;
-							c.y = (T[0].y + T[1].y)/2.0;
-						}
-						/*else{
-							c=T[0];
-						}*/
 					}
 				}
-				else if(nbPointsT==2) 
-				{
-					// Calcul du tableau S2 (les points de S/T du meme cote que c)
-					// le calcul est fait seulement dans le cas ou on a 2 points dans T
-
-					temp=cerclePassantParDeuxPoints(T[0],T[1]);
-					if(!contientTousPoint(temp,S,nbPoints)){
-						j=0; // compteur pour S2
-					//det = calculer_determinant3(T[0],T[1],c);
-					init_tab(S2, nbPoints-1);
-					for(i=0;i<nbPoints;i++){
-						if(not_in(T,S[i],nbPointsT))
-						{
-							//if(det * calculer_determinant3(T[0],T[1],S[i]) > 0)
-							if(1)
-							{
-								S2[j] = S[i];
-								j++;
-							}
-						}
-					}
-					nbPointsS2 = j;
-
-					if(nbPointsS2!=0){
-
-						//calcul du cercle temp passant par les 2 points de T et 1 point de S2 
-						//temp = cerclePassantParTroisPoints(T[0], T[1], S2[0]);
-						//centreTemp.x = temp.x;
-						//centreTemp.y = temp.y;
-						
-
-						/*T[2] = S2[0]; //le point sur le bord du cercle est rajoute a T
-						
-						for(i=1;i<nbPointsS2;i++){
-							//si S2[i] est en dehors du cercle temp, on reactualise le cercle
-							if(!contientPoint(temp,S2[i])){
-								//temp devient le cercle passant par T[0], T[1], S2[i]
-								temp = cerclePassantParTroisPoints(T[0], T[1], S2[i]);
-								centreTemp.x = temp.x;
-								centreTemp.y = temp.y;
-								T[2] = S2[i]; //le point sur le bord du cercle est rajoute a T
-							}
-						}
-						nbPointsT++;*/
-
-						//i=0;
-						//T[2]=S2[0];
-						nbPointsT++;
-						
-						//while(!contientTousPoint(temp,S,nbPoints))
-							
-						max = 0;
-
-						POINT cc;
-						cc.x = (T[0].x+T[1].x)/2;
-						cc.y = (T[0].y+T[1].y)/2;
-						
-						for(i=0;i<nbPointsS2;i++)
-						{
-							DROITE d1 = mediatrice(T[0],T[1]);
-							DROITE d2 = mediatrice(T[0],S2[i]);
-							if(d1.a == 0 && d1.b == 0){
-									centreTemp.x = T[0].x;
-									centreTemp.y = d2.a * T[0].x + d2.b;
-								}
-								else if(d2.a == 0 && d2.b == 0){
-									centreTemp.x = T[0].x;
-									centreTemp.y = d1.a * T[0].x + d1.b;
-								}
-								else{
-									centreTemp = intersection(d1,d2);
-									
-								}
-							temp.x  = centreTemp.x;
-							temp.y = centreTemp.y;
-							temp.d = 2*distance(centreTemp,T[0]);
-							
-							if(contientTousPoint(temp,S,nbPoints) && distance(cc,S2[i])>max){
-								//printf("reactualisation T2 : \n");
-								//print_point(&S2[i]);
-								T[2]=S2[i];
-								max=distance(cc,S2[i]);
-								c=centreTemp;
-							}
-						}
-
-						//on reactualise le centre c
-
-						//T[2] = S2[i];
-						//c = centreTemp;
-					}
-					else
-					{
-						if(!not_in(S,c,nbPoints)){
-							T[2]=c;
-							nbPointsT++;
-						} 
-						c.x = (T[0].x + T[1].x)/2;
-						c.y = (T[0].y + T[1].y)/2;
-
-
-					}
-					//printf("on a rajoute le point:\n");
-					//print_point(&T[2]);
-					}
-					else{
-						c.x = (T[0].x + T[1].x)/2;
-						c.y = (T[0].y + T[1].y)/2;
-					}
-
-					
-
-				}
-				//sleep(5);	
 			}
-		    //on renvoye le cercle resultat de centre c et diametre 2 * distance (c,T[0])
-			resultat.x = c.x;
-			resultat.y = c.y;
-			resultat.d = 2*distance(c,T[0]);
+
+			
+			if(!equals_zero(p)){
+				T[1] = p;
+				nbPointsT++;
+			}
+			else{
+				T[1] = c;
+				nbPointsT++;
+				c.x = (T[0].x + T[1].x)/2.0;
+				c.y = (T[0].y + T[1].y)/2.0;
+			}
+		}
+		else if(nbPointsT==2) 
+		{
+			// Calcul du tableau S2 (les points de S/T du meme cote que c)
+			// le calcul est fait seulement dans le cas ou on a 2 points dans T
+
+			cc.x = (T[0].x+T[1].x)/2;
+			cc.y = (T[0].y+T[1].y)/2;
+
+			j=0; // compteur pour S2
+			det = calculer_determinant3(T[0],T[1],c);
+			for(i=0;i<nbPoints;i++){
+				if(not_in(T,S[i],nbPointsT))
+				{
+					if(det * calculer_determinant3(T[0],T[1],S[i]) > 0 && distance(cc,S[i]) >= distance(cc,T[0]))
+					{
+						S2[j] = S[i];
+						j++;
+					}
+				}
+			}
+			nbPointsS2 = j;
+
+			if(nbPointsS2!=0){
+
+				nbPointsT++;
+					
+				max = 0;
+
+				
+				
+				for(i=0;i<nbPointsS2;i++)
+				{
+					d1 = mediatrice(T[0],T[1]);
+					d2 = mediatrice(T[0],S2[i]);
+					if(d1.a == 0 && d1.b == 0){
+						centreTemp.x = T[0].x;
+						centreTemp.y = d2.a * T[0].x + d2.b;
+					}
+					else if(d2.a == 0 && d2.b == 0){
+						centreTemp.x = T[0].x;
+						centreTemp.y = d1.a * T[0].x + d1.b;
+					}
+					else{
+						centreTemp = intersection(d1,d2);	
+					}
+					
+					if(distance(centreTemp,S2[i])>=max && calculer_determinant3(T[0],T[1],c) * calculer_determinant3(T[0],T[1],centreTemp) >= 0){
+						T[2]=S2[i];
+						max=distance(centreTemp,S2[i]);
+						c=centreTemp;
+					}
+				}
+			}
+
+			if(equals_zero(T[2]))
+			{
+				c.x = (T[0].x + T[1].x)/2;
+				c.y = (T[0].y + T[1].y)/2;
+			}
+		}
+	}
+    //on renvoye le cercle resultat de centre c et diametre 2 * distance (c,T[0])
+	resultat.x = c.x;
+	resultat.y = c.y;
+	resultat.d = 2*distance(c,T[0]);
 
 	printf("\non a fait %d iterations \n",compteur);			
-	}
 	return resultat;
 }
 

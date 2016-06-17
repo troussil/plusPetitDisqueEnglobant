@@ -72,8 +72,8 @@ int main( int argc, char* argv []){
     p.x = x;
     p.y = y;
     printf("\nPoint p = %lf %lf\n", p.x, p.y);
-    printf("\nappartennance_aff de p dans {a,b,c} donne: %d\n",appartenance_aff(p,tab,nbPoints));
-    printf("\nappartennance_conv de p dans {a,b,c} donne: %d\n",appartenance_conv(p,tab,nbPoints));
+    printf("\nappartennance_aff de p dans {a,b,c} donne: %lf\n",appartenance_aff(p,tab,nbPoints));
+    printf("\nappartennance_conv de p dans {a,b,c} donne: %lf\n",appartenance_conv(p,tab,nbPoints));
 
     int index = coefficients_negatifs(p, tab, nbPoints);
 
@@ -84,7 +84,7 @@ int main( int argc, char* argv []){
     else if(index==3)
         printf("\nla methde coefficients_negatifs indique d'eliminer le point c\n");
     else
-        printf("\non ne peut eliminer aucun point %d\n",index);
+        printf("\non ne peut eliminer aucun point %lf\n",index);
 
     dropping(p,tab,nbPoints);
 
@@ -132,22 +132,51 @@ int main( int argc, char* argv []){
 
     printf("\n*** Algorithme brut *** \n\n");
 
-    CERCLE c1 = brute(tab , N);
+    CERCLE c0 = brute(tab , N);
 
     printf("Time ellapsed: %lf\n", (double) (clock() - now) / CLOCKS_PER_SEC);
-    printf("Centre ( %lf , %lf ) diamètre %lf\n", c1.x , c1.y , c1.d );
-    printf("contientTousPoints donne: %d\n", contientTousPoint(c1,tab,N));
+    printf("Centre ( %lf , %lf ) diamètre %lf\n", c0.x , c0.y , c0.d );
+    printf("contientTousPoints donne: %d\n", contientTousPoint(c0,tab,N));
+    
+
+    POINT tab1[] = {{10.0,15.0},{10.0,5.0},{5.0,10.0},{15.0,10.0}}; 
+    printf("\n** Test 1 : Points cocirculaires **\n\n");
+    int nbPoints = sizeof(tab1) / sizeof (tab1[0]);
+    //printf("Nombre de points: %lf\n",nbPoints);
+    CERCLE c1 = algorithme_fischer(tab1,nbPoints);
+    printf("Cercle solution brute: Coordonnées x=%lf, y=%lf, diamètre=%lf.\n",c1.x,c1.y,c1.d);
+    printf("Le résultat devrait être x=10, y=10, d=10\n");
+
+    // Test 2 : Points alignés
+
+    POINT tab2[] = {{10.0,15.0},{10.0,14.0},{10.0,5.0},{10.0,7.0}}; 
+    printf("\n** Test 2 : Points alignés **\n\n");
+    nbPoints = sizeof(tab2) / sizeof (tab2[0]);
+    //printf("Nombre de points: %lf\n",nbPoints);
+    CERCLE c2 = algorithme_fischer(tab2,nbPoints);
+    printf("Cercle solution brute: Coordonnées x=%lf, y=%lf, diamètre=%lf.\n",c2.x,c2.y,c2.d);
+    printf("Le résultat devrait être x=10, y=10, d=10\n");
+
+    // Test 3 : Points confondus
+
+    POINT tab3[] = {{10.0,10.0},{10.0,10.0},{10.0,10.0},{10.0,15.0},{10.0,5.0}};    
+    printf("\n** Test 3 : Points confondus **\n\n");
+    nbPoints = sizeof(tab3) / sizeof (tab3[0]);
+    //printf("Nombre de points: %lf\n",nbPoints);
+    CERCLE c3 = algorithme_fischer(tab3,nbPoints);
+    printf("Cercle solution brute: Coordonnées x=%lf, y=%lf, diamètre=%lf.\n",c3.x,c3.y,c3.d);
+    printf("Le résultat devrait être x=10, y=10, d=10\n");
 
     
 
     printf("\n*** Algorithme Fischer *** \n\n");   
 
     now=0;
-    CERCLE c2 = algorithme_fischer(tab , N);
+    CERCLE c4 = algorithme_fischer(tab , N);
 
     printf("Time ellapsed: %lf\n", (double) (clock() - now) / CLOCKS_PER_SEC);
-    printf("Centre ( %lf , %lf ) diamètre %lf\n\n", c2.x , c2.y , c2.d );
-    printf("contientTousPoints donne: %d\n", contientTousPoint(c2,tab,N));
+    printf("Centre ( %lf , %lf ) diamètre %lf\n\n", c4.x , c4.y , c4.d );
+    printf("contientTousPoints donne: %d\n", contientTousPoint(c4,tab,N));
 
 
 
