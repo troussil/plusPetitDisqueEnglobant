@@ -12,8 +12,7 @@
 #include <math.h>
 #include <float.h>
 
-/* Choix de l'algo de mise à jour */
-#define MODE 1
+
 
 
 /**

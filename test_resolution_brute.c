@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-
 #include "resolution_brute.h"
 
 
@@ -27,7 +26,7 @@ int main(){
 	int nbPoints = sizeof(tab1) / sizeof (tab1[0]);
 	printf("Nombre de points: %d\n",nbPoints);
 	CERCLE c1 = brute(tab1,nbPoints);
-	printf("Cercle solution brute: Coordonnées x=%d, y=%d, diamètre=%lf.\n",c1.x,c1.y,c1.d);
+	printf("Cercle solution brute: Coordonnées x=%lf, y=%lf, diamètre=%lf.\n",c1.x,c1.y,c1.d);
 	printf("Le résultat devrait être x=10, y=10, d=10\n");
 
 	// Test 2 : Points alignés
@@ -37,7 +36,7 @@ int main(){
 	nbPoints = sizeof(tab2) / sizeof (tab2[0]);
 	printf("Nombre de points: %d\n",nbPoints);
 	CERCLE c2 = brute(tab2,nbPoints);
-	printf("Cercle solution brute: Coordonnées x=%d, y=%d, diamètre=%lf.\n",c2.x,c2.y,c2.d);
+	printf("Cercle solution brute: Coordonnées x=%lf, y=%lf, diamètre=%lf.\n",c2.x,c2.y,c2.d);
 	printf("Le résultat devrait être x=10, y=10, d=10\n");
 
 	// Test 3 : Points confondus
@@ -47,8 +46,20 @@ int main(){
 	nbPoints = sizeof(tab3) / sizeof (tab3[0]);
 	printf("Nombre de points: %d\n",nbPoints);
 	CERCLE c3 = brute(tab3,nbPoints);
-	printf("Cercle solution brute: Coordonnées x=%d, y=%d, diamètre=%lf.\n",c3.x,c3.y,c3.d);
+	printf("Cercle solution brute: Coordonnées x=%lf, y=%lf, diamètre=%lf.\n",c3.x,c3.y,c3.d);
 	printf("Le résultat devrait être x=10, y=10, d=10\n");
+
+	// Test 4 : Points en carré
+
+	POINT tab4[] = {{0,10},{10,10},{0,0},{10,0},	//Forme un carré de coté 10 -> Diamètre solution = diagonale = 14.142...
+					{0,5},{5,10},{10,5},{5,0}};	
+					
+	printf("\n** Test 4 : Points en carrés **\n\n");
+	nbPoints = sizeof(tab4) / sizeof (tab4[0]);
+	printf("Nombre de points: %d\n",nbPoints);
+	CERCLE c4 = brute(tab4,nbPoints);
+	printf("Cercle solution brute: Coordonnées x=%lf, y=%lf, diamètre=%lf.\n",c4.x,c4.y,c4.d);
+	printf("Le résultat devrait être x=5, y=5, d=14.142...\n");
 
 	// Résultat
 
@@ -60,5 +71,4 @@ int main(){
 	   return 1; 
 	}
 
-	return 0;
 }
