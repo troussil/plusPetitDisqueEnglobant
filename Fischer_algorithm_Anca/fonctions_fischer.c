@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <math.h>
-
+#include <time.h>
 #include "structures.h"
 #include "fonctions_fischer.h"
 
@@ -36,7 +36,7 @@ void print_cercle(CERCLE* c)
  * calcule la distance entre les points a et b
 **/
 double distance(POINT a, POINT b){
-	return sqrt((a.x - b.x)*(a.x - b.x) + (a.y - b.y)*(a.y - b.y));
+	return ((a.x - b.x)*(a.x - b.x) + (a.y - b.y)*(a.y - b.y));
 }
 
 double signed_triangle_area(POINT a, POINT b, POINT c)
@@ -51,9 +51,9 @@ double signed_triangle_area(POINT a, POINT b, POINT c)
 **/
 int collinear(POINT a, POINT b, POINT c)
 {
-	double signed_triangle_area();
+	//double signed_triangle_area();
 
-	return (fabs(signed_triangle_area(a,b,c)) <= EPSILON);
+	return (calculer_determinant3(a,b,c)*calculer_determinant3(a,b,c) <= EPSILON );
 }
 
 /**
@@ -89,10 +89,7 @@ int estEgalCercle( CERCLE c1, CERCLE c2 ){
  * Teste si deux points p1 et p2 sont égaux
 **/
 int estEgalPoint( POINT p1, POINT p2 ){
-    if( (p1.x == p2.x) && (p1.y == p2.y) )
-        return 1;
-    else
-        return 0;
+    return ( (p1.x == p2.x) && (p1.y == p2.y) );
 }
 
 /*
@@ -131,43 +128,12 @@ double calculer_determinant2(POINT a, POINT b){
 	return a.x*b.y - a.y*b.x;
 }
 
-//retourne l'index d'un POINT avec des coeffs negatifs dans l'ecriture p = alpha*T[i] + betha*T[j]
-//on utilise Cramer pour un systeme de dimension 2
 int coefficients_negatifs(POINT p,POINT T[], int nbPoints){
-	//double alpha;
-	//double betha;
-	//int i,j;
-	//int index=0;
-	//printf("nr points %lf %lf %lf \n", T[0].x, T[1].x, T[2].x);
-
-	/*for(i=0; i<nbPoints;i++){
-		for(j=i+1;j<nbPoints;j++){
-			printf("det: %lf\n", calculer_determinant2(T[i],T[j]));
-			if(calculer_determinant2(T[i],T[j])!=0){
-
-				alpha=calculer_determinant2(p,T[j])/calculer_determinant2(T[i],T[j]);
-				betha=calculer_determinant2(T[i],p)/calculer_determinant2(T[i],T[j]);
-
-				printf("alpha = %lf pour T %d\n", alpha, i);
-				printf("betha = %lf pour T %d\n", betha,j);
-
-				if(alpha<0){
-					index = i;
-				}
-				else if(betha<0){
-						index = j;
-				}
-			}
-		}
-	}*/
-
 	if(calculer_determinant3(T[2],T[1],T[0]) * calculer_determinant3(T[2],T[1],p) <0)
 		return 0;
 	else if(calculer_determinant3(T[2],T[0],T[1]) * calculer_determinant3(T[2],T[0],p) <0)
 		return 1;
 	else return 2;
-	//si on n'a pas trouve d'index, l'equation a une infinite de solutions et donc on peut eliminer n'importe quel point
-	//return index;
 }
 
 /**
@@ -177,24 +143,7 @@ int coefficients_negatifs(POINT p,POINT T[], int nbPoints){
 int appartenance_conv(POINT p,POINT T[], int nbPoints)
 {
 	
-    if(nbPoints == 1)
-    {
-    	//si on a 1 seul point, les points doivent etre confondus
-    	if(distance(p,T[0])<=EPSILON)
-    		return 1;
-    	else
-    		return 0;
-    } 
-    else if(nbPoints==2)
-    {
-    	//si on a 2 points dans T, p doit etre sur le segment qu'elles determinent
-    	//les 3 points doivent etre donc colineailres et le produit scalaire pT[0] , pT[1] doit etre negatif ou nul
-    	if( collinear(T[0],T[1],p) && (((T[0].x - p.x)*(T[1].x - p.x) + (T[0].y - p.y)*(T[1].y - p.y)) <= 0 ))
-    		return 1;
-    	else
-    		return 0;
-    }
-    else
+    if(nbPoints == 3)
     {
     	POINT tab01[2];
     	tab01[0] = T[0];
@@ -228,6 +177,24 @@ int appartenance_conv(POINT p,POINT T[], int nbPoints)
 	    	//si les points sont collineaires, il faut que p soit aussi sur la droite et il faut appartenir a un segment determine par 2 points
 	    	return(collinear(T[0],T[1],p) && ( appartenance_conv(p,tab01,2) || appartenance_conv(p,tab02,2) || appartenance_conv(p,tab12,2) ));
 	    }
+    } 
+    else if(nbPoints==2)
+    {
+    	//si on a 2 points dans T, p doit etre sur le segment qu'elles determinent
+    	//les 3 points doivent etre donc colineailres et le produit scalaire pT[0] , pT[1] doit etre negatif ou nul
+    	if( collinear(T[0],T[1],p) && (((T[0].x - p.x)*(T[1].x - p.x) + (T[0].y - p.y)*(T[1].y - p.y)) <= 0 ))
+    		return 1;
+    	else
+    		return 0;
+    }
+    else
+    {
+    	//si on a 1 seul point, les points doivent etre confondus
+    	if(distance(p,T[0])<=EPSILON)
+    		return 1;
+    	else
+    		return 0;
+    	
     }
 }
 
@@ -238,13 +205,19 @@ int appartenance_conv(POINT p,POINT T[], int nbPoints)
 int appartenance_aff(POINT p,POINT T[], int nbPoints){
 
 	//si on a un seul point, il faut que p et T[0] coincident pour que p appartienne a aff(T)
-	if(nbPoints==1 && distance(p,T[0])!=0)
+	/*if(nbPoints==1 && distance(p,T[0])!=0)
 	{
 		return 0; //distance != 0 => points differents => p appartient pas a aff(T)
 	} 
 	else if(nbPoints==1 && distance(p,T[0]) ==0)
 	{
 		return 1; //distance == 0 => points coincident => p appartient a aff(T)
+	}*/
+	if(distance(p,T[0]) == 1){
+		return 1;
+	}
+	else if(nbPoints==1){
+		return 0;
 	}
 	else if(tableau_collinear(T,nbPoints))
 	{
@@ -347,46 +320,7 @@ DROITE droitePassantParPoints(POINT p1, POINT p2)
 
 /**************************** fonctions pour les tableaux ****************************/
 
-/**
- * tri des points et enlevement des dupliques
-**/
-void sort_and_remove_duplicates(POINT in[], int *n)
-{
-    int i;                  /* counter */
-    int oldn;               /* number of points before deletion */
-    int hole;               /* index marked for potential deletion */
-	int leftlower();
 
-	qsort(in, *n, sizeof(POINT), leftlower);
-
-    oldn = *n;
-	hole = 1;
-        for (i=1; i<oldn; i++) {
-		if ((in[hole-1].x == in[i].x) && (in[hole-1].y == in[i].y)) 
-            (*n)--;
-        else {
-            in[hole].x = in[i].x;
-            in[hole].y = in[i].y;
-            hole = hole + 1;
-        }
-    }
-    in[hole].x = in[oldn-1].x;
-    in[hole].y = in[oldn-1].y;
-}
-
-
-
-//pour le tri
-int leftlower(POINT *p1, POINT *p2)
-{
-	if ((*p1).x < (*p2).x) return (-1);
-	if ((*p1).x > (*p2).x) return (1);
-
-    if ((*p1).y < (*p2).y) return (-1);
-    if ((*p1).y > (*p2).y) return (1);
-
-	return(0);
-}
 
 
 /*
@@ -427,10 +361,6 @@ int dropping(POINT c,POINT T[], int nbPoints){
 	int i;
 	int index = coefficients_negatifs(c, T, nbPoints);
 	//printf("index: %d\n",index);
-	if(index <0){
-		printf("erreur: pas des coeffs negatifs pour le dropping");
-		return 0;
-	}
 	for(i=index;i<nbPoints-1;i++)
 		T[i]=T[i+1];
 	T[nbPoints-1].x = 0;
@@ -450,7 +380,6 @@ CERCLE algorithme_fischer(POINT S[], int nbPoints){
 	POINT c,p,cc;
 
 	POINT T[3]; // le set support
-	POINT S2[nbPoints-1]; //l'ensemble des points de S qui se trouvent du bon côté de la droite passant par les deux points de T
 
 	DROITE d1;
 	DROITE d2;
@@ -458,37 +387,27 @@ CERCLE algorithme_fischer(POINT S[], int nbPoints){
 	double max=0;
 	double det;
 
-	int i,j,nbPointsT,nbPointsS2;
+	int i,j;
+	int nbPointsT=1;
 	int compteur = 0;
 
 	//les iterations sont faites pour les paires c,T
 	//c est le centre du cercle courant et T le set des points support
 
 	c = S[0]; //au debut, c est pris au hasard
+	init_tab(T,3);
 	
 	//on cherche le point le plus eloigne de c
-	for(i=1; i<nbPoints;i++)
+	for(i=0; i<nbPoints;i++)
     {
-    	if(max < distance(c,S[i])){
+    	if(max <= distance(c,S[i])){
     		max = distance(c,S[i]);
-    		p = S[i];
+    		T[0] = S[i];
     	}
     }
 
-	init_tab(T,3);
-	T[0] = p; //au debut, T contient p seulement
-	nbPointsT = 1;
-	
 	while(!appartenance_conv(c,T,nbPointsT)){
 		compteur++;
-
-	
-		/*printf("\n*** iteration %d ***\n\n", compteur);
-		printf("c.x = %lf c.y = %lf\n",c.x,c.y);
-		printf("Dans T on a %d points : \n", nbPointsT);
-		for(i=0;i<nbPointsT;i++){
-			printf("%lf %lf\n", T[i].x, T[i].y);
-		}*/
 						
 		if(appartenance_aff(c,T,nbPointsT))
 		{
@@ -506,10 +425,13 @@ CERCLE algorithme_fischer(POINT S[], int nbPoints){
 			max=0;
 
 			for(i=0;i<nbPoints-1;i++){
+				compteur++;
 
 				if(not_in(T,S[i],nbPointsT)){
+
 					d1 = mediatrice(T[0],S[i]);
 					d2 = droitePassantParPoints(T[0],c);
+
 					if(d1.a == 0 && d1.b == 0){
 						centreTemp.x = T[0].x;
 						centreTemp.y = d2.a * T[0].x + d2.b;
@@ -518,9 +440,7 @@ CERCLE algorithme_fischer(POINT S[], int nbPoints){
 						centreTemp.x = T[0].x;
 						centreTemp.y = d1.a * T[0].x + d1.b;
 					}
-					else{
-						centreTemp = intersection(d1,d2);	
-					}
+					
 
 					if(!equals_zero(centreTemp)){
 						if(distance(centreTemp,S[i]) > max){
@@ -553,32 +473,14 @@ CERCLE algorithme_fischer(POINT S[], int nbPoints){
 			cc.x = (T[0].x+T[1].x)/2;
 			cc.y = (T[0].y+T[1].y)/2;
 
-			j=0; // compteur pour S2
 			det = calculer_determinant3(T[0],T[1],c);
-			for(i=0;i<nbPoints;i++){
-				if(not_in(T,S[i],nbPointsT))
-				{
-					if(det * calculer_determinant3(T[0],T[1],S[i]) > 0 && distance(cc,S[i]) >= distance(cc,T[0]))
-					{
-						S2[j] = S[i];
-						j++;
-					}
-				}
-			}
-			nbPointsS2 = j;
-
-			if(nbPointsS2!=0){
-
-				nbPointsT++;
-					
-				max = 0;
-
-				
-				
-				for(i=0;i<nbPointsS2;i++)
+			max = 0;
+			for(j=0;j<nbPoints;j++){
+				compteur++;
+				if(det * calculer_determinant3(T[0],T[1],S[j]) > 0 && distance(cc,S[j]) > distance(cc,T[0]))
 				{
 					d1 = mediatrice(T[0],T[1]);
-					d2 = mediatrice(T[0],S2[i]);
+					d2 = mediatrice(T[0],S[j]);
 					if(d1.a == 0 && d1.b == 0){
 						centreTemp.x = T[0].x;
 						centreTemp.y = d2.a * T[0].x + d2.b;
@@ -591,25 +493,28 @@ CERCLE algorithme_fischer(POINT S[], int nbPoints){
 						centreTemp = intersection(d1,d2);	
 					}
 					
-					if(distance(centreTemp,S2[i])>=max && calculer_determinant3(T[0],T[1],c) * calculer_determinant3(T[0],T[1],centreTemp) >= 0){
-						T[2]=S2[i];
-						max=distance(centreTemp,S2[i]);
+					if(distance(centreTemp,S[j])>=max && calculer_determinant3(T[0],T[1],c) * calculer_determinant3(T[0],T[1],centreTemp) >= 0){
+						T[2]=S[j];
+						max=distance(centreTemp,S[j]);
 						c=centreTemp;
 					}
 				}
 			}
 
-			if(equals_zero(T[2]))
+			if(T[2].x == 0 && T[2].y == 0 )
 			{
 				c.x = (T[0].x + T[1].x)/2;
 				c.y = (T[0].y + T[1].y)/2;
+			}
+			else{
+				nbPointsT++;
 			}
 		}
 	}
     //on renvoye le cercle resultat de centre c et diametre 2 * distance (c,T[0])
 	resultat.x = c.x;
 	resultat.y = c.y;
-	resultat.d = 2*distance(c,T[0]);
+	resultat.d = 2*sqrt(distance(c,T[0]));
 
 	printf("\non a fait %d iterations \n",compteur);			
 	return resultat;
@@ -646,7 +551,7 @@ int contientPoint( CERCLE c , POINT p){
 	temp.x = c.x;
 	temp.y = c.y;
 
-	if(distance(temp,p) * 2 - c.d > EPSILON){
+	if(sqrt(distance(temp,p)) * 2 - c.d > EPSILON){
 		return 0;
 	}
 	else

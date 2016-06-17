@@ -127,7 +127,7 @@ int main( int argc, char* argv []){
     
 
     clock_t now;
-    now=0;
+    now=clock();
 
 
     printf("\n*** Algorithme brut *** \n\n");
@@ -171,14 +171,12 @@ int main( int argc, char* argv []){
 
     printf("\n*** Algorithme Fischer *** \n\n");   
 
-    now=0;
+    now=clock();
     CERCLE c4 = algorithme_fischer(tab , N);
 
     printf("Time ellapsed: %lf\n", (double) (clock() - now) / CLOCKS_PER_SEC);
     printf("Centre ( %lf , %lf ) diamètre %lf\n\n", c4.x , c4.y , c4.d );
     printf("contientTousPoints donne: %d\n", contientTousPoint(c4,tab,N));
-
-
 
     return 0;
 }
