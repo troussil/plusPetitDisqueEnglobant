@@ -134,41 +134,6 @@ int calculPositionSolutionX(POINT tab[],int longueur,double mediane){
 }
 
 
-POINT* calculDemiPlanY(POINT tab[],int longueur,double ordonne){
-	int i;
-	int fin=0;
-	int compteur=1;
-	int nbpoints=2;
-	POINT *enveloppeConvexe=malloc(longueur*sizeof(POINT));
-	for(i=0;i<longueur;i++){//on centre les valeurs sur yc
-		tab[i].y=tab[i].y-ordonne;
-	}
-
-	quickSortPointY(tab,0,longueur-1);
-	enveloppeConvexe[0]=tab[0];
-	for(i=1;i<longueur;i++){
-		if(tab[i].y==tab[0].y){
-			enveloppeConvexe[i]=tab[i];
-			nbpoints+=1;
-		}
-		else{
-			break;
-		}
-	}
-	for(i=longueur-2;i>0;i--){
-		if(tab[i].y==tab[longueur-1].y){
-			enveloppeConvexe[nbpoints]=tab[i];
-			nbpoints+=1;
-		}
-		else{
-			break;
-		}
-	enveloppeConvexe[nbpoints+1]=tab[longueur-1];
-	enveloppeConvexe[0]=tab[0];
-	}
-
-return enveloppeConvexe;
-}
 /*
 on regarde les xcritique > ou < à xm
 on peut enlever 1/2 de ces points
@@ -330,6 +295,7 @@ POINT* intersectionLigne(DOUBLET tab[],int longueur){
 			intersection[i]=*calculIntersection(tab[i],tab[longueur-i-1]);
 			//printf("point %d | doublet %d et %d | x=%lf | y=%lf\n",i,i,longueur-i-1,intersection[i].x,intersection[i].y );
 		}
+
 	}
 	//printf("taille tableau: %d\n",i);
 	return intersection;
