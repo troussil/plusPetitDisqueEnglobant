@@ -11,10 +11,11 @@
  * @param P tableau des points du plan
  * @param nbPoints nombre de points
  * @param apx facteur d'approximation recherché
+ * @param mode Méthode de mise à jour de la sphère
  * @return sol cercle solution
 **/
 
-CERCLE ApxMEB1 ( POINT P[], int nbPoints, double apx);
+CERCLE ApxMEB1 ( POINT P[], int nbPoints, double apx, int mode);
 
 
 /**
@@ -22,10 +23,11 @@ CERCLE ApxMEB1 ( POINT P[], int nbPoints, double apx);
  * @param P tableau des points du plan
  * @param nbPoints nombre de points
  * @param apx facteur d'approximation recherché
+ * @param mode Méthode de mise à jour de la sphère
  * @return sol cercle solution
 **/
 
-CERCLE ApxMEB2 ( POINT P[], int nbPoints, double apx);
+CERCLE ApxMEB2 ( POINT P[], int nbPoints, double apx, int mode);
 
 
 /**

@@ -60,7 +60,7 @@ int main( int argc, char* argv []){
 
   clock_t now;
   now=0;
-	CERCLE c1 = ApxMEB1(tab , N , apx);
+	CERCLE c1 = ApxMEB1(tab , N , apx , mode);
   printf("Time ellapsed: %lf\n", (double) (clock() - now) / CLOCKS_PER_SEC);
   printf("Centre ( %lf , %lf ) diamètre %lf\n", c1.x , c1.y , c1.d );
   printf("Englobe tous les points: ");
@@ -69,7 +69,7 @@ int main( int argc, char* argv []){
   printf("\n__ ApxMEB2:");
 
 	now=0;
-  CERCLE c2 = ApxMEB2(tab , N , apx);
+  CERCLE c2 = ApxMEB2(tab , N , apx , mode);
   printf("Time ellapsed: %lf\n", (double) (clock() - now) / CLOCKS_PER_SEC);
   printf("Centre ( %lf , %lf ) diamètre %lf\n", c2.x , c2.y , c2.d );
   printf("Englobe tous les points: ");

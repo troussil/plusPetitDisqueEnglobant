@@ -8,10 +8,11 @@
  * @param P tableau des points du plan
  * @param nbPoints nombre de points
  * @param apx facteur d'approximation recherché
+ * @param mode Méthode de mise à jour de la sphère
  * @return sol cercle solution
 **/
 
-CERCLE ApxMEB1 ( POINT P[], int nbPoints, double apx){
+CERCLE ApxMEB1 ( POINT P[], int nbPoints, double apx , int mode){
 
 	int nbPts = nbPoints;
 	POINTS_AND_NB X;
@@ -53,7 +54,7 @@ CERCLE ApxMEB1 ( POINT P[], int nbPoints, double apx){
 		Différentes possibilités avec 2 algos de Yildirim et 1 de Larsson & Källberg et 1 de Badoiu et Clarkson */
 
 
-		switch(MODE){
+		switch(mode){
 			case 1: 
 				Y = methodBadoiuClarkson( c , r , q );
 				break;
@@ -95,10 +96,11 @@ CERCLE ApxMEB1 ( POINT P[], int nbPoints, double apx){
  * @param P tableau des points du plan
  * @param nbPoints nombre de points
  * @param apx facteur d'approximation recherché
+ * @param mode Méthode de mise à jour de la sphère
  * @return sol le cercle solution
 **/
 
-CERCLE ApxMEB2 ( POINT P[], int nbPoints, double apx){
+CERCLE ApxMEB2 ( POINT P[], int nbPoints, double apx , int mode){
 
 	int nbPts = nbPoints;
 	POINTS_AND_SPD Z;
@@ -135,11 +137,21 @@ CERCLE ApxMEB2 ( POINT P[], int nbPoints, double apx){
 		/***** UPDATEBALL ****
 		Différentes possibilités avec 2 algos de Yildirim et 1 de Larsson & Källberg et 1 de Badoiu et Clarkson */
 
-		Y = methodBadoiuClarkson( c , r , q );
+		switch(mode){
+			case 1: 
+				Y = methodBadoiuClarkson( c , r , q );
+				break;
+			case 2: 
+				Y = methodKallbergLarsson( c , r , q , apx/2);
+				break;
+			default: exit(-1);
+		}
+
 		c = Y.center;
 		r = Y.radius;
 
 		maj++;
+
 		
 
 		/*********************/
