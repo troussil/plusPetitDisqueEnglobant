@@ -21,7 +21,7 @@ test:	fonction_megiddo.o utils_table.o utils.o testMegiddo.c
 
  
 solution_brute_contrainte.o:	solution_brute_contrainte.c solution_brute_contrainte.h structure.h utils.o utils_table.o
-	gcc -Wall -c solution_brute_contrainte.c utils.o utils_table.o -o solution_brute_contrainte.o -lm -g
+	gcc -Wall -c solution_brute_contrainte.c  -o solution_brute_contrainte.o -lm -g
 
 clean:
 	rm *.o test generateur solveur
