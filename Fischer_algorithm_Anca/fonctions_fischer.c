@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <math.h>
-#include <time.h>
+
 #include "structures.h"
 #include "fonctions_fischer.h"
 
@@ -477,7 +477,7 @@ CERCLE algorithme_fischer(POINT S[], int nbPoints){
 			max = 0;
 			for(j=0;j<nbPoints;j++){
 				compteur++;
-				if(det * calculer_determinant3(T[0],T[1],S[j]) > 0 && distance(cc,S[j]) > distance(cc,T[0]))
+				if(not_in(T,S[j],nbPointsT) && det * calculer_determinant3(T[0],T[1],S[j]) > 0 && distance(cc,S[j]) > distance(cc,T[0]))
 				{
 					d1 = mediatrice(T[0],T[1]);
 					d2 = mediatrice(T[0],S[j]);
@@ -493,7 +493,7 @@ CERCLE algorithme_fischer(POINT S[], int nbPoints){
 						centreTemp = intersection(d1,d2);	
 					}
 					
-					if(distance(centreTemp,S[j])>=max && calculer_determinant3(T[0],T[1],c) * calculer_determinant3(T[0],T[1],centreTemp) >= 0){
+					if(distance(centreTemp,S[j])>max && calculer_determinant3(T[0],T[1],c) * calculer_determinant3(T[0],T[1],centreTemp) >= 0){
 						T[2]=S[j];
 						max=distance(centreTemp,S[j]);
 						c=centreTemp;
@@ -589,15 +589,8 @@ CERCLE brute( POINT tab[] , int nbPoints ){
 				p2 = tab[j];
 				cTemp = cerclePassantParDeuxPoints(p1 , p2);
 				
-
 				if ( contientTousPoint(cTemp , tab , nbPoints) && cTemp.d < cFinal.d){
 					cFinal = cTemp;
-					/*printf("algo donnee par:");
-					print_point(&p1);
-					print_point(&p2);
-					printf("************");
-					*/
-					
 				}
 			}
 		}
@@ -615,12 +608,6 @@ CERCLE brute( POINT tab[] , int nbPoints ){
 	        	        cTemp = cerclePassantParTroisPoints(p1 , p2 , p3);
 	              	  	if ( contientTousPoint(cTemp , tab , nbPoints) && cTemp.d < cFinal.d){
 	                	        cFinal = cTemp;
-	                	        /*printf("algo donnee par:");
-								print_point(&p1);
-								print_point(&p2);
-								print_point(&p3);
-								printf("************");
-								*/
 	                	}
 					}
 	            }
