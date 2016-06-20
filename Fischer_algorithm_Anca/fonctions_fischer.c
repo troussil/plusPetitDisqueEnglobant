@@ -39,19 +39,12 @@ double distance(POINT a, POINT b){
 	return ((a.x - b.x)*(a.x - b.x) + (a.y - b.y)*(a.y - b.y));
 }
 
-double signed_triangle_area(POINT a, POINT b, POINT c)
-{
-	return( (a.x*b.y - a.y*b.x + a.y*c.x 
-		- a.x*c.y + b.x*c.y - c.x*b.y) / 2.0 );
-}
-
 
 /**
  * verifie si a,b,c alignes
 **/
 int collinear(POINT a, POINT b, POINT c)
 {
-	//double signed_triangle_area();
 
 	return (calculer_determinant3(a,b,c)*calculer_determinant3(a,b,c) <= EPSILON );
 }
@@ -128,6 +121,8 @@ double calculer_determinant2(POINT a, POINT b){
 	return a.x*b.y - a.y*b.x;
 }
 
+
+//retourne l'index du element qui a un coefficient negatif dans la representation p = somme ( coeff(i) * T[i])
 int coefficients_negatifs(POINT p,POINT T[], int nbPoints){
 	if(calculer_determinant3(T[2],T[1],T[0]) * calculer_determinant3(T[2],T[1],p) <0)
 		return 0;
@@ -205,15 +200,7 @@ int appartenance_conv(POINT p,POINT T[], int nbPoints)
 int appartenance_aff(POINT p,POINT T[], int nbPoints){
 
 	//si on a un seul point, il faut que p et T[0] coincident pour que p appartienne a aff(T)
-	/*if(nbPoints==1 && distance(p,T[0])!=0)
-	{
-		return 0; //distance != 0 => points differents => p appartient pas a aff(T)
-	} 
-	else if(nbPoints==1 && distance(p,T[0]) ==0)
-	{
-		return 1; //distance == 0 => points coincident => p appartient a aff(T)
-	}*/
-	if(distance(p,T[0]) == 1){
+	if(distance(p,T[0]) == 0){
 		return 1;
 	}
 	else if(nbPoints==1){
@@ -360,11 +347,12 @@ int dropping(POINT c,POINT T[], int nbPoints){
 
 	int i;
 	int index = coefficients_negatifs(c, T, nbPoints);
-	//printf("index: %d\n",index);
+
 	for(i=index;i<nbPoints-1;i++)
 		T[i]=T[i+1];
 	T[nbPoints-1].x = 0;
 	T[nbPoints-1].y = 0;
+
 	return 1;
 }
 
@@ -411,6 +399,7 @@ CERCLE algorithme_fischer(POINT S[], int nbPoints){
 						
 		if(appartenance_aff(c,T,nbPointsT))
 		{
+			//si c appartient a aff(T) on sait qu'on peut enlever un point par le dropping
 			if(dropping(c,T,nbPointsT)){
 				nbPointsT--;
 			}			
@@ -424,11 +413,15 @@ CERCLE algorithme_fischer(POINT S[], int nbPoints){
 			p.y =0;
 			max=0;
 
+
 			for(i=0;i<nbPoints-1;i++){
 				compteur++;
 
-				if(not_in(T,S[i],nbPointsT)){
+				if(not_in(T,S[i],nbPointsT)){ 
 
+					//pour toutes les points de S qui sont pas dans T on calcule le nouveau cercle qu'elles determinent
+
+					//calcul du centre du cercle temporaire
 					d1 = mediatrice(T[0],S[i]);
 					d2 = droitePassantParPoints(T[0],c);
 
@@ -442,6 +435,8 @@ CERCLE algorithme_fischer(POINT S[], int nbPoints){
 					}
 					
 
+					//si on a un cercle maximal on sait qu'on a tombe sur le point qui a arrete la marche du centre du cercle vers cc(T)
+					//on reactualise donc c
 					if(!equals_zero(centreTemp)){
 						if(distance(centreTemp,S[i]) > max){
 							p=S[i];
@@ -459,16 +454,18 @@ CERCLE algorithme_fischer(POINT S[], int nbPoints){
 				nbPointsT++;
 			}
 			else{
-				T[1] = c;
-				nbPointsT++;
+				//si on n'a pas trouve aucun point qui arrete la marche, alors c atteint cc(T) qui sera en fait le milieu entre c et T[0]
+				if(!not_in(S,c,nbPoints)){
+					T[1] = c;
+					nbPointsT++;
+				}
 				c.x = (T[0].x + T[1].x)/2.0;
 				c.y = (T[0].y + T[1].y)/2.0;
 			}
 		}
 		else if(nbPointsT==2) 
 		{
-			// Calcul du tableau S2 (les points de S/T du meme cote que c)
-			// le calcul est fait seulement dans le cas ou on a 2 points dans T
+			// on a 2 points dans T et on cherche le 3eme point qui va arreter la marche
 
 			cc.x = (T[0].x+T[1].x)/2;
 			cc.y = (T[0].y+T[1].y)/2;
@@ -477,8 +474,12 @@ CERCLE algorithme_fischer(POINT S[], int nbPoints){
 			max = 0;
 			for(j=0;j<nbPoints;j++){
 				compteur++;
+
+				//on cherche le puint "stopper" entre les points de S/T qui se trouvent de meme cote que c par rapport aux autres points de T
+				//on cherche encore une fois un cercle maximal pour etre surs que c'est bien le point qui arrete la marche
 				if(not_in(T,S[j],nbPointsT) && det * calculer_determinant3(T[0],T[1],S[j]) > 0 && distance(cc,S[j]) > distance(cc,T[0]))
 				{
+					//calcul du centre du cercle temporaire grace aux mediatrices
 					d1 = mediatrice(T[0],T[1]);
 					d2 = mediatrice(T[0],S[j]);
 					if(d1.a == 0 && d1.b == 0){
@@ -503,6 +504,7 @@ CERCLE algorithme_fischer(POINT S[], int nbPoints){
 
 			if(T[2].x == 0 && T[2].y == 0 )
 			{
+				//si on n'a pas trouve de point, alors c atteint cc(T) qui est le milieu du segment T[0]T[1]
 				c.x = (T[0].x + T[1].x)/2;
 				c.y = (T[0].y + T[1].y)/2;
 			}
@@ -511,7 +513,7 @@ CERCLE algorithme_fischer(POINT S[], int nbPoints){
 			}
 		}
 	}
-    //on renvoye le cercle resultat de centre c et diametre 2 * distance (c,T[0])
+    //on renvoye le cercle resultat de centre c et diametre = 2 * distance (c,T[0])
 	resultat.x = c.x;
 	resultat.y = c.y;
 	resultat.d = 2*sqrt(distance(c,T[0]));

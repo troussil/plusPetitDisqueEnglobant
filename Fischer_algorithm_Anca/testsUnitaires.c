@@ -85,20 +85,30 @@ int main(){
     for(i=0;i<nbPoints;i++)
         print_point(&tab[i]);
 
+    CERCLE c0 = algorithme_fischer(tab,nbPoints-1);
+    printf("Cercle solution: Coordonnées x=%lf, y=%lf, diamètre=%lf.\n",c0.x,c0.y,c0.d);
+    printf("contientTousPoints donne: %d\n", contientTousPoint(c0,tab,nbPoints-1));
+
+
     POINT tab1[] = {{10.0,15.0},{10.0,5.0},{5.0,10.0},{15.0,10.0}}; 
-    printf("\n** Test 1 : Points cocirculaires **\n\n");
+    printf("\n** Test 2 : Points cocirculaires **\n\n");
+
     nbPoints = sizeof(tab1) / sizeof (tab1[0]);
-    //printf("Nombre de points: %lf\n",nbPoints);
-    CERCLE c1 = brute(tab1,nbPoints);
+    printf("\n Points:\n");
+    for(i=0;i<nbPoints;i++)
+        print_point(&tab1[i]);
+    CERCLE c1 = algorithme_fischer(tab1,nbPoints);
     printf("Cercle solution brute: Coordonnées x=%lf, y=%lf, diamètre=%lf.\n",c1.x,c1.y,c1.d);
     printf("Le résultat devrait être x=10, y=10, d=10\n");
 
     // Test 2 : Points alignés
 
     POINT tab2[] = {{10.0,15.0},{10.0,14.0},{10.0,5.0},{10.0,7.0}}; 
-    printf("\n** Test 2 : Points alignés **\n\n");
+    printf("\n** Test 3 : Points alignés **\n\n");
     nbPoints = sizeof(tab2) / sizeof (tab2[0]);
-    //printf("Nombre de points: %lf\n",nbPoints);
+    printf("\n Points:\n");
+    for(i=0;i<nbPoints;i++)
+        print_point(&tab2[i]);
     CERCLE c2 = algorithme_fischer(tab2,nbPoints);
     printf("Cercle solution brute: Coordonnées x=%lf, y=%lf, diamètre=%lf.\n",c2.x,c2.y,c2.d);
     printf("Le résultat devrait être x=10, y=10, d=10\n");
@@ -106,9 +116,11 @@ int main(){
     // Test 3 : Points confondus
 
     POINT tab3[] = {{10.0,10.0},{10.0,10.0},{10.0,10.0},{10.0,15.0},{10.0,5.0}};    
-    printf("\n** Test 3 : Points confondus **\n\n");
+    printf("\n** Test 4 : Points confondus **\n\n");
     nbPoints = sizeof(tab3) / sizeof (tab3[0]);
-    //printf("Nombre de points: %lf\n",nbPoints);
+    printf("\n Points:\n");
+    for(i=0;i<nbPoints;i++)
+        print_point(&tab3[i]);
     CERCLE c3 = algorithme_fischer(tab3,nbPoints);
     printf("Cercle solution brute: Coordonnées x=%lf, y=%lf, diamètre=%lf.\n",c3.x,c3.y,c3.d);
     printf("Le résultat devrait être x=10, y=10, d=10\n");
