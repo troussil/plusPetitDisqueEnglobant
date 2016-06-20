@@ -20,6 +20,5 @@ DOUBLET* calculAngleCritique(POINT tab[],int longueur);
 int calculPositionSolutionX(POINT tab[],int longueur,double mediane);
 int pruningContraint(POINT point[],int longueur,int ordonne);
 POINT* intersectionLigne(DOUBLET tab[],int longueur);
-POINT* calculDemiPlanY(POINT tab[],int longueur,double ordonne);
 
 #endif
