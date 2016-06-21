@@ -14,6 +14,6 @@ int main() {
   POINT p5 = {0,0};
   POINT points[] = {p1,p2,p3,p4,p5}; 
   CERCLE *c=MINIDISK(points,5);
-  fprintf(stderr,"centre(%d,%d) et diamètre %f",c->x,c->y,c->d);
+  fprintf(stderr,"centre(%d,%d) et diamètre %f \n",c->x,c->y,c->d);
   return 0;
 }

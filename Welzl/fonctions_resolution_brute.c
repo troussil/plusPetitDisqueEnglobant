@@ -1,12 +1,13 @@
 #include "structures.h"
 #include <math.h>
+#include "fonctions_resolution_brute.h"
 
 //Renvoie le cercle le plus petit passant par deux points p1 et p2
  
 CERCLE *cerclePassantParDeuxPoints( POINT p1 , POINT p2){
 	
 	CERCLE *c;
-		
+  c = malloc (sizeof(CERCLE));		
 	c->x = (p1.x + p2.x)/2;
 	c->y = (p1.y + p2.y)/2;
 	c->d = sqrt((p1.x - p2.x)*(p1.x - p2.x) + (p1.y - p2.y)*(p1.y - p2.y));
@@ -21,7 +22,7 @@ CERCLE *cerclePassantParDeuxPoints( POINT p1 , POINT p2){
 CERCLE *cerclePassantParTroisPoints( POINT p1 , POINT p2 , POINT p3){
 	
 	CERCLE *c;
-
+  c = malloc (sizeof(CERCLE));	
 	float det =  (p1.x - p2.x) * (p2.y - p3.y) - (p2.x - p3.x)* (p1.y - p2.y); 
 
   if (det == 0) { 
@@ -58,11 +59,18 @@ int contientTousPoint( CERCLE *c , POINT tab[] , int nbPoints ){
 	return ok;
 }
 
-int contientPoint( CERCLE *c , POINT p){
+double distance(POINT a,POINT b){
+  return sqrt((a.x-b.x)*(a.x-b.x)+(a.y-b.y)*(a.y-b.y));
+}  
 
-	if(c->x + c->d/2 < p.x || c->x - c->d/2 > p.x || c->y + c->d/2 < p.y || c->y - c->d/2 > p.y)
+int contientPoint( CERCLE *c , POINT p){
+  POINT temp;
+  temp.x=c->x;
+  temp.y=c->y;
+	if((distance(temp,p)*2)>(c->d))
 		return 0;
 	else
 		return 1;
 
 }
+

@@ -32,10 +32,12 @@ int Pointrand (int tailleP){
 CERCLE *b_md(POINT *R,int casesRemplies){
   if(casesRemplies==0){
     CERCLE *C;
+    C = malloc (sizeof(CERCLE));
     return C;
   }  
   if(casesRemplies==1){
     CERCLE *C;
+    C = malloc (sizeof(CERCLE));
     C->d=0;
     C->x=R[0].x;
     C->y=R[0].y;
@@ -58,6 +60,7 @@ int defined(CERCLE *C,POINT *P,int taille){
 
 CERCLE *B_MINIDISK(POINT *P,POINT *R,int tailleP,int tailleR){
   CERCLE *D;
+  D = malloc (sizeof(CERCLE));
   if((tailleP==0) || (tailleR==3))
     D=b_md(R,tailleR);
   else{    
@@ -74,6 +77,7 @@ CERCLE *B_MINIDISK(POINT *P,POINT *R,int tailleP,int tailleR){
 
 CERCLE *MINIDISK(POINT *P,int tailleP){
   POINT *R;
+  R=malloc (sizeof(POINT));
   randomisationTableau(P,tailleP);
   return B_MINIDISK(P,R,tailleP,0);
 }  
