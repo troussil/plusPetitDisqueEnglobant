@@ -25,13 +25,6 @@ void print_cercle(CERCLE* c);
 double distance(POINT a, POINT b);
 
 /**
- * Fonction qui calcule l'aire du triangle defini par les points a,b,c
- * @params POINT a,b,c
- * @return (double) l'aire
-**/
-double signed_triangle_area(POINT a, POINT b, POINT c);
-
-/**
  * Verifie si les points a,b,c sont alignes
  * @params POINT a,b,c
  * @return 1 si points colineaires, 0 sinon
@@ -106,7 +99,7 @@ double calculer_determinant3(POINT a, POINT b, POINT c);
 double calculer_determinant2(POINT a, POINT b);
 
 /**
- * calcule l'index d'un POINT avec des coeffs negatifs dans l'ecriture p = alpha*T[i] + betha*T[j]
+ * calcule l'index du element qui a un coefficient negatif dans la representation p = somme ( coeff(i) * T[i])
  * @params p POINT a verifier
  * @params T tableau points
  * @params nbPoints nombre d'elements dans T
@@ -156,14 +149,6 @@ DROITE droitePassantParPoints(POINT p1, POINT p2);
 
 
 /**************************** fonctions pour les tableaux ****************************/
-
-
-/**
- * Fait un tri du tableau et enleve les dupliques
- * @params in tableau de points
- * @params nbPoints nombre de points dans in
-**/
-void sort_and_remove_duplicates(POINT in[], int *n);
 
 /**
  * Initialise un tableau avec des points {0,0} partout
