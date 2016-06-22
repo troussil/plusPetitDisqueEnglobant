@@ -1,4 +1,4 @@
-all:	Test solveurWelzl generateur 
+all:	Test solveurWelzl generateur solveur
 
 fonctions_Welzl.o:	fonctions_Welzl.c fonctions_resolution_brute.h structures.h
 	gcc -c fonctions_Welzl.c -o fonctions_Welzl.o
@@ -9,7 +9,7 @@ Test.o: Test.c fonctions_resolution_brute.h structures.h
 fonctions_resolution_brute.o: fonctions_resolution_brute.c 
 	gcc -c fonctions_resolution_brute.c -o fonctions_resolution_brute.o 
 
-resolution_brute.o:resolution_brute.c
+resolution_brute.o:resolution_brute.c fonctions_resolution_brute.h
 	gcc -c resolution_brute.c -o resolution_brute.o	
 	    
 solveurWelzl.o: solveurWelzl.c structures.h fonctions_resolution_brute.h fonctions_Welzl.h
@@ -21,11 +21,11 @@ generateur.o: generateur.c
 generateur: generateur.o
 	gcc generateur.o -o generateur
 
-#solveur.o:	solveur.c structures.h fonctions_resolution_brute.h resolution_brute.h
-#	gcc -c solveur.c -o solveur.o
+solveur.o:	solveur.c structures.h fonctions_resolution_brute.h resolution_brute.h
+	gcc -c solveur.c -o solveur.o
 
-#solveur:	solveur.o resolution_brute.o fonctions_resolution_brute.o structures.h
-#	gcc solveur.o resolution_brute.o fonctions_resolution_brute.o -lm -o solveur
+solveur:	solveur.o resolution_brute.o fonctions_resolution_brute.o structures.h
+	gcc solveur.o resolution_brute.o fonctions_resolution_brute.o -lm -o solveur
 
 	
 solveurWelzl: solveurWelzl.o fonctions_Welzl.o fonctions_resolution_brute.o structures.h

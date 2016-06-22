@@ -4,6 +4,7 @@
 #include "structures.h"
 #include "fonctions_resolution_brute.h"
 #include "fonctions_Welzl.h"
+#include <time.h>
 
 #define TAILLEPOINT 3 //Diametre d'un point
 
@@ -31,7 +32,7 @@ POINT* convertirEntree (int N){
     }
     /* printf("%s ", chaine); */
     tab[i].x=atoi(chaine);
-    printf("%lf ", tab[i].x); 
+    printf("%d ", tab[i].x); 
     strcpy(chaine, "");
     j=0;
     while((chaine[j]= getc(stdin)) != '\n' && chaine[j]!=EOF){
@@ -39,7 +40,7 @@ POINT* convertirEntree (int N){
     }
     /* printf("%s\n", chaine); */
     tab[i].y=atoi(chaine);
-    printf("%lf\n", tab[i].y); 
+    printf("%d\n", tab[i].y); 
     strcpy(chaine, "");
     j=0;
   }
@@ -70,14 +71,19 @@ void ecritureSVG(POINT tab[], FILE* file , int N){
     dessinerPoint(file,(tab[i]).x, tab[i].y, TAILLEPOINT);
   }
   //On calcul la solution brute puis on la dessine dans le SVG
-  CERCLE *CercleSolution=MINIDISK(tab , N);
+  clock_t now;
+  now=0;
+  CERCLE *CercleSolution=malloc(sizeof(CERCLE));
+  CercleSolution=MINIDISK(tab, N);
+  printf("Time ellapsed: %lf \n",(double)(clock()-now)/CLOCKS_PER_SEC);
+  fprintf(stderr,"centre(%d,%d) et diamètre %f \n",CercleSolution->x,CercleSolution->y,CercleSolution->d);
   /*CERCLE CercleSolution;
   CercleSolution.x = 250;
   CercleSolution.y=250;
   CercleSolution.d = 250;*/
   dessinerCercle(file, CercleSolution->x, CercleSolution->y, CercleSolution->d);
 
-  printf(" \n*** CERCLE SOLUTION PAR ALGO WELZL: posX = %lf , posY = %lf , diamètre = %lf  ***\n", CercleSolution->x, CercleSolution->y, CercleSolution->d );
+  printf(" \n*** CERCLE SOLUTION PAR ALGO WELZL: posX = %d , posY = %d , diamètre = %f  ***\n", CercleSolution->x, CercleSolution->y, CercleSolution->d );
 
 
 }

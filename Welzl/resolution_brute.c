@@ -7,16 +7,16 @@
  * @param tab Tableau contenant les points
  * @return cFinal CERCLE solution finale
 **/
-CERCLE brute( POINT tab[] , int nbPoints){
+CERCLE *brute( POINT tab[] , int nbPoints){
 
-	CERCLE cFinal , cTemp;
-	cFinal.d = 100000000000; cFinal.x = 0; cFinal.y=0;	
+	CERCLE *cFinal , *cTemp;
+	cFinal->d = 100000000000; cFinal->x = 0; cFinal->y=0;	
 
 	/* Cas particuliers */
 
 	if (nbPoints==1)
 	{
-		cFinal.x = tab[0].x;cFinal.y=tab[0].y;cFinal.d=0.0;
+		cFinal->x = tab[0].x;cFinal->y=tab[0].y;cFinal->d=0.0;
 		return cFinal;
 	}
 	if (nbPoints==2)
@@ -40,7 +40,7 @@ CERCLE brute( POINT tab[] , int nbPoints){
 			p1 = tab[i];
 			p2 = tab[j];
 			cTemp = cerclePassantParDeuxPoints(p1 , p2);
-			if ( contientTousPoint(cTemp , tab , nbPoints) && cTemp.d < cFinal.d){
+			if ( contientTousPoint(cTemp , tab , nbPoints) && (cTemp->d) < (cFinal->d)){
 				cFinal = cTemp;
 				
 			}
@@ -61,7 +61,7 @@ CERCLE brute( POINT tab[] , int nbPoints){
                                 p2 = tab[j];
 								p3 = tab[k];
                         	    cTemp = cerclePassantParTroisPoints(p1 , p2 , p3);
-                              	if ( contientTousPoint(cTemp , tab , nbPoints) && cTemp.d < cFinal.d){
+                              	if ( contientTousPoint(cTemp , tab , nbPoints) && (cTemp->d) < (cFinal->d)){
                                 	cFinal = cTemp;
                                 }
 							}

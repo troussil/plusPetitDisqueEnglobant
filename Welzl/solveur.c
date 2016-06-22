@@ -4,6 +4,7 @@
 #include "structures.h"
 #include "fonctions_resolution_brute.h"
 #include "resolution_brute.h"
+#include <time.h>
 
 #define TAILLEPOINT 3 //Diametre d'un point
 
@@ -70,14 +71,20 @@ void ecritureSVG(POINT tab[], FILE* file , int N){
     dessinerPoint(file,(tab[i]).x, tab[i].y, TAILLEPOINT);
   }
   //On calcul la solution brute puis on la dessine dans le SVG
-  CERCLE CercleSolution=brute(tab , N);
+  clock_t now;
+  now=0;
+  CERCLE *CercleSolution=malloc(sizeof(CERCLE));
+  CercleSolution=brute(tab , N);
+  printf("Time ellapsed: %lf \n",(double)(clock()-now)/CLOCKS_PER_SEC);
+  fprintf(stderr,"centre(%d,%d) et diamètre %f \n",CercleSolution->x,CercleSolution->y,CercleSolution->d);
+
   /*CERCLE CercleSolution;
   CercleSolution.x = 250;
   CercleSolution.y=250;
   CercleSolution.d = 250;*/
-  dessinerCercle(file, CercleSolution.x, CercleSolution.y, CercleSolution.d);
+  dessinerCercle(file, CercleSolution->x, CercleSolution->y, CercleSolution->d);
 
-  printf(" \n*** CERCLE SOLUTION PAR METHODE BRUTE: posX = %lf , posY = %lf , diamètre = %lf  ***\n", CercleSolution.x, CercleSolution.y, CercleSolution.d );
+  printf(" \n*** CERCLE SOLUTION PAR METHODE BRUTE: posX = %lf , posY = %lf , diamètre = %lf  ***\n", CercleSolution->x, CercleSolution->y, CercleSolution->d );
 
 
 }
