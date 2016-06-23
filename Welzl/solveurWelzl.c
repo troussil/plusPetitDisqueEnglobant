@@ -32,7 +32,7 @@ POINT* convertirEntree (int N){
     }
     /* printf("%s ", chaine); */
     tab[i].x=atoi(chaine);
-    printf("%d ", tab[i].x); 
+    //printf("%d ", tab[i].x); 
     strcpy(chaine, "");
     j=0;
     while((chaine[j]= getc(stdin)) != '\n' && chaine[j]!=EOF){
@@ -40,7 +40,7 @@ POINT* convertirEntree (int N){
     }
     /* printf("%s\n", chaine); */
     tab[i].y=atoi(chaine);
-    printf("%d\n", tab[i].y); 
+    //printf("%d\n", tab[i].y); 
     strcpy(chaine, "");
     j=0;
   }
@@ -76,14 +76,14 @@ void ecritureSVG(POINT tab[], FILE* file , int N){
   CERCLE *CercleSolution=malloc(sizeof(CERCLE));
   CercleSolution=MINIDISK(tab, N);
   printf("Time ellapsed: %lf \n",(double)(clock()-now)/CLOCKS_PER_SEC);
-  fprintf(stderr,"centre(%d,%d) et diamètre %f \n",CercleSolution->x,CercleSolution->y,CercleSolution->d);
+  fprintf(stderr,"centre(%d,%d) et diamètre %f \n",CercleSolution->x,CercleSolution->y,(CercleSolution->d)/2);
   /*CERCLE CercleSolution;
   CercleSolution.x = 250;
   CercleSolution.y=250;
   CercleSolution.d = 250;*/
-  dessinerCercle(file, CercleSolution->x, CercleSolution->y, CercleSolution->d);
+  dessinerCercle(file, CercleSolution->x, CercleSolution->y, (CercleSolution->d)/2);
 
-  printf(" \n*** CERCLE SOLUTION PAR ALGO WELZL: posX = %d , posY = %d , diamètre = %f  ***\n", CercleSolution->x, CercleSolution->y, CercleSolution->d );
+  printf(" \n*** CERCLE SOLUTION PAR ALGO WELZL: posX = %d , posY = %d , diamètre = %f  ***\n", CercleSolution->x, CercleSolution->y, (CercleSolution->d)/2 );
 
 
 }

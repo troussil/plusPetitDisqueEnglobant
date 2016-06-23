@@ -32,7 +32,7 @@ POINT* convertirEntree (int N){
     }
     /* printf("%s ", chaine); */
     tab[i].x=atoi(chaine);
-    printf("%lf ", tab[i].x); 
+    //printf("%lf ", tab[i].x); 
     strcpy(chaine, "");
     j=0;
     while((chaine[j]= getc(stdin)) != '\n' && chaine[j]!=EOF){
@@ -40,7 +40,7 @@ POINT* convertirEntree (int N){
     }
     /* printf("%s\n", chaine); */
     tab[i].y=atoi(chaine);
-    printf("%lf\n", tab[i].y); 
+    //printf("%lf\n", tab[i].y); 
     strcpy(chaine, "");
     j=0;
   }
@@ -84,7 +84,7 @@ void ecritureSVG(POINT tab[], FILE* file , int N){
   CercleSolution.d = 250;*/
   dessinerCercle(file, CercleSolution->x, CercleSolution->y, CercleSolution->d);
 
-  printf(" \n*** CERCLE SOLUTION PAR METHODE BRUTE: posX = %lf , posY = %lf , diamètre = %lf  ***\n", CercleSolution->x, CercleSolution->y, CercleSolution->d );
+  printf(" \n*** CERCLE SOLUTION PAR METHODE BRUTE: posX = %d , posY = %d , diamètre = %f  ***\n", CercleSolution->x, CercleSolution->y, CercleSolution->d );
 
 
 }

@@ -16,6 +16,6 @@ int contientTousPoint( CERCLE *c , POINT tab[], int nbPoints );
 
 int contientPoint( CERCLE *c , POINT p);
 
-//double distance(POINT a,POINT b);
+double distance(POINT a,POINT b);
 
 #endif

@@ -12,16 +12,16 @@
 
 
 void randomisationTableau(POINT *P, int tailleP){
-    /*int i=0;
+    int i=0;
     int nombre_tire=0;
-    int temp=0;
+    POINT temp;
     for(i = 0; i< tailleP;i++){
         nombre_tire=rand()%tailleP;
         // On échange les contenus des cases i et nombre_tire
         temp = P[i];
         P[i] = P[nombre_tire];
         P[nombre_tire]=temp;
-    }*/
+    }
 }  
 
 int Pointrand (int tailleP){
@@ -67,7 +67,7 @@ CERCLE *B_MINIDISK(POINT *P,POINT *R,int tailleP,int tailleR){
     int index=Pointrand(tailleP);
     POINT point=P[index];
     D= B_MINIDISK(P,R,tailleP-1,tailleR);
-    if ((contientPoint(D,point)==0)&&(defined(D,P,tailleP-1)==1)){//si le point n'est pas dans le cercle
+    if (contientPoint(D,point)==0){//si le point n'est pas dans le cercle
       R[tailleR]=point;
       D=B_MINIDISK(P,R,tailleP-1,tailleR+1);
     }
@@ -80,4 +80,6 @@ CERCLE *MINIDISK(POINT *P,int tailleP){
   R=malloc (sizeof(POINT));
   randomisationTableau(P,tailleP);
   return B_MINIDISK(P,R,tailleP,0);
-}  
+}
+
+  
